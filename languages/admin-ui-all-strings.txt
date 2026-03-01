@@ -1,0 +1,587 @@
+# All detected Serbian strings in includes/*.php
+# format: source = 
+
+      <button type="button" class="stkb-help-step stkb-help-step-open" data-topic="igraci"><h3>3. Igrači</h3><p>Poveži igrača sa klubom i dopuni profil.</p></button> = 
+      <button type="button" class="stkb-help-step stkb-help-step-open" data-topic="retro"><h3>7. Retro unos</h3><p>Za stare sezone koristi listu svih igrača.</p></button> = 
+      <button type="button" class="stkb-help-step stkb-help-step-open" data-topic="takmicenja"><h3>1. Takmičenja</h3><p>Dodaj ligu, sezonu i pravila takmičenja.</p></button> = 
+      <div class="stkb-help-detail" data-topic="igraci" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Igrači - detaljno</h3><p><strong>Dodavanje:</strong></p><ol><li>Idi na <em>Igrači</em> i klikni <strong>+ Dodaj igrača</strong>.</li><li>Unesi ime i prezime, biografiju i sliku.</li><li>Poveži igrača sa trenutnim klubom.</li><li>Unesi datum rođenja, mesto rođenja i državljanstvo.</li><li>Sačuvaj.</li></ol><p><strong>Izmena:</strong> U listi igrača klikni <strong>Uredi</strong>, promeni podatke i sačuvaj.</p><p><strong>Brisanje:</strong> Koristi <strong>Obriši</strong> oprezno, posebno ako igrač ima istoriju partija.</p><p><strong>Napomena:</strong> Državljanstvo je podrazumevano Srbija, ali možeš ga promeniti po igraču.</p></div> = 
+      <div class="stkb-help-detail" data-topic="klubovi" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Klubovi - detaljno</h3><p><strong>Dodavanje:</strong></p><ol><li>Idi na <em>Klubovi</em> i klikni <strong>+ Dodaj klub</strong>.</li><li>Unesi naziv, opis i grb.</li><li>Popuni podatke: grad, kontakt, email, adrese, termin igranja i ostalo.</li><li>Sačuvaj.</li></ol><p><strong>Izmena:</strong> U listi klubova klikni <strong>Uredi</strong>, promeni podatke i sačuvaj.</p><p><strong>Brisanje:</strong> Klikni <strong>Obriši</strong> samo kada si siguran da klub ne koristiš u postojećim unosima.</p><p><strong>Savet:</strong> Grb i tačan naziv kluba odmah proveri na frontend-u.</p></div> = 
+      <div class="stkb-help-detail" data-topic="partije" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Partije - detaljno</h3><p><strong>Kako uneti:</strong></p><ol><li>Otvori utakmicu kroz <strong>Uredi</strong>.</li><li>U sekciji batch unosa unesi igrače za svaku partiju.</li><li>Dubl partija se automatski određuje po pravilima takmičenja.</li><li>Za singl partije unosi se po jedan igrač sa svake strane.</li><li>Na kraju klikni <strong>Sačuvaj sve partije</strong>.</li></ol><p><strong>Izmena:</strong> Ponovo otvori utakmicu, ispravi redove partija i sačuvaj.</p><p><strong>Brisanje:</strong> Ako ostaviš partiju praznom, sistem je briše pri snimanju.</p></div> = 
+      <div class="stkb-help-detail" data-topic="provera" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Provera - detaljno</h3><p><strong>Posle svakog unosa proveri:</strong></p><ol><li>Frontend utakmicu: rezultat, partije, setove, MVP i ostale blokove.</li><li>Frontend klub: forma, vesti, statistika ekipe.</li><li>Frontend igrača: info, statistika, transferi i vesti igrača.</li></ol><p><strong>Ako vidiš grešku:</strong></p><ol><li>Vrati se u admin na odgovarajuću stavku.</li><li>Ispravi podatke.</li><li>Sačuvaj i osveži frontend stranu.</li></ol><p><strong>Savet:</strong> Najbrže je proveravati odmah nakon unosa, ne na kraju dana.</p></div> = 
+      <div class="stkb-help-detail" data-topic="retro" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Retro unos - detaljno</h3><p><strong>Kada koristiti:</strong> Unos starih sezona kada igrači više nisu u trenutnom klubu.</p><p><strong>Koraci:</strong></p><ol><li>U partiji klikni <strong>Lista igrača</strong> pored dropdown-a.</li><li>U popup-u pretraži ime igrača.</li><li>Klikni igrača iz liste i sistem ga ubacuje u polje.</li><li>Nastavi unos partije i setova.</li></ol><p><strong>Napomena:</strong> Ako je igrač van trenutnog kluba, to je podržano i vidljivo u oznaci.</p></div> = 
+      <div class="stkb-help-detail" data-topic="setovi" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Setovi - detaljno</h3><p><strong>Unos setova:</strong></p><ol><li>Za svaku partiju imaš polja Set 1 do Set 5.</li><li>Unosi poene domaćina i gosta po setu.</li><li>Proveri da li je broj osvojenih setova logičan u odnosu na rezultat partije.</li><li>Sačuvaj sve partije.</li></ol><p><strong>Izmena:</strong> Ispravi setove i ponovo sačuvaj.</p><p><strong>Napomena:</strong> Ako su setovi uneti, a ukupni setovi prazni, sistem automatski računa zbir.</p></div> = 
+      <div class="stkb-help-detail" data-topic="takmicenja" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Takmičenja - detaljno</h3><p><strong>Dodavanje:</strong></p><ol><li>Idi na <em>Takmičenja</em> i klikni <strong>+ Dodaj takmičenje</strong>.</li><li>Unesi naziv lige i sezonu (npr. Kvalitetna Liga / 2025-26).</li><li>Izaberi format partija (A ili B), bodovanje i savez.</li><li>Sačuvaj takmičenje.</li></ol><p><strong>Izmena:</strong> U listi takmičenja klikni <strong>Uredi</strong>, promeni pravila i sačuvaj.</p><p><strong>Brisanje:</strong> Koristi <strong>Obriši</strong> samo ako si siguran da takmičenje nije već povezano sa unetim utakmicama.</p><p><strong>Važno:</strong> Najpre unesi takmičenje, pa tek onda utakmice i partije.</p></div> = 
+      <div class="stkb-help-detail" data-topic="utakmice" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Utakmice - detaljno</h3><p><strong>Dodavanje:</strong></p><ol><li>Idi na <em>Utakmice</em> i klikni <strong>+ Dodaj utakmicu</strong>.</li><li>Izaberi takmičenje, kolo i datum.</li><li>Izaberi domaći i gostujući klub.</li><li>Unesi konačan rezultat utakmice.</li><li>Sačuvaj utakmicu.</li></ol><p><strong>Izmena:</strong> U listi utakmica klikni <strong>Uredi</strong>, promeni podatke i sačuvaj.</p><p><strong>Brisanje:</strong> Brisanje utakmice briše i povezane partije i setove.</p><p><strong>Važno:</strong> Rezultat određuje maksimalan broj partija koje možeš da uneseš.</p></div> = 
+      <h2>Vodič za unos podataka</h2> = 
+      <strong>Lista igrača</strong> = 
+    <input type="search" class="stkb-player-picker-search" placeholder="Pretraga igrača..." aria-label="Pretraga igrača"> = 
+  <div class="stkb-help-dialog" role="dialog" aria-modal="true" aria-label="Vodič za unos podataka"> = 
+  <div class="stkb-player-picker-dialog" role="dialog" aria-modal="true" aria-label="Lista igrača"> = 
+ ima setovi u neočekivanom formatu. = 
+ referencira neispravnog igrača ID  = 
+ • Uspešnost:  = 
+ • Učinak:  = 
+" alt="Igrač" class="igrac-slika" /> = 
+" alt="Igrač" class="lp2-thumb" /> = 
+" alt="Igrač" class="stkb-stat-ekipe-mvp-photo" /> = 
+" alt="Igrač" class="stoni-igrac-slika" /> = 
+" aria-label="Izaberi igrača  = 
+" onclick="return confirm('Obrisati igrača?')">Obriši</a></td> = 
+" onclick="return confirm('Obrisati klub?')">Obriši</a></td> = 
+" onclick="return confirm('Obrisati ligu?')">Obriši</a> = 
+" onclick="return confirm('Obrisati sezonu?')">Obriši</a> = 
+" onclick="return confirm('Obrisati takmičenje?')">Obriši</a> = 
+" onclick="return confirm('Obrisati utakmicu i partije/setove?')">Obriši</a></td> = 
+" onsubmit="return confirm('Obrisati izabrane igrače?')"> = 
+" onsubmit="return confirm('Ovo će obrisati sve utakmice/partije/setove za izabrano takmičenje. Nastaviti?')"> = 
+" onsubmit="return confirm('Popraviti played status po rezultatu za izabrano takmičenje?')"> = 
+" placeholder="Pretraga igrača..." class="regular-text stkb-live-search-input" data-stkb-live-target="stkb-players-table" oninput="window.stkbLiveSearchFilter&&window.stkbLiveSearchFilter(this)" onkeyup="window.stkbLiveSearchFilter&&window.stkbLiveSearchFilter(this)"> = 
+" placeholder="Pretraga takmičenja..." class="regular-text stkb-live-search-input" data-stkb-live-target="stkb-competitions-table" oninput="window.stkbLiveSearchFilter&&window.stkbLiveSearchFilter(this)" onkeyup="window.stkbLiveSearchFilter&&window.stkbLiveSearchFilter(this)"> = 
+" style="width:120px;"><p class="description">Broj ekipa ispod direktne promocije koje igraju baraž za viši rang.</p></td></tr> = 
+">+ Dodaj igrača</a> = 
+">+ Dodaj igrača</a></p> = 
+">+ Dodaj takmičenje</a> = 
+">+ Dodaj takmičenje</a></p> = 
+"><p class="description">Opcionalno: mesto/grad kluba (ako želiš detaljnije od opštine).</p></td></tr> = 
+">Igrači</a> = 
+">Lista igrača</button> = 
+">Podešavanja</a> = 
+">Prilagođavanje</a> = 
+">Takmičenja</a> = 
+, igrači:  = 
+-1 učitava sve; uz infinite predstavlja batch veličinu. = 
+. Ažurirano redova:  = 
+1 = najprestižnije, 5 = najniži rang. = 
+1) Izaberi JSON fajl i sekcije. 2) Pokreni validaciju. 3) Pregledaj rezultate i potvrdi uvoz. Featured slike iz paketa će biti automatski uvezene i povezane. = 
+: dubl nije validan (proveri igrače 2). = 
+: izaberi oba glavna igrača. = 
+: ne postoje pravila takmičenja za kombinaciju liga/sezona " = 
+</select><p class="description">1 = najprestižnije, 5 = najniži rang.</p></td></tr> = 
+</select><p class="description">Izaberi savez pod čijim je okriljem takmičenje.</p></td></tr> = 
+<button type="button" class="button" data-stkb-bulk-player-resolution="default">Vrati preporučeno</button> = 
+<button type="button" class="button" data-stkb-bulk-player-resolution="skip">Preskoči sve</button> = 
+<button type="button" class="button" onclick="(function(btn){var f=btn.form;f.querySelectorAll('input[type=checkbox][name=\\'sections[]\\']').forEach(function(c){c.checked=false;});})(this)">Poništi izbor</button> = 
+<button type="submit" class="button button-link-delete" onclick="return confirm('Da li ste sigurni? Ovim brišete sve podatke i ne možete ih vratiti.')">Obriši sve podatke</button> = 
+<button type="submit" class="button button-link-delete">Obriši izabrane</button> = 
+<button type="submit" class="button button-primary" onclick="return confirm('Da li želiš da potvrdiš uvoz ovih podataka?')">Potvrdi uvoz</button> = 
+<button type="submit" class="button button-primary">Sačuvaj jezik</button> = 
+<button type="submit" class="button stkb-search-submit">Pretraži</button> = 
+<button type="submit" class="button">Preskoči setup</button> = 
+<button type="submit" class="button">Prikaži dijagnostiku</button> = 
+<button type="submit" name="stkb_css_action" value="save" class="button button-primary">Sačuvaj CSS</button> = 
+<button type="submit" name="stkb_css_action" value="save" class="button button-primary">Sačuvaj globalni stil</button> = 
+<button type="submit" name="stkb_onboarding_action" value="complete" class="button button-primary stkb-wizard-submit">Završi setup</button> = 
+<div class="no-players-message">Trenutno nema igrača za prikaz.</div> = 
+<div class="notice notice-info"><p>Auto-fix relacija završen. Ispravljeno reference: <strong> = 
+<div class="notice notice-info"><p>Cleanup placeholder-a završen. Očišćeno: <strong> = 
+<div class="notice notice-success"><p>Batch završen. Migrirano: utakmice  = 
+<div class="stkb-games-batch-note">Singl partija: drugi igrač nije potreban.</div> = 
+<div class="stkb-panel"><div style="display:flex;justify-content:space-between;align-items:center;"><strong>Najnoviji igrači</strong><a href=" = 
+<div class="stkb-panel"><div style="display:flex;justify-content:space-between;align-items:center;"><strong>Takmičenja</strong><a href=" = 
+<div class="stkb-player-picker-empty">Nema igrača za prikaz.</div> = 
+<div class="stkb-stat-card"><span class="k">Igrač utakmice</span><strong class="v"> = 
+<div class="stkb-stat-card"><span class="k">Uspešnost</span><strong class="v"> = 
+<div class="stkb-stat-ekipe-card"><span class="k">Dubl učinak</span><strong class="v"> = 
+<div class="stkb-stat-ekipe-card"><span class="k">Kući pobede</span><strong class="v"> = 
+<div class="stkb-stat-ekipe-card"><span class="k">Najduži niz pobeda</span><strong class="v"> = 
+<div class="stkb-stat-ekipe-empty">Nema dovoljno podataka za obračun uspešnosti igrača u trenutnoj sezoni.</div> = 
+<div class="stkb-stat-ekipe-empty">Nema dovoljno podataka za prikaz skraćene tabele.</div> = 
+<div class="stkb-transferi"><p>Nema podataka o transferima za ovog igrača.</p></div> = 
+<div class="stkb-wizard-steps"><span class="stkb-step-pill">1. Takmičenje</span><span class="stkb-step-pill">2. Ekipe i rezultat</span><span class="stkb-step-pill">3. Potvrda</span></div> = 
+<div class="stoni-igrac-right"><span class="stoni-igrac-detalji">Detalji igrača</span></div> = 
+<div class="wrap"><h1>Igrač</h1><p>Igrač nije pronađen.</p></div> = 
+<div class="wrap"><h1>Klub</h1><p>Klub nije pronađen.</p></div> = 
+<div class="wrap"><h1>Utakmica</h1><p>Utakmica nije pronađena.</p></div> = 
+<div style="width:120px;height:120px;background:#f2f2f2;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;">Nema grba takmičenja</div> = 
+<h1>Dobrodošao u OpenTT</h1> = 
+<h1>Igrači</h1> = 
+<h1>Liga</h1><p>Liga nije pronađena.</p></div> = 
+<h1>Podešavanja</h1> = 
+<h1>Prilagođavanje</h1> = 
+<h1>Sezona</h1><p>Sezona nije pronađena.</p></div> = 
+<h1>Takmičenja</h1> = 
+<h1>Takmičenje</h1><p>Zapis nije pronađen.</p></div> = 
+<h2>Dijagnostika takmičenja</h2> = 
+<h2>Poslednji validation izveštaj</h2> = 
+<h2>Reset utakmica po takmičenju</h2> = 
+<h2>Vodič za unos podataka</h2> = 
+<h3 class="stkb-stat-ekipe-title">Najkorisniji igrač</h3> = 
+<h3>1. Takmičenja</h3> = 
+<h3>3. Igrači</h3> = 
+<h3>Dodaj igrače</h3> = 
+<h3>Igrači - detaljno</h3> = 
+<h3>Kreiraj prvo takmičenje</h3> = 
+<h3>Podudaranja igrača (merge pregled)</h3> = 
+<h3>Takmičenja - detaljno</h3> = 
+<h4 class="stkb-stat-ekipe-table-title">Skraćena tabela</h4> = 
+<h4 class="stkb-stat-igraca-rang-title">Skraćena rang lista</h4> = 
+<h4>Šta OpenTT može odmah</h4> = 
+<label><span>Akcent boja</span><small>Menja boju linkova i naglašenih elemenata.</small><input type="text" name="visual_settings[accent_color]" value=" = 
+<label><span>Naslovi shortcode-ova</span><small>Uključi ili isključi automatske naslove sekcija koje plugin prikazuje na frontendu.</small><span style="display:flex;align-items:center;gap:8px;margin-top:8px;"><input type="hidden" name="visual_settings[show_shortcode_titles]" value="0"><input type="checkbox" name="visual_settings[show_shortcode_titles]" value="1"  = 
+<label><strong>Potvrda:</strong> upiši tačno <code>saglasan sam</code></label> = 
+<label>Domaći igrač = 
+<label>Domaći igrač 2 = 
+<label>Domaći setovi = 
+<label>Gost igrač = 
+<label>Gost igrač 2 = 
+<label>Opština <select name="stkb_klub_opstina" onchange="this.form.submit()"><option value="">Sve opštine</option> = 
+<li>Automatski proračun tabela, forme ekipa, MVP prikaza i rang lista igrača.</li> = 
+<li>Jednostavan admin unos klubova, igrača, utakmica, partija i setova.</li> = 
+<li>Kontekstualni frontend shortcode prikazi za single utakmicu, klub i igrača.</li> = 
+<li>Vođenje takmičenja sa pravilima po sezoni i formatu meča.</li> = 
+<option value="">— izaberi državu —</option> = 
+<option value="">— izaberi opštinu —</option> = 
+<p class="description">1) Izaberi JSON fajl i sekcije. 2) Pokreni validaciju. 3) Pregledaj rezultate i potvrdi uvoz. Featured slike iz paketa će biti automatski uvezene i povezane.</p> = 
+<p class="description">Dubl partija je automatski određena pravilima takmičenja: <strong># = 
+<p class="description">Izaberi šta želiš da izvezeš. Dobijaš jedan JSON fajl koji možeš kasnije uvesti u OpenTT. Featured slike (grbovi, slike igrača, logo takmičenja) se izvoze zajedno sa podacima.</p> = 
+<p class="description">Kada završiš, klikni <strong>Završi setup</strong>.</p> = 
+<p class="description">Klase koje najčešće koristi ovaj shortcode:</p> = 
+<p class="description">Obriši utakmice, partije i setove za jednu ligu/sezonu (bez SQL-a). Koristi pre ponovnog uvoza ako je stanje parcijalno.</p> = 
+<p class="description">Ova akcija briše sve OpenTT podatke (DB tabele, OpenTT opcije, klubove, igrače, takmičenja i povezane taksonomije). Akcija je nepovratna.</p> = 
+<p class="description">Pre potvrde uvoza izaberi šta raditi sa igračima koji liče na postojeće unose.</p> = 
+<p class="description">U meniju <strong>Takmičenja</strong> dodaješ liga+sezona i pravila.</p></td></tr> = 
+<p class="description">Unesi sve partije i setove odjednom, pa klikni <strong>Sačuvaj sve partije</strong>. Prazna partija se briše (ako je ranije postojala).</p> = 
+<p class="description">Za manje napredne korisnike: ovde menjaš osnovni izgled svih OpenTT blokova bez pisanja CSS-a.</p> = 
+<p style="margin-bottom:0;"><strong>Autor projekta:</strong> <a href="https://instagram.com/tradicije" target="_blank" rel="noopener">Aleksa Dimitrijević</a>.</p> = 
+<p style="margin-top:14px">Migracija je idempotentna: isti legacy zapis se ažurira po `legacy_post_id`, ne pravi duplikate.</p> = 
+<p style="margin:0 0 12px 0;"><button type="submit" class="button button-link-delete">Obriši izabrane</button></p> = 
+<p>Dodaj igrače i poveži ih sa klubovima. Kasnije možeš unositi i istorijske partije.</p> = 
+<p>Dodaj sve klubove koji učestvuju u takmičenju.</p> = 
+<p>Klub nije pronađen:  = 
+<p>Kreni redom kroz sledeće korake i za nekoliko minuta imaćeš postavljen kompletan sistem.</p> = 
+<p>Nema igrača.</p> = 
+<p>Nema pronađenih vesti za ovaj klub.</p> = 
+<p>Nema pronađenih vesti za ovog igrača.</p> = 
+<p>Nema registrovanih igrača za ovaj klub.</p> = 
+<p>Nema takmičenja za zadatu sezonu.</p> = 
+<p>Nema takmičenja.</p> = 
+<p>Nema unetih takmičenja.</p> = 
+<p>Nije pronađen klub.</p> = 
+<p>One-time setup će te provesti kroz prve korake: takmičenje, timove, igrače i utakmice.</p> = 
+<p>OpenTT je nastao iz želje da se zajednici stonog tenisa vrati moderan, otvoren i praktičan alat za vođenje takmičenja. Ideja je jednostavna: klubovi, savezi i ljudi koji vode takmičenja zaslužuju sistem za 21. vek - brz, jasan i održiv, bez komplikovanih dodataka i ručnih workaround-a.</p> = 
+<p>OpenTT je open-source sistem namenjen vođenju i prikazu stonoteniskih takmičenja, klubova i igrača na moderan, brz i održiv način.</p> = 
+<p>Postojeća rešenja uglavnom tretiraju sport ili kao čisto timski, ili kao isključivo individualni. Stoni tenis je specifičan i zahteva drugačiji pristup.</p> = 
+<p>Projekat je nastao iz stvarne potrebe da se stonoteniska takmičenja prikažu onako kako se zaista igraju: kao timski mečevi koji se sastoje od individualnih duela, sa jasnim kontekstom, istorijom i statistikama.</p> = 
+<p>Trenutno nema vesti za ovog igrača.</p> = 
+<p>Umesto rasutih tabela i nepovezanih podataka, OpenTT objedinjuje ceo tok rada na jednom mestu: takmičenja, klubove, igrače, utakmice, partije i statistiku. Sistem je napravljen da bude lak za svakodnevni unos rezultata, ali i dovoljno moćan za ozbiljno praćenje forme, rangova i istorije.</p> = 
+<span class="stkb-step-pill">2. Takmičenje</span> = 
+<span class="stkb-step-pill">4. Igrači</span> = 
+<span>Klikni za korake unosa: takmičenja, klubovi, igrači, utakmice, partije i setovi.</span> = 
+<strong>Vodič za unos</strong> = 
+<table class="widefat striped"><thead><tr><th>Dolazni igrač</th><th>Kandidat(i) u bazi</th><th>Akcija</th></tr></thead><tbody> = 
+<table id="stkb-clubs-table" class="widefat striped stkb-live-search-table"><thead><tr><th style="width:32px;"><input type="checkbox" id="stkb-clubs-check-all" aria-label="Izaberi sve klubove"></th><th>Klub</th><th>Opština</th><th>Grad</th><th>Kontakt</th><th>Akcije</th></tr></thead><tbody> = 
+<table id="stkb-players-table" class="widefat striped stkb-live-search-table"><thead><tr><th style="width:32px;"><input type="checkbox" id="stkb-players-check-all" aria-label="Izaberi sve igrače"></th><th>Igrač</th><th>Klub</th><th>Datum rođenja</th><th>Akcije</th></tr></thead><tbody> = 
+<th data-tooltip="Meč količnik">+/-</th> = 
+<th>Baraž za opstanak (dole)</th> = 
+<th>Baraž za ulazak (gore)</th> = 
+<th>Državljanstvo</th> = 
+<th>Naziv takmičenja</th> = 
+<th>Rang takmičenja</th> = 
+<tr data-stkb-step="1"><th>Grb takmičenja</th><td><div id="stkb_comp_thumb_preview"> = 
+<tr data-stkb-step="1"><th>Naziv takmičenja</th><td><input type="text" name="league_name" class="regular-text" value=" = 
+<tr data-stkb-step="1"><th>Rang takmičenja</th><td><select name="rang" required> = 
+<tr data-stkb-step="1"><th>Takmičenje</th><td> = 
+<tr data-stkb-step="2"><th>Baraž za ulazak (gore)</th><td><input type="number" min="0" name="promocija_baraz_broj" value=" = 
+<tr data-stkb-step="2"><th>Domaći klub</th><td> = 
+<tr data-stkb-step="2"><th>Gostujući klub</th><td> = 
+<tr data-stkb-step="2"><th>Potvrda</th><td><p class="description">Sačuvaj ligu. Slug će se automatski formirati iz naziva.</p></td></tr> = 
+<tr data-stkb-step="2"><th>Potvrda</th><td><p class="description">Sačuvaj sezonu. Pravila se podešavaju u meniju <strong>Takmičenja</strong>.</p></td></tr> = 
+<tr data-stkb-step="3"><th>Datum rođenja</th><td><input name="datum_rodjenja" type="date" value=" = 
+<tr data-stkb-step="3"><th>Državljanstvo</th><td> = 
+<tr data-stkb-step="3"><th>Mesto rođenja</th><td><input name="mesto_rodjenja" type="text" class="regular-text" value=" = 
+<tr data-stkb-step="3"><th>Opština</th><td> = 
+<tr data-stkb-step="3"><th>Potvrda</th><td><p class="description">Proveri podatke i klikni na dugme za čuvanje.</p></td></tr> = 
+<tr data-stkb-step="3"><th>Potvrda</th><td><p class="description">Sačuvaj pravila za izabranu ligu i sezonu.</p></td></tr> = 
+> Prikaži naslove shortcode-ova</span></label> = 
+>Format B (dubl 7. partija)</option></select><p class="description">Izaberi format prema pravilima takmičenja.</p></td></tr> = 
+>Igrači< = 
+>Kreiraj novog igrača</option> = 
+>Podešavanja< = 
+>Preskoči ovog igrača</option> = 
+>Pretraži< = 
+>Prilagođavanje< = 
+>Sort: Igrač</option> = 
+>Takmičenja< = 
+Ako je igrač van trenutnog kluba, to je podržano i vidljivo u oznaci. = 
+Ako ostaviš partiju praznom, sistem je briše pri snimanju. = 
+Ako su setovi uneti, a ukupni setovi prazni, sistem automatski računa zbir. = 
+Ako vidiš grešku: = 
+Alžir = 
+Aranđelovac = 
+Automatski gradi transfer istoriju iz mečeva. = 
+Automatski proračun tabela, forme ekipa, MVP prikaza i rang lista igrača. = 
+Babušnica = 
+Bajina Bašta = 
+Baraž za opstanak (dole) = 
+Baraž za ulazak (gore) = 
+Batočina = 
+Bač = 
+Bačka Palanka = 
+Bačka Topola = 
+Bački Petrovac = 
+Bez takmičenja = 
+Bečej = 
+Bogatić = 
+Brisanje nije izvršeno. Upiši tačno: saglasan sam. = 
+Brisanje utakmice briše i povezane partije i setove. = 
+Broj ekipa ispod direktne promocije koje igraju baraž za viši rang. = 
+Broj ekipa iznad direktnog ispadanja koje igraju baraž za opstanak. = 
+Broj kolona prikaza (obično 1-6). = 
+CSS override je sačuvan. = 
+Da li ste sigurni? Ovim brišete sve podatke i ne možete ih vratiti. = 
+Datum rođenja = 
+Dijagnostika takmičenja = 
+Dobrodošao u OpenTT = 
+Dodaj igrača = 
+Dodaj igrače = 
+Dodaj igrače i poveži ih sa klubovima. Kasnije možeš unositi i istorijske partije. = 
+Dodaj ligu, sezonu i pravila takmičenja. = 
+Dodaj sve klubove koji učestvuju u takmičenju. = 
+Dodaj takmičenje = 
+Dolazni igrač = 
+Domaći igrač = 
+Domaći igrač 2 = 
+Domaći klub = 
+Domaći setovi = 
+Domaćin = 
+Drugi rang takmičenja = 
+Državljanstvo = 
+Državljanstvo je podrazumevano Srbija, ali možeš ga promeniti po igraču. = 
+Dubl partija se automatski određuje po pravilima takmičenja. = 
+Fajl je prazan ili nečitljiv. = 
+First Time Setup je preskočen. = 
+First Time Setup je završen. = 
+Frontend igrača: info, statistika, transferi i vesti igrača. = 
+Gadžin Han = 
+Globalna stilizacija je sačuvana. = 
+Gost igrač = 
+Gost igrač 2 = 
+Gostujući klub = 
+Grb i tačan naziv kluba odmah proveri na frontend-u. = 
+Grb takmičenja = 
+Greška insert partije (match_id= = 
+Greška insert utakmice  = 
+Greška pri dodavanju partije # = 
+Greška pri dodavanju utakmice. = 
+Greška pri formiranju izvoznog fajla. = 
+Greška pri upload-u fajla (kod:  = 
+Greška pri čuvanju igrača. = 
+Greška pri čuvanju kluba. = 
+Greška pri čuvanju partije # = 
+Greška pri čuvanju utakmice. = 
+Greška update partije (match_id= = 
+Greška update utakmice  = 
+Grčka = 
+Header blok utakmice (domaćin/gost, rezultat, liga/kolo). = 
+Idi na <em>Igrači</em> i klikni <strong>+ Dodaj igrača</strong>. = 
+Idi na <em>Takmičenja</em> i klikni <strong>+ Dodaj takmičenje</strong>. = 
+Igrač = 
+Igrač je obrisan. = 
+Igrač je sačuvan. = 
+Igrač nije pronađen. = 
+Igrač slug = 
+Igrači = 
+Igrači - detaljno = 
+Info igrača = 
+Info kartica igrača (profil + klub + državljanstvo). = 
+Info kartica kluba (osnovni podaci + takmičenje/savez). = 
+Info kartica takmičenja (logo, sezona, savez). = 
+Info takmičenja = 
+Inđija = 
+Ispravi setove i ponovo sačuvaj. = 
+Istorija klubova igrača po sezonama. = 
+Izaberi domaći i gostujući klub. = 
+Izaberi državu = 
+Izaberi format prema pravilima takmičenja. = 
+Izaberi grb takmičenja = 
+Izaberi igrača = 
+Izaberi igrače za partiju. = 
+Izaberi opštinu = 
+Izaberi savez pod čijim je okriljem takmičenje. = 
+Izaberi sve igrače = 
+Izaberi takmičenje za dijagnostiku. = 
+Izaberi takmičenje za repair. = 
+Izaberi takmičenje za reset. = 
+Izaberi takmičenje, kolo i datum. = 
+Izaberi takmičenje. = 
+Izaberi šta želiš da izvezeš. Dobijaš jedan JSON fajl koji možeš kasnije uvesti u OpenTT. Featured slike (grbovi, slike igrača, logo takmičenja) se izvoze zajedno sa podacima. = 
+Izveštaj utakmice = 
+Jednostavan admin unos klubova, igrača, utakmica, partija i setova. = 
+Jezik admin interfejsa je sačuvan. = 
+Južna Afrika = 
+Južna Koreja = 
+Kada završiš, klikni <strong>Završi setup</strong>. = 
+Kanjiža = 
+Kartice takmičenja grupisane po rangu (1-5). = 
+Kartice vesti igrača. = 
+Klase koje najčešće koristi ovaj shortcode: = 
+Klikni <strong>Obriši</strong> samo kada si siguran da klub ne koristiš u postojećim unosima. = 
+Klikni igrača iz liste i sistem ga ubacuje u polje. = 
+Klikni za korake unosa: takmičenja, klubovi, igrači, utakmice, partije i setovi. = 
+Klub je sačuvan. = 
+Klub nije pronađen. = 
+Klubovi za naglašavanje (zarez). = 
+Knić = 
+Knjaževac = 
+Koliko H2H mečeva. = 
+Kontekstualni frontend shortcode prikazi za single utakmicu, klub i igrača. = 
+Koristi <strong>Obriši</strong> oprezno, posebno ako igrač ima istoriju partija. = 
+Koristi <strong>Obriši</strong> samo ako si siguran da takmičenje nije već povezano sa unetim utakmicama. = 
+Koristi DB partije i setove; može raditi kontekstualno. = 
+Kosjerić = 
+Kovačica = 
+Kreiraj novog igrača = 
+Kreiraj prvo takmičenje = 
+Kreni redom kroz sledeće korake i za nekoliko minuta imaćeš postavljen kompletan sistem. = 
+Kruševac = 
+Kuršumlija = 
+Kučevo = 
+Legacy igrač # = 
+Leposavić = 
+Liga je sačuvana. = 
+Liga nije pronađena. = 
+Lista igrača = 
+Lučani = 
+Mali Iđoš = 
+Malo Crniće = 
+Mađarska = 
+Media import: greška upload-a za  = 
+Media import: nevalidan base64 sadržaj za fajl  = 
+Media import: nije moguće kreirati attachment za  = 
+Medveđa = 
+Merošina = 
+Mesto rođenja = 
+Međusobni dueli = 
+Međusobni dueli klubova iz konteksta utakmice. = 
+Migracija liga/sezona završena. Lige:  = 
+Migracija takmičenja završena. Kreirano/azurirano:  = 
+Na kraju klikni <strong>Sačuvaj sve partije</strong>. = 
+Naglašava prosleđene klubove u tabeli. = 
+Najbrže je proveravati odmah nakon unosa, ne na kraju dana. = 
+Najkorisniji igrač = 
+Najkorisniji igrač utakmice. = 
+Najnoviji igrači = 
+Najpre unesi takmičenje, pa tek onda utakmice i partije. = 
+Najčešći shortcode za listing utakmica na početnoj ili liga stranici. = 
+Naziv takmičenja = 
+Nedostaju pravila takmičenja za izabranu ligu i sezonu. = 
+Nema grba takmičenja = 
+Nema igrača za prikaz. = 
+Nema igrača. = 
+Nema rezultata za zadatu pretragu igrača. = 
+Nema rezultata za zadatu pretragu takmičenja. = 
+Nema takmičenja. = 
+Nema unetih igrača. = 
+Nema unetih takmičenja. = 
+Nema utakmica za reset u izabranom takmičenju. = 
+Nemačka = 
+Nemaš dozvolu za ovu akciju. = 
+Neuspešno čuvanje lige. = 
+Neuspešno čuvanje sezone. = 
+Neuspešno čuvanje takmičenja. = 
+Nije izabran nijedan igrač. = 
+Nije pronađen JSON fajl za uvoz. = 
+Nijedan izabrani igrač nije obrisan. = 
+Nijedna legacy partija nije pronađena (CPT: partija). = 
+Nijedna legacy utakmica nije pronađena (CPT: utakmica). = 
+Niš = 
+Niška Banja = 
+Norveška = 
+Nova Varoš = 
+Novi Bečej = 
+Novi Kneževac = 
+Obrisano igrača:  = 
+Obrisati igrača? = 
+Obrisati izabrane igrače? = 
+Obrisati takmičenje? = 
+Obriši = 
+Obriši izabrane = 
+Obriši sve podatke = 
+Obriši utakmice, partije i setove za jednu ligu/sezonu (bez SQL-a). Koristi pre ponovnog uvoza ako je stanje parcijalno. = 
+Odžaci = 
+Ograničava prikaz do određenog kola. = 
+One-time setup će te provesti kroz prve korake: takmičenje, timove, igrače i utakmice. = 
+Opcionalno: mesto/grad kluba (ako želiš detaljnije od opštine). = 
+OpenTT je nastao iz želje da se zajednici stonog tenisa vrati moderan, otvoren i praktičan alat za vođenje takmičenja. Ideja je jednostavna: klubovi, savezi i ljudi koji vode takmičenja zaslužuju sistem za 21. vek - brz, jasan i održiv, bez komplikovanih dodataka i ručnih workaround-a. = 
+OpenTT je open-source sistem namenjen vođenju i prikazu stonoteniskih takmičenja, klubova i igrača na moderan, brz i održiv način. = 
+Opština = 
+Opština/grad kluba (filter kroz polje grad). = 
+Osečina = 
+Palilula (Niš) = 
+Pančevo = 
+Paraćin = 
+Partija je sačuvana. = 
+Partija nije sačuvana. = 
+Partija sa tim rednim brojem već postoji. = 
+Peti rang takmičenja = 
+Pećinci = 
+Plandište = 
+Podešavanja = 
+Podešavanja su resetovana. = 
+Podešavanja su sačuvana. = 
+Podudaranja igrača (merge pregled) = 
+Poništi izbor = 
+Ponovo otvori utakmicu, ispravi redove partija i sačuvaj. = 
+Poređano od ranga 1 ka rangu 5, uz opcioni filter po sezoni. = 
+Poslednji validation izveštaj = 
+Postojeća rešenja uglavnom tretiraju sport ili kao čisto timski, ili kao isključivo individualni. Stoni tenis je specifičan i zahteva drugačiji pristup. = 
+Poveži igrača sa klubom i dopuni profil. = 
+Poveži igrača sa trenutnim klubom. = 
+Požarevac = 
+Požega = 
+Pravila takmičenja = 
+Pravilo takmičenja = 
+Prazna partija se briše = 
+Pre potvrde uvoza izaberi šta raditi sa igračima koji liče na postojeće unose. = 
+Preskočen igrač po izboru korisnika:  = 
+Preskočen set (nedostaje mapiranje partije). = 
+Preskočena partija (nedostaje mapiranje utakmice). = 
+Preskočena utakmica  = 
+Preskočena utakmica (neispravni ključni podaci). = 
+Preskočeno takmičenje bez liga/sezona slug vrednosti. = 
+Preskoči ovog igrača = 
+Preskoči setup = 
+Preskoči sve = 
+Pretraga igrača... = 
+Pretraga takmičenja... = 
+Pretraži = 
+Preševo = 
+Prikaz igrača kluba. = 
+Prikaz metrika ekipe i skraćene/pune tabele. = 
+Prikaz partija za jednu utakmicu (tok meča). = 
+Prikazuje klubove sa grbom, prefiksom STK i aktuelnom ligom. Filteri: liga i opština/grad, uz sortiranje po nazivu. = 
+Prikazuje poslednje međusobne rezultate. = 
+Prikazuje sačuvan izveštaj utakmice. = 
+Prikazuje tabelu takmičenja sa zonama promocije/ispadanja prema pravilima. = 
+Prikaži dijagnostiku = 
+Prikaži logo = 
+Prikaži naslove shortcode-ova = 
+Prilagođavanje = 
+Projekat je nastao iz stvarne potrebe da se stonoteniska takmičenja prikažu onako kako se zaista igraju: kao timski mečevi koji se sastoje od individualnih duela, sa jasnim kontekstom, istorijom i statistikama. = 
+Proveri da li je broj osvojenih setova logičan u odnosu na rezultat partije. = 
+Proveri podatke i klikni na dugme za čuvanje. = 
+Prvi rang takmičenja = 
+Rang lista igrača = 
+Rang lista igrača za ligu/sezonu. = 
+Rang takmičenja = 
+Rača = 
+Računa MVP iz partija meča. = 
+Raška = 
+Ražanj = 
+Repair played završen za = 
+Repair played završen za  = 
+Reset utakmica po takmičenju = 
+Reset završen za = 
+Reset završen za  = 
+Rezultat određuje maksimalan broj partija koje možeš da uneseš. = 
+Sačuvaj = 
+Sačuvaj CSS = 
+Sačuvaj globalni stil = 
+Sačuvaj i osveži frontend stranu. = 
+Sačuvaj izmene = 
+Sačuvaj jezik = 
+Sačuvaj ligu. = 
+Sačuvaj sezonu. = 
+Sačuvaj sve partije = 
+Sačuvaj sve partije. = 
+Sačuvaj takmičenje. = 
+Sačuvaj utakmicu. = 
+Set je sačuvan. = 
+Sezona je sačuvana. = 
+Sezona nije pronađena. = 
+Sečanj = 
+Singl partija: drugi igrač nije potreban. = 
+Sjedinjene Američke Države = 
+Slovačka = 
+Slug igrača za koji se povlače podaci. = 
+Slug kluba za koji se povlače podaci. = 
+Slug lige/takmičenja. = 
+Sort: Igrač = 
+Statistika igrača = 
+Statistika igrača sa sezonskim filterom. = 
+Surčin = 
+Sve partije su sačuvane. = 
+Takmičenja = 
+Takmičenja - detaljno = 
+Takmičenje = 
+Takmičenje je obrisano. = 
+Takmičenje je sačuvano. = 
+Takmičenje nema validan liga/sezona slug. = 
+Takmičenje za ovu ligu i sezonu već postoji. = 
+Tekstualni izveštaj utakmice. = 
+Treći rang takmičenja = 
+Trgovište = 
+U listi igrača klikni <strong>Uredi</strong>, promeni podatke i sačuvaj. = 
+U listi klubova klikni <strong>Uredi</strong>, promeni podatke i sačuvaj. = 
+U listi takmičenja klikni <strong>Uredi</strong>, promeni pravila i sačuvaj. = 
+U listi utakmica klikni <strong>Uredi</strong>, promeni podatke i sačuvaj. = 
+U meniju <strong>Takmičenja</strong> dodaješ liga+sezona i pravila. = 
+U partiji klikni <strong>Lista igrača</strong> pored dropdown-a. = 
+U popup-u pretraži ime igrača. = 
+U sekciji batch unosa unesi igrače za svaku partiju. = 
+Uključuje dodatne filtere/sort opcije. = 
+Uključuje filter po ligi/opštini i sortiranje A-Z / Z-A. = 
+Uključuje filter po sezoni. = 
+Uključuje filter/sort panel. = 
+Uključuje infinite scroll učitavanje. = 
+Uključuje učinak i rang listu oko igrača. = 
+Umesto rasutih tabela i nepovezanih podataka, OpenTT objedinjuje ceo tok rada na jednom mestu: takmičenja, klubove, igrače, utakmice, partije i statistiku. Sistem je napravljen da bude lak za svakodnevni unos rezultata, ali i dovoljno moćan za ozbiljno praćenje forme, rangova i istorije. = 
+Unesi datum rođenja, mesto rođenja i državljanstvo. = 
+Unesi konačan rezultat utakmice. = 
+Unos starih sezona kada igrači više nisu u trenutnom klubu. = 
+Unosi poene domaćina i gosta po setu. = 
+Upozorenje: Partije se uvoze bez sekcije Utakmice. Veze će koristiti postojeće utakmice po mapiranju. = 
+Upozorenje: Setovi se uvoze bez sekcije Partije. Veze će koristiti postojeće partije po mapiranju. = 
+Uredi igrača = 
+Uredi takmičenje = 
+Utakmica je sačuvana. = 
+Utakmica nije pronađena. = 
+Uvoz završen. Takmičenja: = 
+Uvoz završen. Takmičenja:  = 
+Učitavanje dodatnih kartica pri skrolu. = 
+Učitavanje dodatnih klubova pri skrolu. = 
+Užice = 
+Validacija importa je našla probleme. Proveri izveštaj ispod pre migracije. = 
+Validacija importa je prošla bez kritičnih grešaka. = 
+Validacija je našla probleme. Reši ih pre migracije. = 
+Validacija je prošla. Možeš pokrenuti migraciju liga/sezona. = 
+Validacija je završena, ali postoje problemi. Proveri listu i ponovo pokušaj. = 
+Validacija uspešna. Pregledaj podatke i potvrdi uvoz. = 
+Važno: = 
+Veliko Gradište = 
+Vesti igrača = 
+Vesti povezane sa igračem. = 
+Vladičin Han = 
+Vodič za unos = 
+Vodič za unos podataka = 
+Vođenje takmičenja sa pravilima po sezoni i formatu meča. = 
+Voždovac = 
+Vrati preporučeno = 
+Vrati se u admin na odgovarajuću stavku. = 
+Vračar = 
+Vrnjačka Banja = 
+Vršac = 
+Za manje napredne korisnike: ovde menjaš osnovni izgled svih OpenTT blokova bez pisanja CSS-a. = 
+Za singl partije unosi se po jedan igrač sa svake strane. = 
+Za stare sezone koristi listu svih igrača. = 
+Za svaku partiju imaš polja Set 1 do Set 5. = 
+Zaječar = 
+Zapis nije pronađen. = 
+Završi setup = 
+Čajetina = 
+Čačak = 
+Četvrti rang takmičenja = 
+Češka = 
+Čile = 
+Čoka = 
+Čukarica = 
+Šabac = 
+Šid = 
+Španija = 
+Šta OpenTT može odmah = 
+Švajcarska = 
+Švedska = 
+Žabalj = 
+Žabari = 
+Žagubica = 
+Žitište = 

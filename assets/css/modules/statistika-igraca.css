@@ -1,0 +1,132 @@
+.stkb-stat-igraca {
+  margin: 12px 0 16px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.stkb-stat-igraca-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.stkb-stat-igraca-filter {
+  margin: 0 0 8px;
+}
+
+.stkb-stat-igraca-filter label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #c7d7ff;
+}
+
+.stkb-stat-igraca-filter select {
+  min-width: 170px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ffffff33;
+  background: #000a26;
+  color: #fff;
+}
+
+.stkb-stat-igraca-meta {
+  margin: 0 0 8px;
+  opacity: 0.9;
+}
+
+.stkb-stat-igraca-cards {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  width: 100%;
+}
+
+.stkb-stat-card {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(8, 30, 82, 0.32);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.stkb-stat-card .k {
+  display: block;
+  font-size: 0.88rem;
+  opacity: 0.88;
+  overflow-wrap: anywhere;
+}
+
+.stkb-stat-card .v {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.4rem;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.stkb-stat-igraca-rang-wrap {
+  margin-top: 12px;
+}
+
+.stkb-stat-igraca-rang-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.stkb-stat-igraca-rang-title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.stkb-stat-igraca-rang-season {
+  color: #c7d7ff;
+  font-size: 0.88rem;
+}
+
+.stkb-stat-igraca-toggle {
+  margin-left: auto;
+  padding: 6px 10px;
+  border: 1px solid #8ec5ff;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.16);
+  color: #cfe0ff;
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+
+.stkb-stat-igraca-toggle:hover {
+  background: rgba(8, 30, 82, 0.32);
+  color: #fff;
+}
+
+.stkb-stat-igraca-rang-list {
+  margin: 0;
+}
+
+.stkb-stat-igraca-rang-full {
+  margin-top: 10px;
+}
+
+.stkb-stat-igraca-rang-empty {
+  padding: 10px;
+  color: #ffffffa8;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(8, 30, 82, 0.2);
+}
+
+@media (max-width: 640px) {
+  .stkb-stat-igraca-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .stkb-stat-igraca-toggle {
+    margin-left: 0;
+  }
+}

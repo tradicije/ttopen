@@ -1,0 +1,122 @@
+.no-players-message {
+  padding: 16px;
+  color: #ffffffa8;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.top-igraci-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.top-igraci-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 12px 0 16px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.igrac-card-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+}
+
+.top-igraci-list .igrac-card-list:last-of-type {
+  border-bottom: none;
+}
+
+.igrac-card-list .igrac-rank {
+  width: 30px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.igrac-card-list .igrac-slika-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.igrac-card-list .igrac-slika-wrap img {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.igrac-card-list .igrac-imeprezime {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.igrac-card-list .igrac-imeprezime .ime,
+.igrac-card-list .igrac-imeprezime .prezime {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.igrac-card-list .igrac-klub {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+  font-size: 0.9rem;
+  color: #ffffffa8;
+}
+
+.igrac-card-list .igrac-klub-grb {
+  width: 16px;
+  height: 16px;
+}
+
+.igrac-card-list .igrac-klub-grb img {
+  width: 16px;
+  height: 16px;
+  object-fit: cover;
+}
+
+.igrac-card-list .igrac-klub-naziv {
+  font-weight: 500;
+  line-height: 1;
+}
+
+.igrac-card-list .igrac-skor,
+.igrac-card-list .igrac-procenat {
+  width: 70px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.igrac-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.igrac-card-list.highlight {
+  background: rgba(8, 30, 82, 0.32);
+  border-left: 4px solid #0084ff;
+}
+
+.top-igraci-separator {
+  display: none;
+  height: 1px;
+  background: #fff;
+  margin: 8px 0;
+}

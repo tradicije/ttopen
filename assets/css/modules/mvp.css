@@ -1,0 +1,63 @@
+.mvp-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  max-width: 100%;
+	margin-top: 8px !important;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.mvp-slika-wrap {
+  flex-shrink: 0;
+}
+
+.mvp-slika {
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+}
+
+.mvp-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mvp-ime {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.mvp-klub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1em;
+}
+
+.mvp-grb {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.mvp-box .mvp-ime a:hover {
+    color: #0084FF !important;
+}
+
+.mvp-box .mvp-klub a:hover span {
+    color: #0084FF !important;
+}
+
+.mvp-box .mvp-ime a,
+.mvp-box .mvp-klub a span {
+    transition: color 0.2s ease;
+    color: inherit;
+    text-decoration: none;
+}

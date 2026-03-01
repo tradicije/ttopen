@@ -1,0 +1,208 @@
+body a {
+  text-decoration: none !important;
+}
+
+.stkb-grid {
+  display: grid;
+  gap: 16px;
+}
+.stkb-grid.cols-1 { grid-template-columns: repeat(1, 1fr); }
+.stkb-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.stkb-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.stkb-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.stkb-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
+.stkb-grid.cols-6 { grid-template-columns: repeat(6, 1fr); }
+
+.stkb-grid-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: end;
+  margin-bottom: 14px;
+}
+
+.stkb-grid-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.92rem;
+  color: #c7d7ff;
+}
+
+.stkb-grid-filters select {
+  min-width: 170px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ffffff33;
+  background: #000a26;
+  color: #fff;
+}
+
+.stkb-grid-filter-reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid #8ec5ff !important;
+  background: #000a26 !important;
+  color: #cfe0ff !important;
+  text-decoration: none !important;
+  line-height: 1;
+}
+
+.stkb-grid-filter-reset:hover {
+  background: rgba(8, 30, 82, 0.32) !important;
+  color: #fff !important;
+}
+
+.stkb-grid-sentinel {
+  width: 100%;
+  height: 1px;
+  margin-top: 4px;
+}
+
+/* === POJEDINAČNA UTAKMICA === */
+.stkb-item {
+  border: 2px solid #ffffff26;
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  background: #000a26;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+.stkb-item:hover {
+  box-shadow: 0 2px 8px #0084FF26;
+}
+
+/* === DOMAĆIN / GOST RED === */
+.stkb-item .team {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.stkb-item .team {
+  margin-bottom: 8px; /* razmak ispod svakog tima */
+}
+
+/* ali ako ne želiš razmak ispod poslednjeg (gosta), možeš dodati ovo: */
+.stkb-item .team:last-of-type {
+  margin-bottom: 0;
+}
+
+.stkb-item .team img {
+  width: 32px;
+  height: 32px;
+  aspect-ratio: 1/1;
+  border-radius: 6px;
+  object-fit: cover;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+.stkb-item .team span {
+  flex: 1;
+  font-weight: 600;
+  font-size: 1rem;
+}
+.stkb-item .team strong {
+  font-size: 1.2rem;
+  font-weight: 700;
+  min-width: 24px;
+  text-align: right;
+}
+
+/* === META PODACI === */
+.stkb-item .meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 2px solid #ffffff26;
+  color: #ffffffa8;
+}
+
+/* === POBEDNIK / GUBITNIK === */
+.team.pobednik span,
+.team.pobednik strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+.team.gubitnik span,
+.team.gubitnik strong {
+  color: #ffffffa8;
+  font-weight: 500;
+}
+
+/* === LIST VARIJANTA === */
+.stkb-list {
+  list-style: none;
+  padding: 12px;
+  margin: 0;
+  border: 2px solid #ffffff26;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+.stkb-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+.stkb-list li:last-child {
+  border-bottom: none;
+}
+.stkb-list li a {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+}
+
+.stkb-klub {
+  text-align: center;
+}
+
+.stkb-klub a {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+  gap: 6px;
+}
+
+.stkb-grb-wrap img {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.stkb-naziv {
+	font-size: 1.3rem;
+	font-weight: 500;
+}
+
+.stkb-naziv:hover {
+	color: #0084FF;
+}
+
+@media (max-width: 767px) {
+  .stkb-grid.cols-1,
+  .stkb-grid.cols-2,
+  .stkb-grid.cols-3,
+  .stkb-grid.cols-4,
+  .stkb-grid.cols-5,
+  .stkb-grid.cols-6 {
+    grid-template-columns: 1fr;
+  }
+}

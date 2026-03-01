@@ -1,0 +1,80 @@
+.stoni-igraci-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px !important;
+  margin: 12px 0 16px !important;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.stoni-igrac-card {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px;
+  transition: background 0.2s ease;
+}
+
+.stoni-igrac-card:hover {
+  background: rgba(8, 30, 82, 0.32);
+}
+
+.stoni-igraci-list .stoni-igrac-card:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.stoni-igrac-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+}
+
+.stoni-igrac-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stoni-igrac-slika {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.stoni-igrac-slika.prazna {
+  background: #ddd;
+}
+
+.stoni-igrac-ime {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.stoni-igrac-ime-ime,
+.stoni-igrac-ime-prezime {
+  font-weight: 500;
+}
+
+.stoni-igrac-right {
+  font-size: 0.9rem;
+  color: #0084ff;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: underline;
+}
+
+.disabled-link {
+  pointer-events: none;
+  cursor: default;
+  color: inherit;
+  text-decoration: none;
+}

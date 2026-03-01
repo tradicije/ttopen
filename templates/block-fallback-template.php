@@ -1,0 +1,38 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+$content = class_exists('STKB_Unified_Core') ? STKB_Unified_Core::render_auto_fallback_content() : '';
+if ($content === '') {
+    status_header(404);
+    nocache_headers();
+    include get_404_template();
+    exit;
+}
+?><!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+    <meta charset="<?php bloginfo('charset'); ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php wp_head(); ?>
+</head>
+<body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+<?php
+$header_tpl = '<!-- wp:template-part {"slug":"header","tagName":"header"} /-->';
+$footer_tpl = '<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->';
+$header_html = function_exists('do_blocks') ? do_blocks($header_tpl) : '';
+$footer_html = function_exists('do_blocks') ? do_blocks($footer_tpl) : '';
+
+if (trim((string) $header_html) !== '') {
+    echo $header_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+if (trim((string) $footer_html) !== '') {
+    echo $footer_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+?>
+<?php wp_footer(); ?>
+</body>
+</html>

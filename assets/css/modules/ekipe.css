@@ -1,0 +1,222 @@
+.stkb-ekipe {
+  margin: 16px 0 24px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.16);
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.stkb-ekipe a {
+  color: inherit;
+}
+
+.stkb-ekipe-team,
+.stkb-ekipe-team:hover,
+.stkb-ekipe-team:focus {
+  color: #fff;
+  text-decoration: none;
+}
+
+.stkb-ekipe-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ffffff1f;
+  font-size: 0.88rem;
+  line-height: 1.3;
+}
+
+.stkb-ekipe-meta-link,
+.stkb-ekipe-meta-text {
+  color: #cfe0ff;
+  font-weight: 500;
+}
+
+.stkb-ekipe-meta-link {
+  text-decoration: underline;
+}
+
+.stkb-ekipe-meta-link:hover {
+  color: #8ec5ff;
+}
+
+.stkb-ekipe-meta-sep {
+  color: #9fb9eb;
+}
+
+.stkb-ekipe-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.stkb-ekipe-team {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.stkb-ekipe-home {
+  justify-content: flex-start;
+}
+
+.stkb-ekipe-away {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  text-align: right;
+}
+
+.stkb-ekipe-logo-wrap {
+  width: 62px;
+  height: 62px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 62px;
+}
+
+.stkb-ekipe-logo-wrap img {
+  max-width: 62px;
+  max-height: 62px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.stkb-ekipe-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stkb-ekipe-score {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  color: #fff;
+  font-size: clamp(2rem, 4vw, 2.3rem);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stkb-ekipe-score-sep {
+  opacity: 0.85;
+}
+
+.stkb-ekipe-team.pobednik .stkb-ekipe-name,
+.stkb-ekipe-score .pobednik {
+  color: #fff;
+  font-weight: 700;
+  opacity: 1;
+}
+
+.stkb-ekipe-team.gubitnik .stkb-ekipe-name,
+.stkb-ekipe-score .gubitnik {
+  color: #ffffffa8;
+  font-weight: 500;
+  opacity: 0.72;
+}
+
+.stkb-ekipe-footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #ffffff1f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #cfe0ff;
+  font-size: 0.88rem;
+  line-height: 1.3;
+}
+
+.stkb-ekipe-footer-sep {
+  color: #9fb9eb;
+}
+
+@media (max-width: 740px) {
+  .stkb-ekipe {
+    padding: 12px;
+  }
+
+  .stkb-ekipe-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    row-gap: 8px;
+  }
+
+  .stkb-ekipe-home {
+    grid-column: 1;
+    grid-row: 1;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .stkb-ekipe-away {
+    grid-column: 1;
+    grid-row: 2;
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .stkb-ekipe-score {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: grid;
+    grid-template-rows: auto auto;
+    justify-items: end;
+    align-content: center;
+    row-gap: 6px;
+    font-size: 1.25rem;
+    min-width: 24px;
+  }
+
+  .stkb-ekipe-score-sep {
+    display: none;
+  }
+
+  .stkb-ekipe-score > span:first-child {
+    grid-row: 1;
+  }
+
+  .stkb-ekipe-score > span:last-child {
+    grid-row: 2;
+  }
+
+  .stkb-ekipe-name {
+    font-size: 0.92rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .stkb-ekipe-logo-wrap {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+  }
+
+  .stkb-ekipe-logo-wrap img {
+    max-width: 32px;
+    max-height: 32px;
+  }
+
+  .stkb-ekipe-footer {
+    font-size: 0.82rem;
+    flex-wrap: wrap;
+  }
+}

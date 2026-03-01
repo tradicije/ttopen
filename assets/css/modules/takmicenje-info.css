@@ -1,0 +1,53 @@
+.stkb-takmicenje-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  margin: 12px 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.stkb-takmicenje-info-logo {
+  flex: 0 0 auto;
+}
+
+.stkb-takmicenje-info-logo-img {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+  display: block;
+}
+
+.stkb-takmicenje-info-body {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.stkb-takmicenje-info-title {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.stkb-takmicenje-info-meta {
+  margin: 4px 0;
+  overflow-wrap: anywhere;
+}
+
+.stkb-takmicenje-info-meta a {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .stkb-takmicenje-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

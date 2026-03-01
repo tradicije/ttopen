@@ -1,0 +1,36 @@
+.izvestaj-desna-kolona h3:hover {
+	color: #0084FF;
+}
+
+.izvestaj-desna-kolona p {
+	display: none !important;
+}
+
+.izvestaj-utakmice-blok {
+    display: flex;
+    gap: 16px !important;
+    align-items: center !important; /* ovo centrira po vertikali */
+    text-decoration: none;
+    color: inherit;
+    margin: 16px 0 !important;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(0, 0, 0, 0.16);
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.izvestaj-utakmice-blok:hover {
+	background: rgba(8, 30, 82, 0.32);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.izvestaj-leva-kolona img {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}

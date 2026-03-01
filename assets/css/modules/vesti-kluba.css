@@ -1,0 +1,84 @@
+.stoni-vesti-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.stoni-vesti-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.stoni-vesti-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stoni-vesti-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stoni-vesti-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.stoni-vesti-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.stoni-vesti-cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.stoni-vesti-kartica {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.stoni-vesti-kartica:hover {
+  transform: translateY(-1px);
+  background: rgba(8, 30, 82, 0.32);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.vest-klub-slika {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 0;
+  background: #ddd;
+}
+
+.vest-klub-slika.prazna {
+  height: 180px;
+}
+
+.vest-klub-naslov {
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.3;
+  padding: 0 10px;
+}
+
+.vest-klub-naslov:hover {
+  color: #0084ff;
+}
+
+.vest-klub-datum {
+  font-size: 0.9rem;
+  color: #ffffffa8;
+  padding: 0 10px 10px;
+}
+
+@media (max-width: 768px) {
+  .stoni-vesti-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

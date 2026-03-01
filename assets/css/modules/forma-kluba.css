@@ -1,0 +1,160 @@
+.stkb-forma-kluba {
+  margin: 12px 0 16px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.stkb-forma-kluba-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.stkb-forma-kluba-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stkb-forma-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 2px solid #ffffff26;
+  background: #000a26;
+  color: #fff;
+  text-decoration: none;
+}
+
+.stkb-forma-item.is-win {
+  background: rgba(38, 152, 77, 0.25);
+  border-color: rgba(38, 152, 77, 0.45);
+}
+
+.stkb-forma-item.is-loss {
+  background: rgba(186, 43, 43, 0.25);
+  border-color: rgba(186, 43, 43, 0.45);
+}
+
+.stkb-forma-main {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.stkb-forma-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.stkb-forma-status {
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  transform: rotate(-90deg);
+  transform-origin: center center;
+  white-space: nowrap;
+  opacity: 1;
+  font-weight: 700;
+  color: #fff;
+}
+
+.stkb-forma-score {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.1rem;
+  min-width: 20px;
+  text-align: right;
+}
+
+.stkb-forma-score.is-winner {
+  font-weight: 700 !important;
+  color: #fff;
+}
+
+.stkb-forma-score.is-loser {
+  font-weight: 400 !important;
+  color: #ffffffa8;
+}
+
+.stkb-forma-line .stkb-forma-team.is-winner + .stkb-forma-score {
+  font-weight: 700 !important;
+  color: #fff;
+  opacity: 1;
+}
+
+.stkb-forma-line .stkb-forma-team.is-loser + .stkb-forma-score {
+  font-weight: 400 !important;
+  color: #ffffffa8;
+  opacity: 0.72;
+}
+
+.stkb-forma-team {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+
+.stkb-forma-home {
+  justify-content: flex-start;
+}
+
+.stkb-forma-away {
+  justify-content: flex-end;
+}
+
+.stkb-forma-side {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 36px;
+  align-self: stretch;
+}
+
+.stkb-forma-separator {
+  display: inline-block;
+  width: 1px;
+  height: 100%;
+  min-height: 46px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.stkb-forma-logo img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  border-radius: 4px;
+  display: block;
+}
+
+.stkb-forma-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stkb-forma-team.is-winner .stkb-forma-name {
+  font-weight: 700;
+  opacity: 1;
+  color: #fff;
+}
+
+.stkb-forma-team.is-loser .stkb-forma-name {
+  font-weight: 400;
+  opacity: 0.72;
+}
+
+@media (max-width: 640px) {
+  .stkb-forma-status {
+    transform: none;
+  }
+}

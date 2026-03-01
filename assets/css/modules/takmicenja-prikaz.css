@@ -1,0 +1,129 @@
+.stkb-prikaz-takmicenja {
+  display: grid;
+  gap: 24px;
+}
+
+.stkb-prikaz-takmicenja-rank {
+  margin: 0;
+}
+
+.stkb-prikaz-takmicenja-rank-title {
+  margin: 0 0 16px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.stkb-prikaz-takmicenja-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.stkb-prikaz-takmicenja-card {
+  display: block;
+  text-decoration: none !important;
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.16);
+  padding: 12px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.stkb-prikaz-takmicenja-card:hover {
+  border-color: rgba(142, 197, 255, 0.7);
+  background: rgba(8, 30, 82, 0.32);
+}
+
+.stkb-prikaz-takmicenja-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.stkb-prikaz-takmicenja-logo {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stkb-prikaz-takmicenja-logo-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.stkb-prikaz-takmicenja-logo-fallback {
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.stkb-prikaz-takmicenja-meta {
+  min-width: 0;
+}
+
+.stkb-prikaz-takmicenja-title {
+  font-size: 1.06rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.stkb-prikaz-takmicenja-season {
+  margin-top: 2px;
+  font-size: 0.92rem;
+  color: #c7d7ff;
+}
+
+.stkb-prikaz-takmicenja-sep {
+  margin: 10px 0 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stkb-prikaz-takmicenja-clubs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 24px;
+}
+
+.stkb-prikaz-takmicenja-club {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stkb-prikaz-takmicenja-club-logo,
+.stkb-prikaz-takmicenja-club-fallback {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.stkb-prikaz-takmicenja-club-fallback {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.stkb-prikaz-takmicenja-no-clubs {
+  font-size: 0.82rem;
+  opacity: 0.82;
+}
+
+@media (max-width: 640px) {
+  .stkb-prikaz-takmicenja-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stkb-prikaz-takmicenja-title {
+    font-size: 1rem;
+  }
+}

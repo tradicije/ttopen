@@ -1,0 +1,134 @@
+.lp2-lista {
+  margin: 12px 0 16px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.lp2-partija {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lp2-item {
+  display: flex;
+  justify-content: space-between; /* RAZVLAČI levo-desno */
+  align-items: center;
+  gap: 20px;
+}
+
+.lp2-item.lp2-lose {
+  color: #ffffffa8;
+}
+
+.lp2-item .lp2-win {
+  color: #ffffff;
+	font-weight: bold;
+}
+
+.lp2-win .lp2-name {
+  font-weight: bold;
+  color: #ffffff; /* tamnija boja za dobitnika seta */
+}
+
+/* blok sa igračima jednog tima */
+.lp2-team {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* razmak između dva igrača u dublu */
+  flex-shrink: 0; /* ne skupljaj se */
+}
+
+.lp2-igrac {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.lp2-thumb {
+  width: 32px;
+  height: 32px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+.lp2-thumb-placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  font-size: 10px;
+}
+
+.lp2-name {
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.1rem;
+  display: flex;
+  flex-direction: column; /* ime i prezime u dva reda */
+}
+
+.lp2-name:hover {
+	color: #0084FF;
+}
+
+/* setovi */
+.lp2-sets {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  justify-content: flex-end; /* guraj setove skroz desno unutar svog wrappera */
+  flex-wrap: nowrap;
+}
+
+.lp2-set {
+  width: 32px; /* stabilna širina za svaki set */
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.lp2-ukupno {
+  width: 40px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.lp2-igrac-wrap p {
+  margin: 0;
+  padding: 0;
+}
+
+.lp2-partija:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.lp2-naziv-partije {
+	font-size: 1rem;
+	font-weight: 600;
+	padding-bottom: 8px;
+}
+
+.lp2-set.lp2-win {
+  font-weight: bold;
+  color: #ffffff; /* tamnija boja za dobitnika seta */
+}
+
+.lp2-set.lp2-lose {
+  color: #ffffffa8; /* svetlija za gubitnika seta */
+}

@@ -1,0 +1,157 @@
+.stkb-info-igraca {
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.16);
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.stkb-info-igraca-head {
+  margin-bottom: 10px;
+  min-width: 0;
+}
+
+.stkb-info-igraca-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.stkb-info-igraca-foto-link {
+  color: inherit;
+  text-decoration: none;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stkb-info-igraca-ime {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.stkb-info-igraca-slika-wrap {
+  width: 62px;
+  height: 62px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 62px;
+}
+
+.stkb-info-igraca-slika {
+  width: 62px;
+  height: 62px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.stkb-info-igraca-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.stkb-info-igraca-klub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.94rem;
+  color: #cfe0ff;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.stkb-info-igraca-klub-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+  color: #cfe0ff;
+  text-decoration: underline;
+}
+
+.stkb-info-igraca-klub-grb {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 3px;
+}
+
+.stkb-info-igraca-klub-tekst,
+.stkb-info-igraca-klub a {
+  color: #cfe0ff;
+  text-decoration: underline;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stkb-info-igraca-lista {
+  margin: 0;
+  padding: 0;
+}
+
+.stkb-info-igraca-row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 8px 14px;
+  padding: 8px 0;
+  border-top: 1px solid #ffffff1f;
+}
+
+.stkb-info-igraca-row dt {
+  margin: 0;
+  color: #cfe0ff;
+  font-weight: 600;
+}
+
+.stkb-info-igraca-row dd {
+  margin: 0;
+  color: #fff;
+}
+
+.stkb-info-igraca-row a {
+  color: #8ec5ff;
+  text-decoration: underline;
+}
+
+.stkb-info-igraca-nacionalnost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stkb-info-igraca-nacionalnost .flag {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+@media (max-width: 740px) {
+  .stkb-info-igraca-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .stkb-info-igraca-brand {
+    align-items: flex-start;
+  }
+
+  .stkb-info-igraca-ime {
+    font-size: 1.1rem;
+  }
+}

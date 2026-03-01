@@ -1,0 +1,48 @@
+.h2h-box {
+  display: block;
+  background: rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.h2h-box:hover {
+  background: rgba(8, 30, 82, 0.32);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.h2h-club {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.h2h-club img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+.h2h-ime {
+  flex-grow: 1;
+  font-weight: 600;
+  color: #ffffffa8;
+}
+.h2h-rez {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffffa8;
+}
+.h2h-meta {
+  font-size: 13px;
+  color: #ffffffa8;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #ffffff22;
+  padding-top: 5px;
+  margin-top: 8px;
+}
+.pobednik {
+  color: #fff !important;
+}

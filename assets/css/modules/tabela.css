@@ -1,0 +1,81 @@
+.stkb-competition-federation {
+  margin: 10px 0 8px;
+  font-size: 0.95rem;
+  color: #c7d7ff;
+}
+
+.stkb-competition-federation a {
+  color: #9ec3ff;
+  text-decoration: underline;
+}
+
+.tabela-lige {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 12px 0 16px;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.16);
+  border-radius: 8px;
+}
+
+.tabela-lige thead {
+  color: #ffffffa8;
+  font-style: italic;
+  overflow: hidden; /* da obriše unutrašnji višak */
+  background: rgba(8, 30, 82, 0.32);
+}
+
+thead tr th {
+  font-weight: 500 !important;
+}
+
+.tabela-lige th,
+.tabela-lige td {
+  padding: 8px 4px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tabela-lige .klub-cell a{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  color: #fff;
+  text-decoration: none;
+}
+
+.tabela-lige .klub-cell a:hover {
+  color: #8ec5ff;
+}
+
+.tabela-lige .klub-cell img,
+.tabela-lige .klub-cell div {
+  width: 24px !important;
+  height: 24px !important;
+  object-fit: contain;
+}
+
+.tabela-lige tr.highlight {
+  background: rgba(8, 30, 82, 0.32);
+  font-weight: bold;
+  border-left: 4px solid #0084FF;
+}
+
+.tabela-lige tr.zone-promote-direct {
+  background: rgba(12, 139, 85, 0.28);
+}
+
+.tabela-lige tr.zone-promote-playoff {
+  background: rgba(12, 139, 85, 0.16);
+}
+
+.tabela-lige tr.zone-relegate-direct {
+  background: rgba(168, 45, 45, 0.30);
+}
+
+.tabela-lige tr.zone-relegate-playoff {
+  background: rgba(168, 45, 45, 0.18);
+}
