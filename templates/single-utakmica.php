@@ -45,28 +45,28 @@ get_header();
     </section>
 
     <section class="stkb-match-table" style="margin-bottom:20px;">
-        <?php echo do_shortcode('[prikaz_tabela]'); ?>
+        <?php echo do_shortcode('[opentt_standings_table]'); ?>
     </section>
 
     <section class="stkb-match-games" style="margin-bottom:20px;">
-        <?php echo do_shortcode('[lista_partija_nova]'); ?>
+        <?php echo do_shortcode('[opentt_match_games]'); ?>
     </section>
 
     <section class="stkb-match-extras" style="display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:20px;">
         <div class="mvp-utakmice-section">
-            <?php echo do_shortcode('[mvp]'); ?>
+            <?php echo do_shortcode('[opentt_mvp]'); ?>
         </div>
 
         <div class="h2h-utakmice-section">
-            <?php echo do_shortcode('[h2h]'); ?>
+            <?php echo do_shortcode('[opentt_h2h]'); ?>
         </div>
 
         <div class="snimak-utakmice-section-wrap">
-            <?php echo do_shortcode('[snimak_utakmice]'); ?>
+            <?php echo do_shortcode('[opentt_match_video]'); ?>
         </div>
 
         <div class="izvestaj-utakmice-section">
-            <?php echo do_shortcode('[izvestaj_utakmice]'); ?>
+            <?php echo do_shortcode('[opentt_match_report]'); ?>
         </div>
     </section>
 </main>

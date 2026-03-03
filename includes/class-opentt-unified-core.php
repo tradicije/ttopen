@@ -4,18 +4,18 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once __DIR__ . '/modules/class-stkb-unified-assets-module.php';
-require_once __DIR__ . '/modules/class-stkb-unified-admin-module.php';
-require_once __DIR__ . '/modules/class-stkb-unified-routing-module.php';
-require_once __DIR__ . '/modules/class-stkb-unified-shortcodes-module.php';
-require_once __DIR__ . '/modules/class-stkb-unified-legacy-module.php';
-require_once __DIR__ . '/modules/trait-stkb-unified-shortcodes.php';
-require_once __DIR__ . '/class-stkb-unified-readonly-helpers.php';
-require_once __DIR__ . '/class-stkb-unified-admin-readonly-helpers.php';
-require_once __DIR__ . '/class-stkb-unified-admin-match-actions.php';
-require_once __DIR__ . '/class-stkb-unified-admin-club-player-actions.php';
-require_once __DIR__ . '/class-stkb-unified-shortcode-match-query-service.php';
-require_once __DIR__ . '/class-stkb-unified-shortcode-stats-query-service.php';
+require_once __DIR__ . '/modules/class-opentt-unified-assets-module.php';
+require_once __DIR__ . '/modules/class-opentt-unified-admin-module.php';
+require_once __DIR__ . '/modules/class-opentt-unified-routing-module.php';
+require_once __DIR__ . '/modules/class-opentt-unified-shortcodes-module.php';
+require_once __DIR__ . '/modules/class-opentt-unified-legacy-module.php';
+require_once __DIR__ . '/modules/trait-opentt-unified-shortcodes.php';
+require_once __DIR__ . '/class-opentt-unified-readonly-helpers.php';
+require_once __DIR__ . '/class-opentt-unified-admin-readonly-helpers.php';
+require_once __DIR__ . '/class-opentt-unified-admin-match-actions.php';
+require_once __DIR__ . '/class-opentt-unified-admin-club-player-actions.php';
+require_once __DIR__ . '/class-opentt-unified-shortcode-match-query-service.php';
+require_once __DIR__ . '/class-opentt-unified-shortcode-stats-query-service.php';
 
 final class STKB_Unified_Core
 {
@@ -198,7 +198,7 @@ final class STKB_Unified_Core
 
         global $wpdb;
         $posts_table = $wpdb->posts;
-        $like = '%[prikaz_takmicenja%';
+        $like = '%[opentt_competitions%';
         $found_shortcode = $wpdb->get_var($wpdb->prepare(
             "SELECT ID FROM {$posts_table}
              WHERE post_type='page'
@@ -216,7 +216,7 @@ final class STKB_Unified_Core
             'post_status' => 'publish',
             'post_title' => 'Lige',
             'post_name' => 'lige',
-            'post_content' => '[prikaz_takmicenja]',
+            'post_content' => '[opentt_competitions]',
             'comment_status' => 'closed',
             'ping_status' => 'closed',
         ]);
@@ -817,57 +817,57 @@ final class STKB_Unified_Core
 
     public static function register_shortcodes()
     {
-        remove_shortcode('prikaz_utakmica_grid');
-        remove_shortcode('prikaz_tabela');
-        remove_shortcode('lista_partija_nova');
-        remove_shortcode('h2h');
-        remove_shortcode('mvp');
-        remove_shortcode('izvestaj_utakmice');
-        remove_shortcode('snimak_utakmice');
-        remove_shortcode('prikaz_domacina');
-        remove_shortcode('prikaz_gosta');
-        remove_shortcode('prikaz_kluba');
-        remove_shortcode('prikaz_ekipa');
-        remove_shortcode('top_igraci_lista');
-        remove_shortcode('prikaz_igraca');
-        remove_shortcode('vesti_kluba');
-        remove_shortcode('vesti_igraca');
-        remove_shortcode('related_posts');
-        remove_shortcode('info_kluba');
-        remove_shortcode('info_takmicenja');
-        remove_shortcode('forma_kluba');
-        remove_shortcode('statistika_igraca');
-        remove_shortcode('statistika_ekipe');
-        remove_shortcode('transferi');
-        remove_shortcode('info_igraca');
-        remove_shortcode('prikaz_takmicenja');
-        remove_shortcode('prikaz_klubova');
+        remove_shortcode('opentt_matches_grid');
+        remove_shortcode('opentt_standings_table');
+        remove_shortcode('opentt_match_games');
+        remove_shortcode('opentt_h2h');
+        remove_shortcode('opentt_mvp');
+        remove_shortcode('opentt_match_report');
+        remove_shortcode('opentt_match_video');
+        remove_shortcode('opentt_home_club');
+        remove_shortcode('opentt_away_club');
+        remove_shortcode('opentt_club');
+        remove_shortcode('opentt_match_teams');
+        remove_shortcode('opentt_top_players');
+        remove_shortcode('opentt_players');
+        remove_shortcode('opentt_club_news');
+        remove_shortcode('opentt_player_news');
+        remove_shortcode('opentt_related_posts');
+        remove_shortcode('opentt_club_info');
+        remove_shortcode('opentt_competition_info');
+        remove_shortcode('opentt_club_form');
+        remove_shortcode('opentt_player_stats');
+        remove_shortcode('opentt_team_stats');
+        remove_shortcode('opentt_player_transfers');
+        remove_shortcode('opentt_player_info');
+        remove_shortcode('opentt_competitions');
+        remove_shortcode('opentt_clubs');
 
-        add_shortcode('prikaz_utakmica_grid', [__CLASS__, 'shortcode_matches_grid']);
-        add_shortcode('prikaz_tabela', [__CLASS__, 'shortcode_standings_table']);
-        add_shortcode('lista_partija_nova', [__CLASS__, 'shortcode_games_list']);
-        add_shortcode('h2h', [__CLASS__, 'shortcode_h2h']);
-        add_shortcode('mvp', [__CLASS__, 'shortcode_mvp']);
-        add_shortcode('izvestaj_utakmice', [__CLASS__, 'shortcode_match_report']);
-        add_shortcode('snimak_utakmice', [__CLASS__, 'shortcode_match_video']);
-        add_shortcode('prikaz_domacina', [__CLASS__, 'shortcode_show_home_club']);
-        add_shortcode('prikaz_gosta', [__CLASS__, 'shortcode_show_away_club']);
-        add_shortcode('prikaz_kluba', [__CLASS__, 'shortcode_show_club_by_name']);
-        add_shortcode('prikaz_ekipa', [__CLASS__, 'shortcode_show_match_teams']);
-        add_shortcode('top_igraci_lista', [__CLASS__, 'shortcode_top_players_list']);
-        add_shortcode('prikaz_igraca', [__CLASS__, 'shortcode_show_players']);
-        add_shortcode('vesti_kluba', [__CLASS__, 'shortcode_club_news']);
-        add_shortcode('vesti_igraca', [__CLASS__, 'shortcode_player_news']);
-        add_shortcode('related_posts', [__CLASS__, 'shortcode_related_posts']);
-        add_shortcode('info_kluba', [__CLASS__, 'shortcode_club_info']);
-        add_shortcode('info_takmicenja', [__CLASS__, 'shortcode_competition_info']);
-        add_shortcode('forma_kluba', [__CLASS__, 'shortcode_club_form']);
-        add_shortcode('statistika_igraca', [__CLASS__, 'shortcode_player_stats']);
-        add_shortcode('statistika_ekipe', [__CLASS__, 'shortcode_team_stats']);
-        add_shortcode('transferi', [__CLASS__, 'shortcode_player_transfers']);
-        add_shortcode('info_igraca', [__CLASS__, 'shortcode_player_info']);
-        add_shortcode('prikaz_takmicenja', [__CLASS__, 'shortcode_competitions_grid']);
-        add_shortcode('prikaz_klubova', [__CLASS__, 'shortcode_clubs_grid']);
+        add_shortcode('opentt_matches_grid', [__CLASS__, 'shortcode_matches_grid']);
+        add_shortcode('opentt_standings_table', [__CLASS__, 'shortcode_standings_table']);
+        add_shortcode('opentt_match_games', [__CLASS__, 'shortcode_games_list']);
+        add_shortcode('opentt_h2h', [__CLASS__, 'shortcode_h2h']);
+        add_shortcode('opentt_mvp', [__CLASS__, 'shortcode_mvp']);
+        add_shortcode('opentt_match_report', [__CLASS__, 'shortcode_match_report']);
+        add_shortcode('opentt_match_video', [__CLASS__, 'shortcode_match_video']);
+        add_shortcode('opentt_home_club', [__CLASS__, 'shortcode_show_home_club']);
+        add_shortcode('opentt_away_club', [__CLASS__, 'shortcode_show_away_club']);
+        add_shortcode('opentt_club', [__CLASS__, 'shortcode_show_club_by_name']);
+        add_shortcode('opentt_match_teams', [__CLASS__, 'shortcode_show_match_teams']);
+        add_shortcode('opentt_top_players', [__CLASS__, 'shortcode_top_players_list']);
+        add_shortcode('opentt_players', [__CLASS__, 'shortcode_show_players']);
+        add_shortcode('opentt_club_news', [__CLASS__, 'shortcode_club_news']);
+        add_shortcode('opentt_player_news', [__CLASS__, 'shortcode_player_news']);
+        add_shortcode('opentt_related_posts', [__CLASS__, 'shortcode_related_posts']);
+        add_shortcode('opentt_club_info', [__CLASS__, 'shortcode_club_info']);
+        add_shortcode('opentt_competition_info', [__CLASS__, 'shortcode_competition_info']);
+        add_shortcode('opentt_club_form', [__CLASS__, 'shortcode_club_form']);
+        add_shortcode('opentt_player_stats', [__CLASS__, 'shortcode_player_stats']);
+        add_shortcode('opentt_team_stats', [__CLASS__, 'shortcode_team_stats']);
+        add_shortcode('opentt_player_transfers', [__CLASS__, 'shortcode_player_transfers']);
+        add_shortcode('opentt_player_info', [__CLASS__, 'shortcode_player_info']);
+        add_shortcode('opentt_competitions', [__CLASS__, 'shortcode_competitions_grid']);
+        add_shortcode('opentt_clubs', [__CLASS__, 'shortcode_clubs_grid']);
     }
 
     public static function capture_virtual_match_context()
@@ -1426,14 +1426,14 @@ final class STKB_Unified_Core
 
         // Fallback sadržaj ako block template nije pronađen.
         return '<div class="wp-site-blocks"><main class="stkb-match-page" style="max-width:1100px;margin:0 auto;padding:20px 16px;">'
-            . do_shortcode('[prikaz_ekipa]')
-            . do_shortcode('[prikaz_tabela]')
-            . do_shortcode('[lista_partija_nova]')
-            . do_shortcode('[top_igraci_lista]')
-            . do_shortcode('[mvp]')
-            . do_shortcode('[h2h]')
-            . do_shortcode('[snimak_utakmice]')
-            . do_shortcode('[izvestaj_utakmice]')
+            . do_shortcode('[opentt_match_teams]')
+            . do_shortcode('[opentt_standings_table]')
+            . do_shortcode('[opentt_match_games]')
+            . do_shortcode('[opentt_top_players]')
+            . do_shortcode('[opentt_mvp]')
+            . do_shortcode('[opentt_h2h]')
+            . do_shortcode('[opentt_match_video]')
+            . do_shortcode('[opentt_match_report]')
             . '</main></div>';
     }
 
@@ -1443,19 +1443,19 @@ final class STKB_Unified_Core
 
         if (is_singular('klub')) {
             return '<main class="stkb-auto-page stkb-auto-klub" style="max-width:1100px;margin:0 auto;padding:20px 16px;">'
-                . do_shortcode('[info_kluba]')
-                . do_shortcode('[prikaz_igraca]')
-                . do_shortcode('[forma_kluba]')
-                . do_shortcode('[statistika_ekipe filter="true"]')
-                . do_shortcode('[vesti_kluba limit="6" columns="2"]')
+                . do_shortcode('[opentt_club_info]')
+                . do_shortcode('[opentt_players]')
+                . do_shortcode('[opentt_club_form]')
+                . do_shortcode('[opentt_team_stats filter="true"]')
+                . do_shortcode('[opentt_club_news limit="6" columns="2"]')
                 . '</main>';
         }
         if (is_singular('igrac')) {
             return '<main class="stkb-auto-page stkb-auto-igrac" style="max-width:1100px;margin:0 auto;padding:20px 16px;">'
-                . do_shortcode('[info_igraca]')
-                . do_shortcode('[statistika_igraca filter="true"]')
-                . do_shortcode('[transferi]')
-                . do_shortcode('[vesti_igraca limit="6" columns="2"]')
+                . do_shortcode('[opentt_player_info]')
+                . do_shortcode('[opentt_player_stats filter="true"]')
+                . do_shortcode('[opentt_player_transfers]')
+                . do_shortcode('[opentt_player_news limit="6" columns="2"]')
                 . '</main>';
         }
         if (is_tax('liga_sezona') || (is_array($archive_ctx) && ($archive_ctx['type'] ?? '') === 'liga_sezona')) {
@@ -1469,19 +1469,19 @@ final class STKB_Unified_Core
                 $args .= ' sezona="' . esc_attr($sezona) . '"';
             }
             return '<main class="stkb-auto-page stkb-auto-liga-sezona" style="max-width:1100px;margin:0 auto;padding:20px 16px;">'
-                . do_shortcode('[info_takmicenja' . $args . ']')
-                . do_shortcode('[prikaz_tabela' . $args . ']')
-                . do_shortcode('[top_igraci_lista' . $args . ']')
-                . do_shortcode('[prikaz_utakmica_grid columns="4" limit="12" filter="true" infinite="true"' . $args . ']')
+                . do_shortcode('[opentt_competition_info' . $args . ']')
+                . do_shortcode('[opentt_standings_table' . $args . ']')
+                . do_shortcode('[opentt_top_players' . $args . ']')
+                . do_shortcode('[opentt_matches_grid columns="4" limit="12" filter="true" infinite="true"' . $args . ']')
                 . '</main>';
         }
         if (is_tax('kolo') || (is_array($archive_ctx) && ($archive_ctx['type'] ?? '') === 'kolo')) {
             $kolo = is_array($archive_ctx) ? sanitize_title((string) ($archive_ctx['kolo_slug'] ?? '')) : '';
             $kolo_arg = $kolo !== '' ? ' kolo="' . esc_attr($kolo) . '"' : '';
             return '<main class="stkb-auto-page stkb-auto-kolo" style="max-width:1100px;margin:0 auto;padding:20px 16px;">'
-                . do_shortcode('[prikaz_utakmica_grid columns="4" limit="12" filter="true" infinite="true"' . $kolo_arg . ']')
-                . do_shortcode('[prikaz_tabela' . $kolo_arg . ']')
-                . do_shortcode('[top_igraci_lista' . $kolo_arg . ']')
+                . do_shortcode('[opentt_matches_grid columns="4" limit="12" filter="true" infinite="true"' . $kolo_arg . ']')
+                . do_shortcode('[opentt_standings_table' . $kolo_arg . ']')
+                . do_shortcode('[opentt_top_players' . $kolo_arg . ']')
                 . '</main>';
         }
 
@@ -1721,7 +1721,7 @@ final class STKB_Unified_Core
         echo '      <div class="stkb-help-detail" data-topic="partije" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Partije - detaljno</h3><p><strong>Kako uneti:</strong></p><ol><li>Otvori utakmicu kroz <strong>Uredi</strong>.</li><li>U sekciji batch unosa unesi igrače za svaku partiju.</li><li>Dubl partija se automatski određuje po pravilima takmičenja.</li><li>Za singl partije unosi se po jedan igrač sa svake strane.</li><li>Na kraju klikni <strong>Sačuvaj sve partije</strong>.</li></ol><p><strong>Izmena:</strong> Ponovo otvori utakmicu, ispravi redove partija i sačuvaj.</p><p><strong>Brisanje:</strong> Ako ostaviš partiju praznom, sistem je briše pri snimanju.</p></div>';
         echo '      <div class="stkb-help-detail" data-topic="setovi" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Setovi - detaljno</h3><p><strong>Unos setova:</strong></p><ol><li>Za svaku partiju imaš polja Set 1 do Set 5.</li><li>Unosi poene domaćina i gosta po setu.</li><li>Proveri da li je broj osvojenih setova logičan u odnosu na rezultat partije.</li><li>Sačuvaj sve partije.</li></ol><p><strong>Izmena:</strong> Ispravi setove i ponovo sačuvaj.</p><p><strong>Napomena:</strong> Ako su setovi uneti, a ukupni setovi prazni, sistem automatski računa zbir.</p></div>';
         echo '      <div class="stkb-help-detail" data-topic="retro" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Retro unos - detaljno</h3><p><strong>Kada koristiti:</strong> Unos starih sezona kada igrači više nisu u trenutnom klubu.</p><p><strong>Koraci:</strong></p><ol><li>U partiji klikni <strong>Lista igrača</strong> pored dropdown-a.</li><li>U popup-u pretraži ime igrača.</li><li>Klikni igrača iz liste i sistem ga ubacuje u polje.</li><li>Nastavi unos partije i setova.</li></ol><p><strong>Napomena:</strong> Ako je igrač van trenutnog kluba, to je podržano i vidljivo u oznaci.</p></div>';
-        echo '      <div class="stkb-help-detail" data-topic="provera" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Provera - detaljno</h3><p><strong>Posle svakog unosa proveri:</strong></p><ol><li>Frontend utakmicu: rezultat, partije, setove, MVP i ostale blokove.</li><li>Frontend klub: forma, vesti, statistika ekipe.</li><li>Frontend igrača: info, statistika, transferi i vesti igrača.</li></ol><p><strong>Ako vidiš grešku:</strong></p><ol><li>Vrati se u admin na odgovarajuću stavku.</li><li>Ispravi podatke.</li><li>Sačuvaj i osveži frontend stranu.</li></ol><p><strong>Savet:</strong> Najbrže je proveravati odmah nakon unosa, ne na kraju dana.</p></div>';
+        echo '      <div class="stkb-help-detail" data-topic="provera" hidden><button type="button" class="button stkb-help-back">← Nazad</button><h3>Provera - detaljno</h3><p><strong>Posle svakog unosa proveri:</strong></p><ol><li>Frontend utakmicu: rezultat, partije, setove, MVP i ostale blokove.</li><li>Frontend klub: forma, vesti, statistika ekipe.</li><li>Frontend igrača: info, statistika, opentt_player_transfers i vesti igrača.</li></ol><p><strong>Ako vidiš grešku:</strong></p><ol><li>Vrati se u admin na odgovarajuću stavku.</li><li>Ispravi podatke.</li><li>Sačuvaj i osveži frontend stranu.</li></ol><p><strong>Savet:</strong> Najbrže je proveravati odmah nakon unosa, ne na kraju dana.</p></div>';
         echo '    </div>';
         echo '  </div>';
         echo '</div>';
@@ -3167,7 +3167,7 @@ JS;
     {
         return [
             [
-                'tag' => 'prikaz_utakmica_grid',
+                'tag' => 'opentt_matches_grid',
                 'desc' => 'Grid prikaz utakmica sa filterima/sortiranjem i infinite opcijom.',
                 'attrs' => 'columns, limit, klub, odigrana, liga, sezona, filter, infinite',
                 'details' => 'Najčešći shortcode za listing utakmica na početnoj ili liga stranici.',
@@ -3182,7 +3182,7 @@ JS;
                 ],
             ],
             [
-                'tag' => 'prikaz_tabela',
+                'tag' => 'opentt_standings_table',
                 'desc' => 'Tabela lige za kontekst stranice ili zadatu ligu/sezonu.',
                 'attrs' => 'liga, sezona, highlight',
                 'details' => 'Prikazuje tabelu takmičenja sa zonama promocije/ispadanja prema pravilima.',
@@ -3192,14 +3192,14 @@ JS;
                     ['name' => 'highlight', 'label' => 'Highlight klubovi', 'type' => 'text', 'default' => '', 'help' => 'Klubovi za naglašavanje (zarez).'],
                 ],
             ],
-            ['tag' => 'lista_partija_nova', 'desc' => 'Prikaz partija za jednu utakmicu (tok meča).', 'attrs' => 'kontekstualno', 'details' => 'Koristi kontekst trenutne utakmice.', 'builder' => []],
-            ['tag' => 'prikaz_ekipa', 'desc' => 'Header blok utakmice (domaćin/gost, rezultat, liga/kolo).', 'attrs' => 'kontekstualno', 'details' => 'Koristi kontekst trenutne utakmice.', 'builder' => []],
-            ['tag' => 'h2h', 'desc' => 'Međusobni dueli klubova iz konteksta utakmice.', 'attrs' => 'limit', 'details' => 'Prikazuje poslednje međusobne rezultate.', 'builder' => [['name' => 'limit', 'label' => 'Limit', 'type' => 'number', 'default' => '3', 'help' => 'Koliko H2H mečeva.']]],
-            ['tag' => 'mvp', 'desc' => 'Najkorisniji igrač utakmice.', 'attrs' => 'kontekstualno', 'details' => 'Računa MVP iz partija meča.', 'builder' => []],
-            ['tag' => 'izvestaj_utakmice', 'desc' => 'Tekstualni izveštaj utakmice.', 'attrs' => 'kontekstualno', 'details' => 'Prikazuje sačuvan izveštaj utakmice.', 'builder' => []],
-            ['tag' => 'snimak_utakmice', 'desc' => 'Snimak/vizuelni blok utakmice.', 'attrs' => 'kontekstualno', 'details' => 'Prikazuje snimak utakmice kada postoji.', 'builder' => []],
+            ['tag' => 'opentt_match_games', 'desc' => 'Prikaz partija za jednu utakmicu (tok meča).', 'attrs' => 'kontekstualno', 'details' => 'Koristi kontekst trenutne utakmice.', 'builder' => []],
+            ['tag' => 'opentt_match_teams', 'desc' => 'Header blok utakmice (domaćin/gost, rezultat, liga/kolo).', 'attrs' => 'kontekstualno', 'details' => 'Koristi kontekst trenutne utakmice.', 'builder' => []],
+            ['tag' => 'opentt_h2h', 'desc' => 'Međusobni dueli klubova iz konteksta utakmice.', 'attrs' => 'limit', 'details' => 'Prikazuje poslednje međusobne rezultate.', 'builder' => [['name' => 'limit', 'label' => 'Limit', 'type' => 'number', 'default' => '3', 'help' => 'Koliko H2H mečeva.']]],
+            ['tag' => 'opentt_mvp', 'desc' => 'Najkorisniji igrač utakmice.', 'attrs' => 'kontekstualno', 'details' => 'Računa MVP iz partija meča.', 'builder' => []],
+            ['tag' => 'opentt_match_report', 'desc' => 'Tekstualni izveštaj utakmice.', 'attrs' => 'kontekstualno', 'details' => 'Prikazuje sačuvan izveštaj utakmice.', 'builder' => []],
+            ['tag' => 'opentt_match_video', 'desc' => 'Snimak/vizuelni blok utakmice.', 'attrs' => 'kontekstualno', 'details' => 'Prikazuje snimak utakmice kada postoji.', 'builder' => []],
             [
-                'tag' => 'top_igraci_lista',
+                'tag' => 'opentt_top_players',
                 'desc' => 'Rang lista igrača za ligu/sezonu.',
                 'attrs' => 'liga, sezona, limit, kolo',
                 'details' => 'Koristi DB partije i setove; može raditi kontekstualno.',
@@ -3210,20 +3210,20 @@ JS;
                     ['name' => 'kolo', 'label' => 'Do kog kola', 'type' => 'number', 'default' => ''],
                 ],
             ],
-            ['tag' => 'prikaz_igraca', 'desc' => 'Prikaz igrača kluba.', 'attrs' => 'klub', 'details' => 'Na single-klub radi bez atributa.', 'builder' => [['name' => 'klub', 'label' => 'Klub slug', 'type' => 'text', 'default' => '']]],
-            ['tag' => 'vesti_kluba', 'desc' => 'Kartice vesti kluba.', 'attrs' => 'klub, limit, columns', 'details' => 'Vesti povezane sa klubom.', 'builder' => [['name' => 'klub', 'label' => 'Klub slug', 'type' => 'text', 'default' => ''], ['name' => 'limit', 'label' => 'Limit', 'type' => 'number', 'default' => '6'], ['name' => 'columns', 'label' => 'Kolone', 'type' => 'number', 'default' => '3']]],
-            ['tag' => 'vesti_igraca', 'desc' => 'Kartice vesti igrača.', 'attrs' => 'igrac, limit, columns', 'details' => 'Vesti povezane sa igračem.', 'builder' => [['name' => 'igrac', 'label' => 'Igrač slug', 'type' => 'text', 'default' => ''], ['name' => 'limit', 'label' => 'Limit', 'type' => 'number', 'default' => '6'], ['name' => 'columns', 'label' => 'Kolone', 'type' => 'number', 'default' => '3']]],
-            ['tag' => 'related_posts', 'desc' => 'Povezane objave.', 'attrs' => 'limit, columns', 'details' => 'Kontekstualno vezane objave.', 'builder' => [['name' => 'limit', 'label' => 'Limit', 'type' => 'number', 'default' => '6'], ['name' => 'columns', 'label' => 'Kolone', 'type' => 'number', 'default' => '3']]],
-            ['tag' => 'info_kluba', 'desc' => 'Info kartica kluba (osnovni podaci + takmičenje/savez).', 'attrs' => 'klub', 'details' => 'Na single-klub radi bez atributa.', 'builder' => [['name' => 'klub', 'label' => 'Klub slug', 'type' => 'text', 'default' => '']]],
-            ['tag' => 'forma_kluba', 'desc' => 'Poslednje utakmice kluba (forma).', 'attrs' => 'klub, limit', 'details' => 'Pobede/porazi sa stilskim markerima.', 'builder' => [['name' => 'klub', 'label' => 'Klub slug', 'type' => 'text', 'default' => ''], ['name' => 'limit', 'label' => 'Limit', 'type' => 'number', 'default' => '5']]],
-            ['tag' => 'statistika_ekipe', 'desc' => 'Statistika ekipe + tabela oko pozicije kluba.', 'attrs' => 'klub, filter', 'details' => 'Prikaz metrika ekipe i skraćene/pune tabele.', 'builder' => [['name' => 'klub', 'label' => 'Klub slug', 'type' => 'text', 'default' => ''], ['name' => 'filter', 'label' => 'Filter', 'type' => 'text', 'default' => 'true']]],
-            ['tag' => 'info_igraca', 'desc' => 'Info kartica igrača (profil + klub + državljanstvo).', 'attrs' => 'igrac', 'details' => 'Na single-igrac radi bez atributa.', 'builder' => [['name' => 'igrac', 'label' => 'Igrač slug', 'type' => 'text', 'default' => '']]],
-            ['tag' => 'statistika_igraca', 'desc' => 'Statistika igrača sa sezonskim filterom.', 'attrs' => 'igrac, filter', 'details' => 'Uključuje učinak i rang listu oko igrača.', 'builder' => [['name' => 'igrac', 'label' => 'Igrač slug', 'type' => 'text', 'default' => ''], ['name' => 'filter', 'label' => 'Filter', 'type' => 'text', 'default' => 'true']]],
-            ['tag' => 'transferi', 'desc' => 'Istorija klubova igrača po sezonama.', 'attrs' => 'igrac', 'details' => 'Automatski gradi transfer istoriju iz mečeva.', 'builder' => [['name' => 'igrac', 'label' => 'Igrač slug', 'type' => 'text', 'default' => '']]],
-            ['tag' => 'info_takmicenja', 'desc' => 'Info kartica takmičenja (logo, sezona, savez).', 'attrs' => 'liga, sezona, show_logo', 'details' => 'Radi na arhivi lige ili sa zadatim slugovima.', 'builder' => [['name' => 'liga', 'label' => 'Liga slug', 'type' => 'text', 'default' => ''], ['name' => 'sezona', 'label' => 'Sezona slug', 'type' => 'text', 'default' => ''], ['name' => 'show_logo', 'label' => 'Prikaži logo', 'type' => 'text', 'default' => '1']]],
-            ['tag' => 'prikaz_takmicenja', 'desc' => 'Kartice takmičenja grupisane po rangu (1-5).', 'attrs' => 'limit, filter', 'details' => 'Poređano od ranga 1 ka rangu 5, uz opcioni filter po sezoni.', 'builder' => [['name' => 'limit', 'label' => 'Limit po rangu', 'type' => 'number', 'default' => '0'], ['name' => 'filter', 'label' => 'Filter', 'type' => 'text', 'default' => 'true', 'help' => 'Uključuje filter po sezoni.']]],
+            ['tag' => 'opentt_players', 'desc' => 'Prikaz igrača kluba.', 'attrs' => 'klub', 'details' => 'Na single-klub radi bez atributa.', 'builder' => [['name' => 'klub', 'label' => 'Klub slug', 'type' => 'text', 'default' => '']]],
+            ['tag' => 'opentt_club_news', 'desc' => 'Kartice vesti kluba.', 'attrs' => 'klub, limit, columns', 'details' => 'Vesti povezane sa klubom.', 'builder' => [['name' => 'klub', 'label' => 'Klub slug', 'type' => 'text', 'default' => ''], ['name' => 'limit', 'label' => 'Limit', 'type' => 'number', 'default' => '6'], ['name' => 'columns', 'label' => 'Kolone', 'type' => 'number', 'default' => '3']]],
+            ['tag' => 'opentt_player_news', 'desc' => 'Kartice vesti igrača.', 'attrs' => 'igrac, limit, columns', 'details' => 'Vesti povezane sa igračem.', 'builder' => [['name' => 'igrac', 'label' => 'Igrač slug', 'type' => 'text', 'default' => ''], ['name' => 'limit', 'label' => 'Limit', 'type' => 'number', 'default' => '6'], ['name' => 'columns', 'label' => 'Kolone', 'type' => 'number', 'default' => '3']]],
+            ['tag' => 'opentt_related_posts', 'desc' => 'Povezane objave.', 'attrs' => 'limit, columns', 'details' => 'Kontekstualno vezane objave.', 'builder' => [['name' => 'limit', 'label' => 'Limit', 'type' => 'number', 'default' => '6'], ['name' => 'columns', 'label' => 'Kolone', 'type' => 'number', 'default' => '3']]],
+            ['tag' => 'opentt_club_info', 'desc' => 'Info kartica kluba (osnovni podaci + takmičenje/savez).', 'attrs' => 'klub', 'details' => 'Na single-klub radi bez atributa.', 'builder' => [['name' => 'klub', 'label' => 'Klub slug', 'type' => 'text', 'default' => '']]],
+            ['tag' => 'opentt_club_form', 'desc' => 'Poslednje utakmice kluba (forma).', 'attrs' => 'klub, limit', 'details' => 'Pobede/porazi sa stilskim markerima.', 'builder' => [['name' => 'klub', 'label' => 'Klub slug', 'type' => 'text', 'default' => ''], ['name' => 'limit', 'label' => 'Limit', 'type' => 'number', 'default' => '5']]],
+            ['tag' => 'opentt_team_stats', 'desc' => 'Statistika ekipe + tabela oko pozicije kluba.', 'attrs' => 'klub, filter', 'details' => 'Prikaz metrika ekipe i skraćene/pune tabele.', 'builder' => [['name' => 'klub', 'label' => 'Klub slug', 'type' => 'text', 'default' => ''], ['name' => 'filter', 'label' => 'Filter', 'type' => 'text', 'default' => 'true']]],
+            ['tag' => 'opentt_player_info', 'desc' => 'Info kartica igrača (profil + klub + državljanstvo).', 'attrs' => 'igrac', 'details' => 'Na single-igrac radi bez atributa.', 'builder' => [['name' => 'igrac', 'label' => 'Igrač slug', 'type' => 'text', 'default' => '']]],
+            ['tag' => 'opentt_player_stats', 'desc' => 'Statistika igrača sa sezonskim filterom.', 'attrs' => 'igrac, filter', 'details' => 'Uključuje učinak i rang listu oko igrača.', 'builder' => [['name' => 'igrac', 'label' => 'Igrač slug', 'type' => 'text', 'default' => ''], ['name' => 'filter', 'label' => 'Filter', 'type' => 'text', 'default' => 'true']]],
+            ['tag' => 'opentt_player_transfers', 'desc' => 'Istorija klubova igrača po sezonama.', 'attrs' => 'igrac', 'details' => 'Automatski gradi transfer istoriju iz mečeva.', 'builder' => [['name' => 'igrac', 'label' => 'Igrač slug', 'type' => 'text', 'default' => '']]],
+            ['tag' => 'opentt_competition_info', 'desc' => 'Info kartica takmičenja (logo, sezona, savez).', 'attrs' => 'liga, sezona, show_logo', 'details' => 'Radi na arhivi lige ili sa zadatim slugovima.', 'builder' => [['name' => 'liga', 'label' => 'Liga slug', 'type' => 'text', 'default' => ''], ['name' => 'sezona', 'label' => 'Sezona slug', 'type' => 'text', 'default' => ''], ['name' => 'show_logo', 'label' => 'Prikaži logo', 'type' => 'text', 'default' => '1']]],
+            ['tag' => 'opentt_competitions', 'desc' => 'Kartice takmičenja grupisane po rangu (1-5).', 'attrs' => 'limit, filter', 'details' => 'Poređano od ranga 1 ka rangu 5, uz opcioni filter po sezoni.', 'builder' => [['name' => 'limit', 'label' => 'Limit po rangu', 'type' => 'number', 'default' => '0'], ['name' => 'filter', 'label' => 'Filter', 'type' => 'text', 'default' => 'true', 'help' => 'Uključuje filter po sezoni.']]],
             [
-                'tag' => 'prikaz_klubova',
+                'tag' => 'opentt_clubs',
                 'desc' => 'Grid/lista prikaz svih klubova sa filterima i infinite opcijom.',
                 'attrs' => 'columns, limit, filter, infinite',
                 'details' => 'Prikazuje klubove sa grbom, prefiksom STK i aktuelnom ligom. Filteri: liga i opština/grad, uz sortiranje po nazivu.',
@@ -3259,24 +3259,24 @@ JS;
     private static function shortcode_css_class_reference()
     {
         return [
-            'prikaz_utakmica_grid' => ['module' => 'utakmice.css', 'classes' => ['.stkb-grid', '.stkb-grid-filters', '.stkb-item', '.team.pobednik', '.team.gubitnik', '.meta']],
-            'prikaz_tabela' => ['module' => 'tabela.css', 'classes' => ['.tabela-lige', '.tabela-lige tr.highlight', '.zone-promote-direct', '.zone-promote-playoff', '.zone-relegate-direct', '.zone-relegate-playoff']],
-            'prikaz_ekipa' => ['module' => 'ekipe.css', 'classes' => ['.stkb-ekipe', '.stkb-ekipe-home', '.stkb-ekipe-away', '.stkb-ekipe-score']],
-            'lista_partija_nova' => ['module' => 'partije.css', 'classes' => ['.lista-partija', '.partija-row', '.lp2-win', '.lp2-name']],
-            'top_igraci_lista' => ['module' => 'rang-lista.css', 'classes' => ['.igrac-rang-lista', '.igrac-card-list', '.igrac-card-list.highlight']],
-            'info_kluba' => ['module' => 'info-kluba.css', 'classes' => ['.stkb-info-kluba', '.stkb-info-kluba-head', '.stkb-info-kluba-meta']],
-            'info_igraca' => ['module' => 'info-igraca.css', 'classes' => ['.stkb-info-igraca', '.stkb-info-igraca-head', '.stkb-info-igraca-meta']],
-            'forma_kluba' => ['module' => 'forma-kluba.css', 'classes' => ['.stkb-forma-kluba', '.stkb-forma-item', '.stkb-forma-win', '.stkb-forma-loss']],
-            'statistika_ekipe' => ['module' => 'statistika-ekipe.css', 'classes' => ['.stkb-stat-ekipe', '.stkb-stat-ekipe-card', '.stkb-stat-ekipe-table', '.stkb-stat-ekipe-table tr.highlight']],
-            'statistika_igraca' => ['module' => 'statistika-igraca.css', 'classes' => ['.stkb-stat-igraca', '.stkb-stat-igraca-cards', '.stkb-stat-igraca-card']],
-            'transferi' => ['module' => 'transferi.css', 'classes' => ['.stkb-transferi', '.stkb-transferi-table', '.stkb-transferi-row']],
-            'vesti_kluba' => ['module' => 'vesti-kluba.css', 'classes' => ['.stoni-vesti-grid', '.stoni-vesti-kartica', '.vest-klub-slika', '.vest-klub-naslov']],
-            'vesti_igraca' => ['module' => 'vesti-kluba.css', 'classes' => ['.stoni-vesti-grid', '.stoni-vesti-kartica', '.vest-klub-slika', '.vest-klub-naslov']],
-            'related_posts' => ['module' => 'related-posts.css', 'classes' => ['.related-posts-grid', '.related-post-item', '.related-post-content']],
-            'prikaz_igraca' => ['module' => 'prikaz-igraca.css', 'classes' => ['.stoni-igraci-list', '.stoni-igrac-card', '.stoni-igrac-row']],
-            'info_takmicenja' => ['module' => 'takmicenje-info.css', 'classes' => ['.stkb-takmicenje-info', '.stkb-takmicenje-info-title', '.stkb-takmicenje-info-meta']],
-            'prikaz_takmicenja' => ['module' => 'takmicenja-prikaz.css', 'classes' => ['.stkb-prikaz-takmicenja', '.stkb-prikaz-takmicenja-card', '.stkb-prikaz-takmicenja-title', '.stkb-prikaz-takmicenja-club-logo']],
-            'prikaz_klubova' => ['module' => 'prikaz-klubova.css', 'classes' => ['.stkb-klubovi', '.stkb-klubovi-grid', '.stkb-klubovi-item', '.stkb-klubovi-filters', '.stkb-klubovi-name']],
+            'opentt_matches_grid' => ['module' => 'utakmice.css', 'classes' => ['.stkb-grid', '.stkb-grid-filters', '.stkb-item', '.team.pobednik', '.team.gubitnik', '.meta']],
+            'opentt_standings_table' => ['module' => 'tabela.css', 'classes' => ['.tabela-lige', '.tabela-lige tr.highlight', '.zone-promote-direct', '.zone-promote-playoff', '.zone-relegate-direct', '.zone-relegate-playoff']],
+            'opentt_match_teams' => ['module' => 'ekipe.css', 'classes' => ['.stkb-ekipe', '.stkb-ekipe-home', '.stkb-ekipe-away', '.stkb-ekipe-score']],
+            'opentt_match_games' => ['module' => 'partije.css', 'classes' => ['.lista-partija', '.partija-row', '.lp2-win', '.lp2-name']],
+            'opentt_top_players' => ['module' => 'rang-lista.css', 'classes' => ['.igrac-rang-lista', '.igrac-card-list', '.igrac-card-list.highlight']],
+            'opentt_club_info' => ['module' => 'info-kluba.css', 'classes' => ['.stkb-info-kluba', '.stkb-info-kluba-head', '.stkb-info-kluba-meta']],
+            'opentt_player_info' => ['module' => 'info-igraca.css', 'classes' => ['.stkb-info-igraca', '.stkb-info-igraca-head', '.stkb-info-igraca-meta']],
+            'opentt_club_form' => ['module' => 'forma-kluba.css', 'classes' => ['.stkb-forma-kluba', '.stkb-forma-item', '.stkb-forma-win', '.stkb-forma-loss']],
+            'opentt_team_stats' => ['module' => 'statistika-ekipe.css', 'classes' => ['.stkb-stat-ekipe', '.stkb-stat-ekipe-card', '.stkb-stat-ekipe-table', '.stkb-stat-ekipe-table tr.highlight']],
+            'opentt_player_stats' => ['module' => 'statistika-igraca.css', 'classes' => ['.stkb-stat-igraca', '.stkb-stat-igraca-cards', '.stkb-stat-igraca-card']],
+            'opentt_player_transfers' => ['module' => 'transferi.css', 'classes' => ['.stkb-transferi', '.stkb-transferi-table', '.stkb-transferi-row']],
+            'opentt_club_news' => ['module' => 'vesti-kluba.css', 'classes' => ['.stoni-vesti-grid', '.stoni-vesti-kartica', '.vest-klub-slika', '.vest-klub-naslov']],
+            'opentt_player_news' => ['module' => 'vesti-kluba.css', 'classes' => ['.stoni-vesti-grid', '.stoni-vesti-kartica', '.vest-klub-slika', '.vest-klub-naslov']],
+            'opentt_related_posts' => ['module' => 'related-posts.css', 'classes' => ['.related-posts-grid', '.related-post-item', '.related-post-content']],
+            'opentt_players' => ['module' => 'prikaz-igraca.css', 'classes' => ['.stoni-igraci-list', '.stoni-igrac-card', '.stoni-igrac-row']],
+            'opentt_competition_info' => ['module' => 'takmicenje-info.css', 'classes' => ['.stkb-takmicenje-info', '.stkb-takmicenje-info-title', '.stkb-takmicenje-info-meta']],
+            'opentt_competitions' => ['module' => 'takmicenja-prikaz.css', 'classes' => ['.stkb-prikaz-takmicenja', '.stkb-prikaz-takmicenja-card', '.stkb-prikaz-takmicenja-title', '.stkb-prikaz-takmicenja-club-logo']],
+            'opentt_clubs' => ['module' => 'prikaz-klubova.css', 'classes' => ['.stkb-klubovi', '.stkb-klubovi-grid', '.stkb-klubovi-item', '.stkb-klubovi-filters', '.stkb-klubovi-name']],
         ];
     }
 

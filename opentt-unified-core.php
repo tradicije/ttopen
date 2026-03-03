@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once __DIR__ . '/includes/class-stkb-unified-core.php';
+require_once __DIR__ . '/includes/class-opentt-unified-core.php';
 
 register_activation_hook(__FILE__, function () {
     STKB_Unified_Core::activate(__FILE__);

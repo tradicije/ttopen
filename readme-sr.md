@@ -61,28 +61,28 @@ Ključna arhitekturna odluka:
 
 ### Frontend (shortcode sistem)
 
-OpenTT zadržava kompatibilnost sa legacy shortcode-ovima uz novi DB model.
+OpenTT koristi standardizovane engleske `opentt_*` shortcode nazive uz novi DB model.
 
 Primeri:
 
-- `[prikaz_utakmica_grid]`
-- `[prikaz_tabela]`
-- `[lista_partija_nova]`
-- `[h2h]`
-- `[mvp]`
-- `[izvestaj_utakmice]`
-- `[snimak_utakmice]`
-- `[prikaz_klubova]`
-- `[prikaz_igraca]`
-- `[info_kluba]`
-- `[info_igraca]`
-- `[top_igraci_lista]`
-- `[statistika_igraca]`
-- `[statistika_ekipe]`
-- `[transferi]`
-- `[info_takmicenja]`
-- `[prikaz_takmicenja]`
-- `[vesti_kluba]`, `[vesti_igraca]`
+- `[opentt_matches_grid]`
+- `[opentt_standings_table]`
+- `[opentt_match_games]`
+- `[opentt_h2h]`
+- `[opentt_mvp]`
+- `[opentt_match_report]`
+- `[opentt_match_video]`
+- `[opentt_clubs]`
+- `[opentt_players]`
+- `[opentt_club_info]`
+- `[opentt_player_info]`
+- `[opentt_top_players]`
+- `[opentt_player_stats]`
+- `[opentt_team_stats]`
+- `[opentt_player_transfers]`
+- `[opentt_competition_info]`
+- `[opentt_competitions]`
+- `[opentt_club_news]`, `[opentt_player_news]`
 
 ## Model podataka
 
