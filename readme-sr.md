@@ -88,9 +88,9 @@ Primeri:
 
 OpenTT koristi namenske DB tabele za meč podatke:
 
-- `wp_stkb_matches`
-- `wp_stkb_games`
-- `wp_stkb_sets`
+- `wp_opentt_matches`
+- `wp_opentt_games`
+- `wp_opentt_sets`
 
 Klubovi i igrači ostaju na CPT-ovima (`klub`, `igrac`) zbog kompatibilnosti i uredničkog workflow-a.
 

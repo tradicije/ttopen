@@ -14,22 +14,26 @@ All notable changes for the OpenTT plugin.
 - Refactor Phase 3 (part 2): extracted shortcode statistics/query methods into new `includes/class-opentt-unified-shortcode-stats-query-service.php`.
 - Refactor Phase 3 (part 2): moved remaining read-only stats/data methods from shortcode trait to stats service via delegations (`db_get_top_players_data`, `db_get_played_matches_count_by_club`, competition/player/club season lookups, team stats, MVP stats, competition club IDs).
 - Wired the new shortcode stats query service into core bootstrap includes.
-- Refactor Core admin actions (matches): extracted match/game/set admin action handlers into new `includes/class-opentt-unified-admin-match-actions.php` and kept `STKB_Unified_Core` methods as delegating wrappers for backward-compatible hooks.
-- Refactor Core admin actions (clubs/players): extracted club/player save/delete/bulk handlers into new `includes/class-opentt-unified-admin-club-player-actions.php` and kept `STKB_Unified_Core` methods as delegating wrappers for backward-compatible hooks.
+- Refactor Core admin actions (matches): extracted match/game/set admin action handlers into new `includes/class-opentt-unified-admin-match-actions.php` and kept `OpenTT_Unified_Core` methods as delegating wrappers for backward-compatible hooks.
+- Refactor Core admin actions (clubs/players): extracted club/player save/delete/bulk handlers into new `includes/class-opentt-unified-admin-club-player-actions.php` and kept `OpenTT_Unified_Core` methods as delegating wrappers for backward-compatible hooks.
 - BREAKING: renamed all public shortcodes to English `opentt_*` tags and removed legacy tag registrations from runtime.
 - Updated plugin fallback/template shortcode usage and shortcode catalog/CSS reference keys to the new `opentt_*` tags.
 - Added SQL migration script for existing content: `migrations/2026-03-03-shortcode-tags-to-opentt.sql`.
 - BREAKING: renamed all PHP source filenames from `stkb` prefix to `opentt` prefix (root bootstrap, core/services/helpers/modules/trait) and updated all internal include paths accordingly.
+- BREAKING: renamed internal PHP symbols from `STKB_Unified_*` to `OpenTT_Unified_*` across core/services/modules/templates.
+- BREAKING: renamed internal hook/nonce/action/option/transient keys from `stkb_unified_*` to `opentt_unified_*`.
+- BREAKING: renamed and translated competition meta keys from Serbian `stkb_pravila_*` to English `opentt_competition_*`.
+- Added SQL migration script for internal key rename: `migrations/2026-03-03-internal-keys-to-opentt.sql`.
 - Updated `readme.md` and `readme-sr.md`: removed top-level `# OpenTT` heading and added centered root logo (`opentt-logo.png`) at the top.
 
 ### 2026-03-02
 
 #### Changed
 
-- Refactor Phase 1 completed: extracted shared read-only parse/format helpers from `STKB_Unified_Core` and shortcode trait into new `includes/class-opentt-unified-readonly-helpers.php`.
-- Refactor Phase 1: kept backward compatibility by preserving existing method signatures in `STKB_Unified_Core` and `STKB_Unified_Shortcodes_Trait` and delegating to the new helper class.
+- Refactor Phase 1 completed: extracted shared read-only parse/format helpers from `OpenTT_Unified_Core` and shortcode trait into new `includes/class-opentt-unified-readonly-helpers.php`.
+- Refactor Phase 1: kept backward compatibility by preserving existing method signatures in `OpenTT_Unified_Core` and `OpenTT_Unified_Shortcodes_Trait` and delegating to the new helper class.
 - Refactor Phase 2 completed: extracted admin read-only UI/data helpers (dropdown builders, municipality/country option catalogs, country label/flag utilities, player index helpers) into new `includes/class-opentt-unified-admin-readonly-helpers.php`.
-- Refactor Phase 2: updated `STKB_Unified_Core` to delegate admin read-only helper methods to the new admin helper class without changing external behavior.
+- Refactor Phase 2: updated `OpenTT_Unified_Core` to delegate admin read-only helper methods to the new admin helper class without changing external behavior.
 - Reduced monolithic class size by moving non-mutating helper logic out of `includes/class-opentt-unified-core.php`.
 
 ### 2026-03-01
@@ -98,5 +102,5 @@ All notable changes for the OpenTT plugin.
 
 ## Notes
 
-- Internal class/function names intentionally remain unchanged for compatibility.
+- Internal class/function names are now standardized to the `OpenTT_*` naming scheme.
 - This changelog is now maintained in English for public release workflow.

@@ -4,12 +4,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-final class STKB_Unified_Admin_Match_Actions
+final class OpenTT_Unified_Admin_Match_Actions
 {
     public static function handle_save_match()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_save_match');
+        check_admin_referer('opentt_unified_save_match');
         global $wpdb;
         $table = $wpdb->prefix . 'stkb_matches';
 
@@ -20,8 +20,8 @@ final class STKB_Unified_Admin_Match_Actions
         if ($competition_rule_id > 0) {
             $rule_post = get_post($competition_rule_id);
             if ($rule_post && $rule_post->post_type === 'pravilo_takmicenja') {
-                $liga = sanitize_title((string) get_post_meta($competition_rule_id, 'stkb_pravila_liga_slug', true));
-                $sezona = sanitize_title((string) get_post_meta($competition_rule_id, 'stkb_pravila_sezona_slug', true));
+                $liga = sanitize_title((string) get_post_meta($competition_rule_id, 'opentt_competition_league_slug', true));
+                $sezona = sanitize_title((string) get_post_meta($competition_rule_id, 'opentt_competition_season_slug', true));
             }
         }
         if ($liga === '') {
@@ -118,7 +118,7 @@ final class STKB_Unified_Admin_Match_Actions
         if ($id <= 0) {
             wp_die('Nedostaje ID.');
         }
-        check_admin_referer('stkb_unified_delete_match_' . $id);
+        check_admin_referer('opentt_unified_delete_match_' . $id);
 
         global $wpdb;
         $matches = $wpdb->prefix . 'stkb_matches';
@@ -139,7 +139,7 @@ final class STKB_Unified_Admin_Match_Actions
     public static function handle_delete_matches_bulk_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_delete_matches_bulk');
+        check_admin_referer('opentt_unified_delete_matches_bulk');
 
         $ids = isset($_POST['match_ids']) && is_array($_POST['match_ids']) ? array_map('intval', (array) $_POST['match_ids']) : [];
         $ids = array_values(array_unique(array_filter($ids, static function ($v) {
@@ -194,7 +194,7 @@ final class STKB_Unified_Admin_Match_Actions
     public static function handle_save_game()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_save_game');
+        check_admin_referer('opentt_unified_save_game');
         global $wpdb;
         $table = $wpdb->prefix . 'stkb_games';
         $matches_table = $wpdb->prefix . 'stkb_matches';
@@ -306,7 +306,7 @@ final class STKB_Unified_Admin_Match_Actions
     public static function handle_save_games_batch()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_save_games_batch');
+        check_admin_referer('opentt_unified_save_games_batch');
         global $wpdb;
         $games_table = $wpdb->prefix . 'stkb_games';
         $sets_table = $wpdb->prefix . 'stkb_sets';
@@ -470,7 +470,7 @@ final class STKB_Unified_Admin_Match_Actions
         if ($id <= 0 || $match_id <= 0) {
             wp_die('Nedostaje ID.');
         }
-        check_admin_referer('stkb_unified_delete_game_' . $id);
+        check_admin_referer('opentt_unified_delete_game_' . $id);
 
         global $wpdb;
         $games = $wpdb->prefix . 'stkb_games';
@@ -485,7 +485,7 @@ final class STKB_Unified_Admin_Match_Actions
     public static function handle_save_set()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_save_set');
+        check_admin_referer('opentt_unified_save_set');
         global $wpdb;
         $table = $wpdb->prefix . 'stkb_sets';
 
@@ -517,7 +517,7 @@ final class STKB_Unified_Admin_Match_Actions
         if ($id <= 0 || $match_id <= 0) {
             wp_die('Nedostaje ID.');
         }
-        check_admin_referer('stkb_unified_delete_set_' . $id);
+        check_admin_referer('opentt_unified_delete_set_' . $id);
         global $wpdb;
         $table = $wpdb->prefix . 'stkb_sets';
         $wpdb->delete($table, ['id' => $id]);
@@ -527,7 +527,7 @@ final class STKB_Unified_Admin_Match_Actions
 
     private static function require_cap()
     {
-        if (!current_user_can(STKB_Unified_Core::CAP)) {
+        if (!current_user_can(OpenTT_Unified_Core::CAP)) {
             wp_die('Nemaš dozvolu za ovu akciju.');
         }
     }
@@ -535,8 +535,8 @@ final class STKB_Unified_Admin_Match_Actions
     private static function admin_notice_url($url, $type, $message)
     {
         return add_query_arg([
-            'stkb_notice' => sanitize_key((string) $type),
-            'stkb_msg' => (string) $message,
+            'opentt_notice' => sanitize_key((string) $type),
+            'opentt_msg' => (string) $message,
         ], $url);
     }
 
@@ -564,12 +564,12 @@ final class STKB_Unified_Admin_Match_Actions
             'post_status' => ['publish', 'draft', 'pending', 'private'],
             'meta_query' => [
                 [
-                    'key' => 'stkb_pravila_liga_slug',
+                    'key' => 'opentt_competition_league_slug',
                     'value' => $liga_slug,
                     'compare' => '=',
                 ],
                 [
-                    'key' => 'stkb_pravila_sezona_slug',
+                    'key' => 'opentt_competition_season_slug',
                     'value' => $sezona_slug,
                     'compare' => '=',
                 ],
@@ -580,7 +580,7 @@ final class STKB_Unified_Admin_Match_Actions
 
     private static function match_competition_format($liga_slug, $sezona_slug)
     {
-        $rule = STKB_Unified_Core::get_competition_rule_data($liga_slug, $sezona_slug);
+        $rule = OpenTT_Unified_Core::get_competition_rule_data($liga_slug, $sezona_slug);
         if (is_array($rule)) {
             $format = (string) ($rule['format_partija'] ?? '');
             if ($format === 'format_b') {

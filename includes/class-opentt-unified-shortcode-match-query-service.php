@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-final class STKB_Unified_Shortcode_Match_Query_Service
+final class OpenTT_Unified_Shortcode_Match_Query_Service
 {
     public static function db_get_matches($args)
     {

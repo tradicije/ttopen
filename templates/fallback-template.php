@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$content = class_exists('STKB_Unified_Core') ? STKB_Unified_Core::render_auto_fallback_content() : '';
+$content = class_exists('OpenTT_Unified_Core') ? OpenTT_Unified_Core::render_auto_fallback_content() : '';
 if ($content === '') {
     status_header(404);
     nocache_headers();

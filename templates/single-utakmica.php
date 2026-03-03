@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$ctx = class_exists('STKB_Unified_Core') ? STKB_Unified_Core::get_template_match_context() : null;
+$ctx = class_exists('OpenTT_Unified_Core') ? OpenTT_Unified_Core::get_template_match_context() : null;
 if (!$ctx) {
     status_header(404);
     nocache_headers();

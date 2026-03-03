@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-final class STKB_Unified_Readonly_Helpers
+final class OpenTT_Unified_Readonly_Helpers
 {
     public static function parse_date_to_sql($raw)
     {

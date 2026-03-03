@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-final class STKB_Unified_Shortcode_Stats_Query_Service
+final class OpenTT_Unified_Shortcode_Stats_Query_Service
 {
     public static function db_get_top_players_data($liga_slug, $sezona_slug = '', $max_kolo = null)
     {
@@ -214,7 +214,7 @@ final class STKB_Unified_Shortcode_Stats_Query_Service
             return null;
         }
 
-        $club_id = STKB_Unified_Admin_Readonly_Helpers::get_player_club_id($player_id);
+        $club_id = OpenTT_Unified_Admin_Readonly_Helpers::get_player_club_id($player_id);
         if ($club_id > 0) {
             $for_club = self::db_get_latest_competition_for_club($club_id);
             if ($for_club) {
@@ -372,8 +372,8 @@ final class STKB_Unified_Shortcode_Stats_Query_Service
         }
 
         usort($history, function ($a, $b) {
-            $ak = STKB_Unified_Readonly_Helpers::season_sort_key((string) ($a['season_slug'] ?? ''));
-            $bk = STKB_Unified_Readonly_Helpers::season_sort_key((string) ($b['season_slug'] ?? ''));
+            $ak = OpenTT_Unified_Readonly_Helpers::season_sort_key((string) ($a['season_slug'] ?? ''));
+            $bk = OpenTT_Unified_Readonly_Helpers::season_sort_key((string) ($b['season_slug'] ?? ''));
             if ($ak === $bk) {
                 return strnatcasecmp((string) ($a['season_slug'] ?? ''), (string) ($b['season_slug'] ?? ''));
             }
@@ -507,8 +507,8 @@ final class STKB_Unified_Shortcode_Stats_Query_Service
         }
 
         usort($rows, function ($a, $b) {
-            $ak = STKB_Unified_Readonly_Helpers::season_sort_key((string) $a);
-            $bk = STKB_Unified_Readonly_Helpers::season_sort_key((string) $b);
+            $ak = OpenTT_Unified_Readonly_Helpers::season_sort_key((string) $a);
+            $bk = OpenTT_Unified_Readonly_Helpers::season_sort_key((string) $b);
             if ($ak === $bk) {
                 return strnatcasecmp((string) $b, (string) $a);
             }
@@ -876,7 +876,7 @@ final class STKB_Unified_Shortcode_Stats_Query_Service
             return 0;
         }
 
-        $games = STKB_Unified_Shortcode_Match_Query_Service::db_get_games_for_match_id($match_id);
+        $games = OpenTT_Unified_Shortcode_Match_Query_Service::db_get_games_for_match_id($match_id);
         if (empty($games)) {
             return 0;
         }
@@ -899,7 +899,7 @@ final class STKB_Unified_Shortcode_Stats_Query_Service
                 continue;
             }
 
-            $sets = STKB_Unified_Shortcode_Match_Query_Service::db_get_sets_for_game_id(intval($g->id));
+            $sets = OpenTT_Unified_Shortcode_Match_Query_Service::db_get_sets_for_game_id(intval($g->id));
             $poeni_d = 0;
             $poeni_g = 0;
             foreach ($sets as $set) {

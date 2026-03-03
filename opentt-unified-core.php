@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 require_once __DIR__ . '/includes/class-opentt-unified-core.php';
 
 register_activation_hook(__FILE__, function () {
-    STKB_Unified_Core::activate(__FILE__);
+    OpenTT_Unified_Core::activate(__FILE__);
 });
 
-STKB_Unified_Core::init(__FILE__);
+OpenTT_Unified_Core::init(__FILE__);

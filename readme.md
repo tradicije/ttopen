@@ -88,9 +88,9 @@ Examples:
 
 OpenTT uses dedicated DB tables for match data:
 
-- `wp_stkb_matches`
-- `wp_stkb_games`
-- `wp_stkb_sets`
+- `wp_opentt_matches`
+- `wp_opentt_games`
+- `wp_opentt_sets`
 
 Clubs and players remain on CPTs (`klub`, `igrac`) for compatibility and editor workflows.
 

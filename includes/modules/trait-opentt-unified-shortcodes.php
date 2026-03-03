@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-trait STKB_Unified_Shortcodes_Trait
+trait OpenTT_Unified_Shortcodes_Trait
 {
     private static function shortcode_title_html($title)
     {
@@ -12,7 +12,7 @@ trait STKB_Unified_Shortcodes_Trait
         if ($title === '') {
             return '';
         }
-        if (class_exists('STKB_Unified_Core') && method_exists('STKB_Unified_Core', 'should_show_shortcode_titles') && !STKB_Unified_Core::should_show_shortcode_titles()) {
+        if (class_exists('OpenTT_Unified_Core') && method_exists('OpenTT_Unified_Core', 'should_show_shortcode_titles') && !OpenTT_Unified_Core::should_show_shortcode_titles()) {
             return '';
         }
         return '<h3 class="stkb-shortcode-title">' . esc_html($title) . '</h3>';
@@ -2754,9 +2754,9 @@ trait STKB_Unified_Shortcodes_Trait
 
         $country_code = strtoupper(sanitize_key((string) get_post_meta($player_id, 'drzavljanstvo', true)));
         if ($country_code !== '') {
-            $country_name = STKB_Unified_Core::country_label_by_code($country_code);
+            $country_name = OpenTT_Unified_Core::country_label_by_code($country_code);
             if ($country_name !== '') {
-                $flag = STKB_Unified_Core::country_flag_emoji($country_code);
+                $flag = OpenTT_Unified_Core::country_flag_emoji($country_code);
                 $country_value = '<span class="stkb-info-igraca-nacionalnost">';
                 if ($flag !== '') {
                     $country_value .= '<span class="flag" aria-hidden="true">' . esc_html($flag) . '</span> ';
@@ -2828,12 +2828,12 @@ trait STKB_Unified_Shortcodes_Trait
 
     private static function normalize_phone_for_href($raw_phone)
     {
-        return STKB_Unified_Readonly_Helpers::normalize_phone_for_href($raw_phone);
+        return OpenTT_Unified_Readonly_Helpers::normalize_phone_for_href($raw_phone);
     }
 
     private static function format_phone_for_display($raw_phone)
     {
-        return STKB_Unified_Readonly_Helpers::format_phone_for_display($raw_phone);
+        return OpenTT_Unified_Readonly_Helpers::format_phone_for_display($raw_phone);
     }
 
     public static function shortcode_show_match_teams($atts = [])
@@ -3097,7 +3097,7 @@ trait STKB_Unified_Shortcodes_Trait
             $selected_season = isset($_GET['stkb_takm_sezona']) ? sanitize_title((string) wp_unslash($_GET['stkb_takm_sezona'])) : '';
             $season_pool = [];
             foreach ($rows as $r) {
-                $s = sanitize_title((string) get_post_meta($r->ID, 'stkb_pravila_sezona_slug', true));
+                $s = sanitize_title((string) get_post_meta($r->ID, 'opentt_competition_season_slug', true));
                 if ($s !== '') {
                     $season_pool[$s] = $s;
                 }
@@ -3120,8 +3120,8 @@ trait STKB_Unified_Shortcodes_Trait
         }
 
         foreach ($rows as $r) {
-            $liga_slug = sanitize_title((string) get_post_meta($r->ID, 'stkb_pravila_liga_slug', true));
-            $sezona_slug = sanitize_title((string) get_post_meta($r->ID, 'stkb_pravila_sezona_slug', true));
+            $liga_slug = sanitize_title((string) get_post_meta($r->ID, 'opentt_competition_league_slug', true));
+            $sezona_slug = sanitize_title((string) get_post_meta($r->ID, 'opentt_competition_season_slug', true));
             if ($liga_slug === '') {
                 continue;
             }
@@ -3131,7 +3131,7 @@ trait STKB_Unified_Shortcodes_Trait
             if ($enable_filter && $selected_season !== '' && $selected_season !== $sezona_slug) {
                 continue;
             }
-            $rank = (int) get_post_meta($r->ID, 'stkb_pravila_rang', true);
+            $rank = (int) get_post_meta($r->ID, 'opentt_competition_rank', true);
             if ($rank < 1 || $rank > 5) {
                 $rank = 3;
             }
@@ -3514,42 +3514,42 @@ trait STKB_Unified_Shortcodes_Trait
 
     private static function db_get_top_players_data($liga_slug, $sezona_slug = '', $max_kolo = null)
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_top_players_data($liga_slug, $sezona_slug, $max_kolo);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_top_players_data($liga_slug, $sezona_slug, $max_kolo);
     }
 
     private static function db_get_played_matches_count_by_club($liga_slug, $sezona_slug = '', $max_kolo = null)
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_played_matches_count_by_club($liga_slug, $sezona_slug, $max_kolo);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_played_matches_count_by_club($liga_slug, $sezona_slug, $max_kolo);
     }
 
     private static function db_get_latest_competition_with_games()
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_latest_competition_with_games();
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_latest_competition_with_games();
     }
 
     private static function db_get_latest_competition_for_player($player_id)
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_latest_competition_for_player($player_id);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_latest_competition_for_player($player_id);
     }
 
     private static function db_get_latest_competition_for_club($club_id)
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_latest_competition_for_club($club_id);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_latest_competition_for_club($club_id);
     }
 
     private static function db_get_recent_club_matches($club_id, $limit = 5)
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_recent_club_matches($club_id, $limit);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_recent_club_matches($club_id, $limit);
     }
 
     private static function db_get_player_season_club_history($player_id)
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_player_season_club_history($player_id);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_player_season_club_history($player_id);
     }
 
     private static function season_sort_key($season_slug)
     {
-        return STKB_Unified_Readonly_Helpers::season_sort_key($season_slug);
+        return OpenTT_Unified_Readonly_Helpers::season_sort_key($season_slug);
     }
 
     private static function build_player_stints($history)
@@ -3588,42 +3588,42 @@ trait STKB_Unified_Shortcodes_Trait
 
     private static function db_get_player_stats($player_id, $season_slug = '')
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_player_stats($player_id, $season_slug);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_player_stats($player_id, $season_slug);
     }
 
     private static function db_get_player_season_options($player_id)
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_player_season_options($player_id);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_player_season_options($player_id);
     }
 
     private static function db_get_club_season_options($club_id)
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_club_season_options($club_id);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_club_season_options($club_id);
     }
 
     private static function db_get_latest_liga_for_player_and_season($player_id, $season_slug = '')
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_latest_liga_for_player_and_season($player_id, $season_slug);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_latest_liga_for_player_and_season($player_id, $season_slug);
     }
 
     private static function db_get_latest_liga_for_club_and_season($club_id, $season_slug = '')
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_latest_liga_for_club_and_season($club_id, $season_slug);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_latest_liga_for_club_and_season($club_id, $season_slug);
     }
 
     private static function db_get_club_team_stats($club_id, $season_slug = '')
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_club_team_stats($club_id, $season_slug);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_club_team_stats($club_id, $season_slug);
     }
 
     private static function db_get_club_season_best_player_by_success($club_id, $season_slug)
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_club_season_best_player_by_success($club_id, $season_slug);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_club_season_best_player_by_success($club_id, $season_slug);
     }
 
     private static function db_get_competition_club_ids($liga_slug, $sezona_slug = '')
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_competition_club_ids($liga_slug, $sezona_slug);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_competition_club_ids($liga_slug, $sezona_slug);
     }
 
     private static function db_build_standings_for_competition($liga_slug, $sezona_slug = '', $max_kolo = null)
@@ -3803,12 +3803,12 @@ trait STKB_Unified_Shortcodes_Trait
 
     private static function db_get_player_mvp_count($player_id, $season_slug = '')
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_player_mvp_count($player_id, $season_slug);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_player_mvp_count($player_id, $season_slug);
     }
 
     private static function db_get_match_mvp_player_id($match_id)
     {
-        return STKB_Unified_Shortcode_Stats_Query_Service::db_get_match_mvp_player_id($match_id);
+        return OpenTT_Unified_Shortcode_Stats_Query_Service::db_get_match_mvp_player_id($match_id);
     }
 
     private static function render_top_player_card_list($igrac_id, $rank, $info, $highlight = false)
@@ -3964,37 +3964,37 @@ trait STKB_Unified_Shortcodes_Trait
 
     private static function db_get_matches($args)
     {
-        return STKB_Unified_Shortcode_Match_Query_Service::db_get_matches($args);
+        return OpenTT_Unified_Shortcode_Match_Query_Service::db_get_matches($args);
     }
 
     private static function db_get_match_by_legacy_id($legacy_id)
     {
-        return STKB_Unified_Shortcode_Match_Query_Service::db_get_match_by_legacy_id($legacy_id);
+        return OpenTT_Unified_Shortcode_Match_Query_Service::db_get_match_by_legacy_id($legacy_id);
     }
 
     private static function db_get_match_by_keys($liga_slug, $sezona_slug, $kolo_slug, $slug)
     {
-        return STKB_Unified_Shortcode_Match_Query_Service::db_get_match_by_keys($liga_slug, $sezona_slug, $kolo_slug, $slug);
+        return OpenTT_Unified_Shortcode_Match_Query_Service::db_get_match_by_keys($liga_slug, $sezona_slug, $kolo_slug, $slug);
     }
 
     private static function db_get_h2h_matches($current_match_db_id, $home_club_id, $away_club_id)
     {
-        return STKB_Unified_Shortcode_Match_Query_Service::db_get_h2h_matches($current_match_db_id, $home_club_id, $away_club_id);
+        return OpenTT_Unified_Shortcode_Match_Query_Service::db_get_h2h_matches($current_match_db_id, $home_club_id, $away_club_id);
     }
 
     private static function db_get_games_for_match_id($match_id)
     {
-        return STKB_Unified_Shortcode_Match_Query_Service::db_get_games_for_match_id($match_id);
+        return OpenTT_Unified_Shortcode_Match_Query_Service::db_get_games_for_match_id($match_id);
     }
 
     private static function db_get_sets_for_game_id($game_id)
     {
-        return STKB_Unified_Shortcode_Match_Query_Service::db_get_sets_for_game_id($game_id);
+        return OpenTT_Unified_Shortcode_Match_Query_Service::db_get_sets_for_game_id($game_id);
     }
 
     private static function db_get_latest_liga_for_club($club_id)
     {
-        return STKB_Unified_Shortcode_Match_Query_Service::db_get_latest_liga_for_club($club_id);
+        return OpenTT_Unified_Shortcode_Match_Query_Service::db_get_latest_liga_for_club($club_id);
     }
 
     private static function render_matches_grid_html($rows, $columns, $with_kolo_attr)
@@ -4238,12 +4238,12 @@ trait STKB_Unified_Shortcodes_Trait
 
     private static function display_match_date($match_date)
     {
-        return STKB_Unified_Readonly_Helpers::display_match_date($match_date);
+        return OpenTT_Unified_Readonly_Helpers::display_match_date($match_date);
     }
 
     private static function display_match_date_long($match_date)
     {
-        return STKB_Unified_Readonly_Helpers::display_match_date_long($match_date);
+        return OpenTT_Unified_Readonly_Helpers::display_match_date_long($match_date);
     }
 
     private static function kolo_name_from_slug($slug)
@@ -4261,7 +4261,7 @@ trait STKB_Unified_Shortcodes_Trait
 
     private static function extract_round_no($kolo_slug)
     {
-        return STKB_Unified_Readonly_Helpers::extract_round_no($kolo_slug);
+        return OpenTT_Unified_Readonly_Helpers::extract_round_no($kolo_slug);
     }
 
     private static function render_lp2_player($player_id)

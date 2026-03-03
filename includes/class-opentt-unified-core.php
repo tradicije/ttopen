@@ -17,29 +17,29 @@ require_once __DIR__ . '/class-opentt-unified-admin-club-player-actions.php';
 require_once __DIR__ . '/class-opentt-unified-shortcode-match-query-service.php';
 require_once __DIR__ . '/class-opentt-unified-shortcode-stats-query-service.php';
 
-final class STKB_Unified_Core
+final class OpenTT_Unified_Core
 {
-    use STKB_Unified_Shortcodes_Trait;
+    use OpenTT_Unified_Shortcodes_Trait;
 
     const VERSION = '1.0.0';
     const CAP = 'edit_others_posts';
-    const OPTION_SCHEMA_VERSION = 'stkb_unified_schema_version';
+    const OPTION_SCHEMA_VERSION = 'opentt_unified_schema_version';
     const SCHEMA_VERSION = '2';
-    const OPTION_MIGRATION_STATE = 'stkb_unified_migration_state';
-    const OPTION_VALIDATION_REPORT = 'stkb_unified_validation_report';
-    const OPTION_LEAGUE_SEASON_VALIDATION_REPORT = 'stkb_unified_league_season_validation_report';
-    const OPTION_LEGACY_ID_MAP = 'stkb_unified_legacy_id_map';
-    const OPTION_PLAYER_CITIZENSHIP_BACKFILL_DONE = 'stkb_unified_player_citizenship_backfill_done';
-    const OPTION_CUSTOM_SHORTCODE_CSS = 'stkb_unified_custom_shortcode_css';
-    const OPTION_CUSTOM_SHORTCODE_CSS_MAP = 'stkb_unified_custom_shortcode_css_map';
-    const OPTION_VISUAL_SETTINGS = 'stkb_unified_visual_settings';
-    const OPTION_DEFAULT_PAGES_SETUP_DONE = 'stkb_unified_default_pages_setup_done';
-    const OPTION_ONBOARDING_STATE = 'stkb_unified_onboarding_state';
-    const OPTION_REWRITE_FLUSHED = 'stkb_unified_rewrite_flushed';
-    const OPTION_SHOW_SHORTCODE_TITLES = 'stkb_unified_show_shortcode_titles';
-    const OPTION_IMPORT_PREVIEW = 'stkb_unified_import_preview';
-    const OPTION_COMPETITION_DIAGNOSTICS = 'stkb_unified_competition_diagnostics';
-    const OPTION_ADMIN_UI_LANGUAGE = 'stkb_unified_admin_ui_language';
+    const OPTION_MIGRATION_STATE = 'opentt_unified_migration_state';
+    const OPTION_VALIDATION_REPORT = 'opentt_unified_validation_report';
+    const OPTION_LEAGUE_SEASON_VALIDATION_REPORT = 'opentt_unified_league_season_validation_report';
+    const OPTION_LEGACY_ID_MAP = 'opentt_unified_legacy_id_map';
+    const OPTION_PLAYER_CITIZENSHIP_BACKFILL_DONE = 'opentt_unified_player_citizenship_backfill_done';
+    const OPTION_CUSTOM_SHORTCODE_CSS = 'opentt_unified_custom_shortcode_css';
+    const OPTION_CUSTOM_SHORTCODE_CSS_MAP = 'opentt_unified_custom_shortcode_css_map';
+    const OPTION_VISUAL_SETTINGS = 'opentt_unified_visual_settings';
+    const OPTION_DEFAULT_PAGES_SETUP_DONE = 'opentt_unified_default_pages_setup_done';
+    const OPTION_ONBOARDING_STATE = 'opentt_unified_onboarding_state';
+    const OPTION_REWRITE_FLUSHED = 'opentt_unified_rewrite_flushed';
+    const OPTION_SHOW_SHORTCODE_TITLES = 'opentt_unified_show_shortcode_titles';
+    const OPTION_IMPORT_PREVIEW = 'opentt_unified_import_preview';
+    const OPTION_COMPETITION_DIAGNOSTICS = 'opentt_unified_competition_diagnostics';
+    const OPTION_ADMIN_UI_LANGUAGE = 'opentt_unified_admin_ui_language';
     const MATCH_BLOCK_TEMPLATE_SLUG = 'stkb-match';
 
     private static $plugin_file = '';
@@ -52,11 +52,11 @@ final class STKB_Unified_Core
         self::$plugin_file = $plugin_file;
         self::$plugin_dir = plugin_dir_path($plugin_file);
         self::maybe_migrate_schema();
-        STKB_Unified_Assets_Module::register();
-        STKB_Unified_Admin_Module::register();
-        STKB_Unified_Routing_Module::register();
-        STKB_Unified_Shortcodes_Module::register();
-        STKB_Unified_Legacy_Module::register();
+        OpenTT_Unified_Assets_Module::register();
+        OpenTT_Unified_Admin_Module::register();
+        OpenTT_Unified_Routing_Module::register();
+        OpenTT_Unified_Shortcodes_Module::register();
+        OpenTT_Unified_Legacy_Module::register();
         add_action('init', [__CLASS__, 'maybe_flush_rewrite_rules_once'], 99);
         add_action('init', [__CLASS__, 'maybe_setup_default_pages'], 30);
         add_action('admin_init', [__CLASS__, 'maybe_redirect_to_onboarding']);
@@ -98,7 +98,7 @@ final class STKB_Unified_Core
         }
 
         update_option(self::OPTION_ONBOARDING_STATE, 'pending', false);
-        set_transient('stkb_unified_onboarding_redirect', '1', DAY_IN_SECONDS);
+        set_transient('opentt_unified_onboarding_redirect', '1', DAY_IN_SECONDS);
     }
 
     private static function is_existing_install_detected()
@@ -162,7 +162,7 @@ final class STKB_Unified_Core
             return;
         }
 
-        delete_transient('stkb_unified_onboarding_redirect');
+        delete_transient('opentt_unified_onboarding_redirect');
         wp_safe_redirect(admin_url('admin.php?page=stkb-unified-onboarding'));
         exit;
     }
@@ -1681,8 +1681,8 @@ final class STKB_Unified_Core
         } else {
             echo '<ul>';
             foreach ($latest_competitions as $t) {
-                $liga_slug = (string) get_post_meta((int) $t->ID, 'stkb_pravila_liga_slug', true);
-                $sezona_slug = (string) get_post_meta((int) $t->ID, 'stkb_pravila_sezona_slug', true);
+                $liga_slug = (string) get_post_meta((int) $t->ID, 'opentt_competition_league_slug', true);
+                $sezona_slug = (string) get_post_meta((int) $t->ID, 'opentt_competition_season_slug', true);
                 $edit_url = admin_url('admin.php?page=stkb-unified-add-competition&action=edit&id=' . (int) $t->ID);
                 echo '<li><a href="' . esc_url($edit_url) . '">' . esc_html(self::slug_to_title($liga_slug) . ' / ' . self::slug_to_title($sezona_slug)) . '</a></li>';
             }
@@ -1936,8 +1936,8 @@ JS;
         echo '</form>';
 
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" onsubmit="return confirm(\'Obrisati izabrane utakmice i povezane partije/setove?\')">';
-        wp_nonce_field('stkb_unified_delete_matches_bulk');
-        echo '<input type="hidden" name="action" value="stkb_unified_delete_matches_bulk">';
+        wp_nonce_field('opentt_unified_delete_matches_bulk');
+        echo '<input type="hidden" name="action" value="opentt_unified_delete_matches_bulk">';
         foreach ([
             'liga_slug' => $f_liga,
             'sezona_slug' => $f_sezona,
@@ -1968,8 +1968,8 @@ JS;
             $edit_url = admin_url('admin.php?page=stkb-unified-add-match&action=edit&id=' . (int) $m->id);
             $front_url = self::match_permalink($m);
             $del_url = wp_nonce_url(
-                admin_url('admin-post.php?action=stkb_unified_delete_match&id=' . (int) $m->id),
-                'stkb_unified_delete_match_' . (int) $m->id
+                admin_url('admin-post.php?action=opentt_unified_delete_match&id=' . (int) $m->id),
+                'opentt_unified_delete_match_' . (int) $m->id
             );
 
             echo '<tr>';
@@ -2020,8 +2020,8 @@ JS;
         }
         echo '</form>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" onsubmit="return confirm(\'Obrisati izabrane klubove?\')">';
-        wp_nonce_field('stkb_unified_delete_clubs_bulk');
-        echo '<input type="hidden" name="action" value="stkb_unified_delete_clubs_bulk">';
+        wp_nonce_field('opentt_unified_delete_clubs_bulk');
+        echo '<input type="hidden" name="action" value="opentt_unified_delete_clubs_bulk">';
         echo '<button type="submit" class="button button-link-delete">Obriši izabrane</button>';
         echo '</div>';
         if (!$rows) {
@@ -2039,8 +2039,8 @@ JS;
             $edit_url = admin_url('admin.php?page=stkb-unified-add-club&action=edit&id=' . (int) $c->ID);
             $front_url = get_permalink((int) $c->ID) ?: '';
             $del_url = wp_nonce_url(
-                admin_url('admin-post.php?action=stkb_unified_delete_club&id=' . (int) $c->ID),
-                'stkb_unified_delete_club_' . (int) $c->ID
+                admin_url('admin-post.php?action=opentt_unified_delete_club&id=' . (int) $c->ID),
+                'opentt_unified_delete_club_' . (int) $c->ID
             );
             $opstina = (string) get_post_meta($c->ID, 'opstina', true);
             echo '<tr>';
@@ -2213,8 +2213,8 @@ JS;
         }
         echo '</form>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" onsubmit="return confirm(\'Obrisati izabrane igrače?\')">';
-        wp_nonce_field('stkb_unified_delete_players_bulk');
-        echo '<input type="hidden" name="action" value="stkb_unified_delete_players_bulk">';
+        wp_nonce_field('opentt_unified_delete_players_bulk');
+        echo '<input type="hidden" name="action" value="opentt_unified_delete_players_bulk">';
         echo '<button type="submit" class="button button-link-delete">Obriši izabrane</button>';
         echo '</div>';
         if (!$rows) {
@@ -2246,8 +2246,8 @@ JS;
             $edit_url = admin_url('admin.php?page=stkb-unified-add-player&action=edit&id=' . (int) $p->ID);
             $front_url = get_permalink((int) $p->ID) ?: '';
             $del_url = wp_nonce_url(
-                admin_url('admin-post.php?action=stkb_unified_delete_player&id=' . (int) $p->ID),
-                'stkb_unified_delete_player_' . (int) $p->ID
+                admin_url('admin-post.php?action=opentt_unified_delete_player&id=' . (int) $p->ID),
+                'opentt_unified_delete_player_' . (int) $p->ID
             );
             echo '<tr>';
             echo '<td><input type="checkbox" class="stkb-player-bulk-checkbox" name="player_ids[]" value="' . (int) $p->ID . '" aria-label="Izaberi igrača ' . esc_attr((string) $p->post_title) . '"></td>';
@@ -2288,8 +2288,8 @@ JS;
             $edit_url = admin_url('admin.php?page=stkb-unified-add-league&action=edit&id=' . (int) $t->ID);
             $front_url = get_permalink((int) $t->ID) ?: '';
             $del_url = wp_nonce_url(
-                admin_url('admin-post.php?action=stkb_unified_delete_league&id=' . (int) $t->ID),
-                'stkb_unified_delete_league_' . (int) $t->ID
+                admin_url('admin-post.php?action=opentt_unified_delete_league&id=' . (int) $t->ID),
+                'opentt_unified_delete_league_' . (int) $t->ID
             );
             echo '<tr><td>' . intval($t->ID) . '</td><td>' . esc_html((string) $t->post_title) . '</td><td><code>' . esc_html((string) $t->post_name) . '</code></td><td>';
             echo '<a class="button button-small" href="' . esc_url($edit_url) . '">Uredi</a> ';
@@ -2324,8 +2324,8 @@ JS;
         foreach ($rows as $t) {
             $edit_url = admin_url('admin.php?page=stkb-unified-add-season&action=edit&id=' . (int) $t->ID);
             $del_url = wp_nonce_url(
-                admin_url('admin-post.php?action=stkb_unified_delete_season&id=' . (int) $t->ID),
-                'stkb_unified_delete_season_' . (int) $t->ID
+                admin_url('admin-post.php?action=opentt_unified_delete_season&id=' . (int) $t->ID),
+                'opentt_unified_delete_season_' . (int) $t->ID
             );
 
             echo '<tr><td>' . intval($t->ID) . '</td><td>' . esc_html((string) $t->post_title) . '</td><td><code>' . esc_html((string) $t->post_name) . '</code></td><td>';
@@ -2497,8 +2497,8 @@ HTML;
         self::render_admin_topbar();
         echo '<h1>' . ($match ? 'Uredi utakmicu' : 'Dodaj utakmicu') . '</h1>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-wizard-form" data-stkb-steps="3">';
-        wp_nonce_field('stkb_unified_save_match');
-        echo '<input type="hidden" name="action" value="stkb_unified_save_match">';
+        wp_nonce_field('opentt_unified_save_match');
+        echo '<input type="hidden" name="action" value="opentt_unified_save_match">';
         echo '<input type="hidden" name="id" value="' . esc_attr((string) ($match ? (int) $match->id : 0)) . '">';
         echo '<div class="stkb-wizard-steps"><span class="stkb-step-pill">1. Takmičenje</span><span class="stkb-step-pill">2. Ekipe i rezultat</span><span class="stkb-step-pill">3. Potvrda</span></div>';
         echo '<table class="form-table"><tbody>';
@@ -2550,8 +2550,8 @@ HTML;
             echo '<p class="description">Dubl partija je automatski određena pravilima takmičenja: <strong>#' . (int) $expected_doubles_order . '</strong>.</p>';
 
             echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-panel">';
-            wp_nonce_field('stkb_unified_save_games_batch');
-            echo '<input type="hidden" name="action" value="stkb_unified_save_games_batch">';
+            wp_nonce_field('opentt_unified_save_games_batch');
+            echo '<input type="hidden" name="action" value="opentt_unified_save_games_batch">';
             echo '<input type="hidden" name="match_id" value="' . (int) $match->id . '">';
 
             for ($n = 1; $n <= $max_games; $n++) {
@@ -2669,8 +2669,8 @@ HTML;
         self::render_admin_topbar();
         echo '<h1>' . ($club ? 'Uredi klub' : 'Dodaj klub') . '</h1>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-wizard-form" data-stkb-steps="3">';
-        wp_nonce_field('stkb_unified_save_club');
-        echo '<input type="hidden" name="action" value="stkb_unified_save_club">';
+        wp_nonce_field('opentt_unified_save_club');
+        echo '<input type="hidden" name="action" value="opentt_unified_save_club">';
         echo '<input type="hidden" name="id" value="' . esc_attr((string) $club_id) . '">';
         echo '<div class="stkb-wizard-steps"><span class="stkb-step-pill">1. Osnovno</span><span class="stkb-step-pill">2. Mediji</span><span class="stkb-step-pill">3. Kontakt i detalji</span></div>';
         echo '<table class="form-table"><tbody>';
@@ -2748,8 +2748,8 @@ JS;
         self::render_admin_topbar();
         echo '<h1>' . ($player ? 'Uredi igrača' : 'Dodaj igrača') . '</h1>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-wizard-form" data-stkb-steps="3">';
-        wp_nonce_field('stkb_unified_save_player');
-        echo '<input type="hidden" name="action" value="stkb_unified_save_player">';
+        wp_nonce_field('opentt_unified_save_player');
+        echo '<input type="hidden" name="action" value="opentt_unified_save_player">';
         echo '<input type="hidden" name="id" value="' . esc_attr((string) $player_id) . '">';
         echo '<div class="stkb-wizard-steps"><span class="stkb-step-pill">1. Osnovno</span><span class="stkb-step-pill">2. Klub i slika</span><span class="stkb-step-pill">3. Dodatno</span></div>';
         echo '<table class="form-table"><tbody>';
@@ -2817,8 +2817,8 @@ JS;
 
         echo '<h1>' . ($league ? 'Uredi ligu' : 'Dodaj ligu') . '</h1>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-wizard-form" data-stkb-steps="2">';
-        wp_nonce_field('stkb_unified_save_league');
-        echo '<input type="hidden" name="action" value="stkb_unified_save_league">';
+        wp_nonce_field('opentt_unified_save_league');
+        echo '<input type="hidden" name="action" value="opentt_unified_save_league">';
         echo '<input type="hidden" name="id" value="' . esc_attr((string) ($league ? (int) $league->ID : 0)) . '">';
         echo '<div class="stkb-wizard-steps"><span class="stkb-step-pill">1. Osnovno</span><span class="stkb-step-pill">2. Potvrda</span></div>';
         echo '<table class="form-table"><tbody>';
@@ -2854,8 +2854,8 @@ JS;
         $title = $season ? (string) $season->post_title : '';
         echo '<h1>' . ($season ? 'Uredi sezonu' : 'Dodaj sezonu') . '</h1>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-wizard-form" data-stkb-steps="2">';
-        wp_nonce_field('stkb_unified_save_season');
-        echo '<input type="hidden" name="action" value="stkb_unified_save_season">';
+        wp_nonce_field('opentt_unified_save_season');
+        echo '<input type="hidden" name="action" value="opentt_unified_save_season">';
         echo '<input type="hidden" name="id" value="' . esc_attr((string) ($season ? (int) $season->ID : 0)) . '">';
         echo '<div class="stkb-wizard-steps"><span class="stkb-step-pill">1. Osnovno</span><span class="stkb-step-pill">2. Potvrda</span></div>';
         echo '<table class="form-table"><tbody>';
@@ -2922,33 +2922,33 @@ JS;
         echo '<p style="margin-top:14px">Migracija je idempotentna: isti legacy zapis se ažurira po `legacy_post_id`, ne pravi duplikate.</p>';
 
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="display:inline-block;margin-right:10px">';
-        wp_nonce_field('stkb_unified_validate_import');
-        echo '<input type="hidden" name="action" value="stkb_unified_validate_import">';
+        wp_nonce_field('opentt_unified_validate_import');
+        echo '<input type="hidden" name="action" value="opentt_unified_validate_import">';
         submit_button('Proveri import (validacija)', 'secondary', 'submit', false);
         echo '</form>';
 
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="display:inline-block;margin-right:10px">';
-        wp_nonce_field('stkb_unified_repair_relations');
-        echo '<input type="hidden" name="action" value="stkb_unified_repair_relations">';
+        wp_nonce_field('opentt_unified_repair_relations');
+        echo '<input type="hidden" name="action" value="opentt_unified_repair_relations">';
         submit_button('Auto-fix relacija', 'secondary', 'submit', false);
         echo '</form>';
 
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="display:inline-block;margin-right:10px">';
-        wp_nonce_field('stkb_unified_cleanup_placeholders');
-        echo '<input type="hidden" name="action" value="stkb_unified_cleanup_placeholders">';
+        wp_nonce_field('opentt_unified_cleanup_placeholders');
+        echo '<input type="hidden" name="action" value="opentt_unified_cleanup_placeholders">';
         submit_button('Cleanup placeholder-a', 'secondary', 'submit', false);
         echo '</form>';
 
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="display:inline-block;margin-right:10px">';
-        wp_nonce_field('stkb_unified_migrate_batch');
-        echo '<input type="hidden" name="action" value="stkb_unified_migrate_batch">';
+        wp_nonce_field('opentt_unified_migrate_batch');
+        echo '<input type="hidden" name="action" value="opentt_unified_migrate_batch">';
         echo '<input type="hidden" name="batch" value="100">';
         submit_button('Pokreni 1 batch (100 utakmica)', 'primary', 'submit', false);
         echo '</form>';
 
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="display:inline-block">';
-        wp_nonce_field('stkb_unified_reset_migration');
-        echo '<input type="hidden" name="action" value="stkb_unified_reset_migration">';
+        wp_nonce_field('opentt_unified_reset_migration');
+        echo '<input type="hidden" name="action" value="opentt_unified_reset_migration">';
         submit_button('Reset offseta', 'secondary', 'submit', false);
         echo '</form>';
 
@@ -3017,30 +3017,30 @@ JS;
         echo '<div class="stkb-table-scroll">';
         echo '<table id="stkb-competitions-table" class="widefat striped stkb-live-search-table"><thead><tr><th>Liga</th><th>Sezona</th><th>Rang</th><th>Savez</th><th>Bodovanje</th><th>Format</th><th>Prom/isp</th><th>Akcije</th></tr></thead><tbody>';
         foreach ($rows as $r) {
-            $liga_slug = (string) get_post_meta($r->ID, 'stkb_pravila_liga_slug', true);
-            $sezona_slug = (string) get_post_meta($r->ID, 'stkb_pravila_sezona_slug', true);
-            $rank = (int) get_post_meta($r->ID, 'stkb_pravila_rang', true);
+            $liga_slug = (string) get_post_meta($r->ID, 'opentt_competition_league_slug', true);
+            $sezona_slug = (string) get_post_meta($r->ID, 'opentt_competition_season_slug', true);
+            $rank = (int) get_post_meta($r->ID, 'opentt_competition_rank', true);
             if ($rank < 1 || $rank > 5) {
                 $rank = 3;
             }
-            $savez_code = self::normalize_competition_federation((string) get_post_meta($r->ID, 'stkb_pravila_savez', true));
+            $savez_code = self::normalize_competition_federation((string) get_post_meta($r->ID, 'opentt_competition_federation', true));
             $savez = self::competition_federation_data($savez_code);
-            $bodovanje = (string) get_post_meta($r->ID, 'stkb_pravila_bodovanje_tip', true);
+            $bodovanje = (string) get_post_meta($r->ID, 'opentt_competition_scoring_type', true);
             if ($bodovanje === '') {
                 $bodovanje = '2-1';
             }
-            $format = (string) get_post_meta($r->ID, 'stkb_pravila_format_partija', true);
+            $format = (string) get_post_meta($r->ID, 'opentt_competition_match_format', true);
             if ($format === '') {
                 $format = 'format_a';
             }
-            $promo = (int) get_post_meta($r->ID, 'stkb_pravila_promocija_broj', true);
-            $promo_baraz = (int) get_post_meta($r->ID, 'stkb_pravila_promocija_baraz_broj', true);
-            $releg = (int) get_post_meta($r->ID, 'stkb_pravila_ispadanje_broj', true);
-            $releg_razigravanje = (int) get_post_meta($r->ID, 'stkb_pravila_ispadanje_razigravanje_broj', true);
+            $promo = (int) get_post_meta($r->ID, 'opentt_competition_promotion_slots', true);
+            $promo_baraz = (int) get_post_meta($r->ID, 'opentt_competition_promotion_playoff_slots', true);
+            $releg = (int) get_post_meta($r->ID, 'opentt_competition_relegation_slots', true);
+            $releg_razigravanje = (int) get_post_meta($r->ID, 'opentt_competition_relegation_playoff_slots', true);
             $edit_url = admin_url('admin.php?page=stkb-unified-add-competition&action=edit&id=' . (int) $r->ID);
             $del_url = wp_nonce_url(
-                admin_url('admin-post.php?action=stkb_unified_delete_competition_rule&id=' . (int) $r->ID),
-                'stkb_unified_delete_competition_rule_' . (int) $r->ID
+                admin_url('admin-post.php?action=opentt_unified_delete_competition_rule&id=' . (int) $r->ID),
+                'opentt_unified_delete_competition_rule_' . (int) $r->ID
             );
 
             echo '<tr><td><code>' . esc_html($liga_slug) . '</code></td><td><code>' . esc_html($sezona_slug) . '</code></td><td>' . esc_html((string) $rank) . '</td><td>';
@@ -3075,20 +3075,20 @@ JS;
             }
         }
 
-        $liga_slug = $rule ? (string) get_post_meta($rule->ID, 'stkb_pravila_liga_slug', true) : '';
-        $sezona_slug = $rule ? (string) get_post_meta($rule->ID, 'stkb_pravila_sezona_slug', true) : '';
+        $liga_slug = $rule ? (string) get_post_meta($rule->ID, 'opentt_competition_league_slug', true) : '';
+        $sezona_slug = $rule ? (string) get_post_meta($rule->ID, 'opentt_competition_season_slug', true) : '';
         $liga_name = self::slug_to_title($liga_slug);
         $sezona_name = self::slug_to_title($sezona_slug);
-        $rank = $rule ? (int) get_post_meta($rule->ID, 'stkb_pravila_rang', true) : 3;
+        $rank = $rule ? (int) get_post_meta($rule->ID, 'opentt_competition_rank', true) : 3;
         if ($rank < 1 || $rank > 5) {
             $rank = 3;
         }
-        $promo = $rule ? (int) get_post_meta($rule->ID, 'stkb_pravila_promocija_broj', true) : 0;
-        $promo_baraz = $rule ? (int) get_post_meta($rule->ID, 'stkb_pravila_promocija_baraz_broj', true) : 0;
-        $releg = $rule ? (int) get_post_meta($rule->ID, 'stkb_pravila_ispadanje_broj', true) : 0;
-        $releg_razigravanje = $rule ? (int) get_post_meta($rule->ID, 'stkb_pravila_ispadanje_razigravanje_broj', true) : 0;
-        $scoring = $rule ? (string) get_post_meta($rule->ID, 'stkb_pravila_bodovanje_tip', true) : '2-1';
-        $savez_code = $rule ? self::normalize_competition_federation((string) get_post_meta($rule->ID, 'stkb_pravila_savez', true)) : 'STSS';
+        $promo = $rule ? (int) get_post_meta($rule->ID, 'opentt_competition_promotion_slots', true) : 0;
+        $promo_baraz = $rule ? (int) get_post_meta($rule->ID, 'opentt_competition_promotion_playoff_slots', true) : 0;
+        $releg = $rule ? (int) get_post_meta($rule->ID, 'opentt_competition_relegation_slots', true) : 0;
+        $releg_razigravanje = $rule ? (int) get_post_meta($rule->ID, 'opentt_competition_relegation_playoff_slots', true) : 0;
+        $scoring = $rule ? (string) get_post_meta($rule->ID, 'opentt_competition_scoring_type', true) : '2-1';
+        $savez_code = $rule ? self::normalize_competition_federation((string) get_post_meta($rule->ID, 'opentt_competition_federation', true)) : 'STSS';
         if ($savez_code === '') {
             $savez_code = 'STSS';
         }
@@ -3097,7 +3097,7 @@ JS;
         if ($scoring === '') {
             $scoring = '2-1';
         }
-        $format = $rule ? (string) get_post_meta($rule->ID, 'stkb_pravila_format_partija', true) : 'format_a';
+        $format = $rule ? (string) get_post_meta($rule->ID, 'opentt_competition_match_format', true) : 'format_a';
         if ($format === '') {
             $format = 'format_a';
         }
@@ -3106,8 +3106,8 @@ JS;
         self::render_admin_topbar();
         echo '<h1>' . ($rule ? 'Uredi takmičenje' : 'Dodaj takmičenje') . '</h1>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-wizard-form" data-stkb-steps="3">';
-        wp_nonce_field('stkb_unified_save_competition_rule');
-        echo '<input type="hidden" name="action" value="stkb_unified_save_competition_rule">';
+        wp_nonce_field('opentt_unified_save_competition_rule');
+        echo '<input type="hidden" name="action" value="opentt_unified_save_competition_rule">';
         echo '<input type="hidden" name="id" value="' . esc_attr((string) ($rule ? (int) $rule->ID : 0)) . '">';
         echo '<div class="stkb-wizard-steps"><span class="stkb-step-pill">1. Kontekst</span><span class="stkb-step-pill">2. Pravila</span><span class="stkb-step-pill">3. Potvrda</span></div>';
         echo '<table class="form-table"><tbody>';
@@ -3295,8 +3295,8 @@ JS;
         echo '<h2>Jezik admin interfejsa</h2>';
         echo '<p class="description">Izaberi jezik za OpenTT admin interfejs.</p>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-settings-css-form">';
-        wp_nonce_field('stkb_unified_save_settings');
-        echo '<input type="hidden" name="action" value="stkb_unified_save_settings">';
+        wp_nonce_field('opentt_unified_save_settings');
+        echo '<input type="hidden" name="action" value="opentt_unified_save_settings">';
         echo '<input type="hidden" name="stkb_settings_section" value="ui_lang">';
         $available_langs = self::get_available_admin_ui_languages();
         echo '<label><span>Jezik</span><select name="admin_ui_language">';
@@ -3365,8 +3365,8 @@ JS;
         echo '<h2>Brisanje svih podataka</h2>';
         echo '<p class="description">Ova akcija briše sve OpenTT podatke (DB tabele, OpenTT opcije, klubove, igrače, takmičenja i povezane taksonomije). Akcija je nepovratna.</p>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-delete-data-form">';
-        wp_nonce_field('stkb_unified_delete_all_data');
-        echo '<input type="hidden" name="action" value="stkb_unified_delete_all_data">';
+        wp_nonce_field('opentt_unified_delete_all_data');
+        echo '<input type="hidden" name="action" value="opentt_unified_delete_all_data">';
         echo '<label><strong>Potvrda:</strong> upiši tačno <code>saglasan sam</code></label>';
         echo '<input type="text" name="stkb_confirm_phrase" class="regular-text" placeholder="saglasan sam" autocomplete="off">';
         echo '<div class="stkb-settings-actions">';
@@ -3457,8 +3457,8 @@ HTML;
         echo '<h2>Globalna stilizacija</h2>';
         echo '<p class="description">Za manje napredne korisnike: ovde menjaš osnovni izgled svih OpenTT blokova bez pisanja CSS-a.</p>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-settings-css-form">';
-        wp_nonce_field('stkb_unified_save_settings');
-        echo '<input type="hidden" name="action" value="stkb_unified_save_settings">';
+        wp_nonce_field('opentt_unified_save_settings');
+        echo '<input type="hidden" name="action" value="opentt_unified_save_settings">';
         echo '<input type="hidden" name="stkb_settings_section" value="visual">';
         echo '<div class="stkb-visual-grid">';
         echo '<label><span>Boja pozadine kontejnera</span><small>Menja pozadinu kartica i glavnih blokova shortcode-ova.</small><input type="text" name="visual_settings[container_bg]" value="' . esc_attr((string) $visual['container_bg']) . '" class="stkb-color-field"></label>';
@@ -3480,8 +3480,8 @@ HTML;
         echo '<h2>CSS Override (Shortcode-ovi)</h2>';
         echo '<p class="description">Napredna sekcija: puni CSS override (globalni + po shortcode-u). Uvek ima prioritet nad globalnom stilizacijom.</p>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-settings-css-form">';
-        wp_nonce_field('stkb_unified_save_settings');
-        echo '<input type="hidden" name="action" value="stkb_unified_save_settings">';
+        wp_nonce_field('opentt_unified_save_settings');
+        echo '<input type="hidden" name="action" value="opentt_unified_save_settings">';
         echo '<input type="hidden" name="stkb_settings_section" value="css">';
         echo '<h3>Globalni CSS Override</h3>';
         echo '<textarea name="custom_shortcode_css" class="stkb-settings-css-editor" spellcheck="false" placeholder=".stkb-item { border-radius: 12px; }">' . esc_textarea($custom_css) . '</textarea>';
@@ -3592,8 +3592,8 @@ HTML;
         echo '<h2>Izvezi podatke</h2>';
         echo '<p class="description">Izaberi šta želiš da izvezeš. Dobijaš jedan JSON fajl koji možeš kasnije uvesti u OpenTT. Featured slike (grbovi, slike igrača, logo takmičenja) se izvoze zajedno sa podacima.</p>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
-        wp_nonce_field('stkb_unified_export_data');
-        echo '<input type="hidden" name="action" value="stkb_unified_export_data">';
+        wp_nonce_field('opentt_unified_export_data');
+        echo '<input type="hidden" name="action" value="opentt_unified_export_data">';
         self::render_transfer_sections_checkboxes('sections', $all_sections);
         echo '<div class="stkb-settings-actions">';
         echo '<button type="button" class="button" onclick="(function(btn){var f=btn.form;f.querySelectorAll(\'input[type=checkbox][name=\\\'sections[]\\\']\').forEach(function(c){c.checked=true;});})(this)">Izaberi sve</button>';
@@ -3607,8 +3607,8 @@ HTML;
         echo '<h2>Uvezi podatke</h2>';
         echo '<p class="description">1) Izaberi JSON fajl i sekcije. 2) Pokreni validaciju. 3) Pregledaj rezultate i potvrdi uvoz. Featured slike iz paketa će biti automatski uvezene i povezane.</p>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" enctype="multipart/form-data">';
-        wp_nonce_field('stkb_unified_import_validate');
-        echo '<input type="hidden" name="action" value="stkb_unified_import_validate">';
+        wp_nonce_field('opentt_unified_import_validate');
+        echo '<input type="hidden" name="action" value="opentt_unified_import_validate">';
         echo '<p><input type="file" name="import_file" accept=".json,application/json" required></p>';
         self::render_transfer_sections_checkboxes('sections', $all_sections);
         echo '<div class="stkb-settings-actions">';
@@ -3623,8 +3623,8 @@ HTML;
         echo '<h2>Reset utakmica po takmičenju</h2>';
         echo '<p class="description">Obriši utakmice, partije i setove za jednu ligu/sezonu (bez SQL-a). Koristi pre ponovnog uvoza ako je stanje parcijalno.</p>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" onsubmit="return confirm(\'Ovo će obrisati sve utakmice/partije/setove za izabrano takmičenje. Nastaviti?\')">';
-        wp_nonce_field('stkb_unified_reset_competition_matches');
-        echo '<input type="hidden" name="action" value="stkb_unified_reset_competition_matches">';
+        wp_nonce_field('opentt_unified_reset_competition_matches');
+        echo '<input type="hidden" name="action" value="opentt_unified_reset_competition_matches">';
         echo '<p>' . self::competition_rules_dropdown_admin('competition_rule_id', 0, true) . '</p>';
         echo '<div class="stkb-settings-actions">';
         echo '<button type="submit" class="button button-secondary">Resetuj sezonu (utakmice/partije/setovi)</button>';
@@ -3636,16 +3636,16 @@ HTML;
         echo '<h2>Dijagnostika takmičenja</h2>';
         echo '<p class="description">Proveri stanje po kolima i po potrebi popravi <code>played</code> flag prema rezultatu utakmice.</p>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
-        wp_nonce_field('stkb_unified_competition_diagnostics');
-        echo '<input type="hidden" name="action" value="stkb_unified_competition_diagnostics">';
+        wp_nonce_field('opentt_unified_competition_diagnostics');
+        echo '<input type="hidden" name="action" value="opentt_unified_competition_diagnostics">';
         echo '<p>' . self::competition_rules_dropdown_admin('competition_rule_id', 0, true) . '</p>';
         echo '<div class="stkb-settings-actions">';
         echo '<button type="submit" class="button">Prikaži dijagnostiku</button>';
         echo '</div>';
         echo '</form>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" onsubmit="return confirm(\'Popraviti played status po rezultatu za izabrano takmičenje?\')">';
-        wp_nonce_field('stkb_unified_repair_competition_played');
-        echo '<input type="hidden" name="action" value="stkb_unified_repair_competition_played">';
+        wp_nonce_field('opentt_unified_repair_competition_played');
+        echo '<input type="hidden" name="action" value="opentt_unified_repair_competition_played">';
         echo '<p>' . self::competition_rules_dropdown_admin('competition_rule_id', 0, true) . '</p>';
         echo '<div class="stkb-settings-actions">';
         echo '<button type="submit" class="button button-secondary">Repair played po rezultatu</button>';
@@ -3713,8 +3713,8 @@ HTML;
 
             if ($valid) {
                 echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
-                wp_nonce_field('stkb_unified_import_commit');
-                echo '<input type="hidden" name="action" value="stkb_unified_import_commit">';
+                wp_nonce_field('opentt_unified_import_commit');
+                echo '<input type="hidden" name="action" value="opentt_unified_import_commit">';
                 echo '<input type="hidden" name="import_token" value="' . esc_attr($token) . '">';
                 if (!empty($player_conflicts)) {
                     echo '<h3>Podudaranja igrača (merge pregled)</h3>';
@@ -3857,16 +3857,16 @@ HTML;
                 'post_status' => (string) $r->post_status,
                 'featured_media' => self::export_featured_media_for_post($id),
                 'meta' => [
-                    'stkb_pravila_liga_slug' => (string) get_post_meta($id, 'stkb_pravila_liga_slug', true),
-                    'stkb_pravila_sezona_slug' => (string) get_post_meta($id, 'stkb_pravila_sezona_slug', true),
-                    'stkb_pravila_format_partija' => (string) get_post_meta($id, 'stkb_pravila_format_partija', true),
-                    'stkb_pravila_bodovanje_tip' => (string) get_post_meta($id, 'stkb_pravila_bodovanje_tip', true),
-                    'stkb_pravila_promocija_broj' => (int) get_post_meta($id, 'stkb_pravila_promocija_broj', true),
-                    'stkb_pravila_promocija_baraz_broj' => (int) get_post_meta($id, 'stkb_pravila_promocija_baraz_broj', true),
-                    'stkb_pravila_ispadanje_broj' => (int) get_post_meta($id, 'stkb_pravila_ispadanje_broj', true),
-                    'stkb_pravila_ispadanje_razigravanje_broj' => (int) get_post_meta($id, 'stkb_pravila_ispadanje_razigravanje_broj', true),
-                    'stkb_pravila_savez' => (string) get_post_meta($id, 'stkb_pravila_savez', true),
-                    'stkb_pravila_rang' => (int) get_post_meta($id, 'stkb_pravila_rang', true),
+                    'opentt_competition_league_slug' => (string) get_post_meta($id, 'opentt_competition_league_slug', true),
+                    'opentt_competition_season_slug' => (string) get_post_meta($id, 'opentt_competition_season_slug', true),
+                    'opentt_competition_match_format' => (string) get_post_meta($id, 'opentt_competition_match_format', true),
+                    'opentt_competition_scoring_type' => (string) get_post_meta($id, 'opentt_competition_scoring_type', true),
+                    'opentt_competition_promotion_slots' => (int) get_post_meta($id, 'opentt_competition_promotion_slots', true),
+                    'opentt_competition_promotion_playoff_slots' => (int) get_post_meta($id, 'opentt_competition_promotion_playoff_slots', true),
+                    'opentt_competition_relegation_slots' => (int) get_post_meta($id, 'opentt_competition_relegation_slots', true),
+                    'opentt_competition_relegation_playoff_slots' => (int) get_post_meta($id, 'opentt_competition_relegation_playoff_slots', true),
+                    'opentt_competition_federation' => (string) get_post_meta($id, 'opentt_competition_federation', true),
+                    'opentt_competition_rank' => (int) get_post_meta($id, 'opentt_competition_rank', true),
                 ],
             ];
         }
@@ -4043,7 +4043,7 @@ HTML;
     public static function handle_export_data_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_export_data');
+        check_admin_referer('opentt_unified_export_data');
         $sections = self::sanitize_transfer_sections($_POST['sections'] ?? []);
         if (empty($sections)) {
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Izaberi bar jednu sekciju za izvoz.'));
@@ -4280,7 +4280,7 @@ HTML;
     public static function handle_import_validate_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_import_validate');
+        check_admin_referer('opentt_unified_import_validate');
         delete_option(self::OPTION_IMPORT_PREVIEW);
         $sections = self::sanitize_transfer_sections($_POST['sections'] ?? []);
         if (empty($sections)) {
@@ -4300,7 +4300,7 @@ HTML;
         if ($token === '') {
             $token = sanitize_key(strtolower(wp_generate_uuid4()));
         }
-        set_transient('stkb_unified_import_payload_' . $token, $payload, 30 * MINUTE_IN_SECONDS);
+        set_transient('opentt_unified_import_payload_' . $token, $payload, 30 * MINUTE_IN_SECONDS);
         update_option(self::OPTION_IMPORT_PREVIEW, [
             'token' => $token,
             'sections' => $sections,
@@ -4376,7 +4376,7 @@ HTML;
             'post_status' => 'inherit',
             'numberposts' => 1,
             'fields' => 'ids',
-            'meta_key' => '_stkb_import_source_attachment_id',
+            'meta_key' => '_opentt_import_source_attachment_id',
             'meta_value' => (string) $source_id,
             'suppress_filters' => true,
         ]);
@@ -4450,7 +4450,7 @@ HTML;
             update_post_meta((int) $attach_id, '_wp_attachment_image_alt', $alt);
         }
         if ($source_id > 0) {
-            update_post_meta((int) $attach_id, '_stkb_import_source_attachment_id', (string) $source_id);
+            update_post_meta((int) $attach_id, '_opentt_import_source_attachment_id', (string) $source_id);
         }
 
         return (int) $attach_id;
@@ -4591,24 +4591,24 @@ HTML;
         if (in_array('competitions', $sections, true) && !empty($data['competitions']) && is_array($data['competitions'])) {
             foreach ($data['competitions'] as $row) {
                 $meta = isset($row['meta']) && is_array($row['meta']) ? $row['meta'] : [];
-                $liga_slug = sanitize_title((string) ($meta['stkb_pravila_liga_slug'] ?? ''));
-                $sezona_slug = sanitize_title((string) ($meta['stkb_pravila_sezona_slug'] ?? ''));
+                $liga_slug = sanitize_title((string) ($meta['opentt_competition_league_slug'] ?? ''));
+                $sezona_slug = sanitize_title((string) ($meta['opentt_competition_season_slug'] ?? ''));
                 if ($liga_slug === '' || $sezona_slug === '') {
                     $result['issues'][] = 'Preskočeno takmičenje bez liga/sezona slug vrednosti.';
                     continue;
                 }
                 $existing = self::get_competition_rule_post_by_slugs($liga_slug, $sezona_slug);
                 $post_id = self::upsert_post_from_import('pravilo_takmicenja', $row, [
-                    'stkb_pravila_liga_slug',
-                    'stkb_pravila_sezona_slug',
-                    'stkb_pravila_format_partija',
-                    'stkb_pravila_bodovanje_tip',
-                    'stkb_pravila_promocija_broj',
-                    'stkb_pravila_promocija_baraz_broj',
-                    'stkb_pravila_ispadanje_broj',
-                    'stkb_pravila_ispadanje_razigravanje_broj',
-                    'stkb_pravila_savez',
-                    'stkb_pravila_rang',
+                    'opentt_competition_league_slug',
+                    'opentt_competition_season_slug',
+                    'opentt_competition_match_format',
+                    'opentt_competition_scoring_type',
+                    'opentt_competition_promotion_slots',
+                    'opentt_competition_promotion_playoff_slots',
+                    'opentt_competition_relegation_slots',
+                    'opentt_competition_relegation_playoff_slots',
+                    'opentt_competition_federation',
+                    'opentt_competition_rank',
                 ], $liga_slug . '-' . $sezona_slug);
                 if ($post_id <= 0 && $existing) {
                     $post_id = (int) $existing->ID;
@@ -4772,7 +4772,7 @@ HTML;
     public static function handle_import_commit_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_import_commit');
+        check_admin_referer('opentt_unified_import_commit');
         $token = sanitize_key(strtolower((string) ($_POST['import_token'] ?? '')));
         $preview = get_option(self::OPTION_IMPORT_PREVIEW, []);
         $preview_token = '';
@@ -4783,7 +4783,7 @@ HTML;
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Nema validnog preview tokena za uvoz.'));
             exit;
         }
-        $payload = get_transient('stkb_unified_import_payload_' . $token);
+        $payload = get_transient('opentt_unified_import_payload_' . $token);
         if (!is_array($payload)) {
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Import preview je istekao. Pokreni validaciju ponovo.'));
             exit;
@@ -4811,7 +4811,7 @@ HTML;
         $result = self::import_payload_apply($payload, $sections, [
             'player_resolution' => $player_resolution,
         ]);
-        delete_transient('stkb_unified_import_payload_' . $token);
+        delete_transient('opentt_unified_import_payload_' . $token);
         delete_option(self::OPTION_IMPORT_PREVIEW);
 
         $msg = 'Uvoz završen. Takmičenja: ' . intval($result['competitions']) . ', klubovi: ' . intval($result['clubs']) . ', igrači: ' . intval($result['players']) . ', utakmice: ' . intval($result['matches']) . ', partije: ' . intval($result['games']) . ', setovi: ' . intval($result['sets']) . '.';
@@ -4825,7 +4825,7 @@ HTML;
     public static function handle_reset_competition_matches_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_reset_competition_matches');
+        check_admin_referer('opentt_unified_reset_competition_matches');
 
         global $wpdb;
         $matches_table = $wpdb->prefix . 'stkb_matches';
@@ -4843,8 +4843,8 @@ HTML;
             exit;
         }
 
-        $liga_slug = sanitize_title((string) get_post_meta($rule_id, 'stkb_pravila_liga_slug', true));
-        $sezona_slug = sanitize_title((string) get_post_meta($rule_id, 'stkb_pravila_sezona_slug', true));
+        $liga_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_league_slug', true));
+        $sezona_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_season_slug', true));
         if ($liga_slug === '' || $sezona_slug === '') {
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Takmičenje nema validan liga/sezona slug.'));
             exit;
@@ -4938,15 +4938,15 @@ HTML;
     public static function handle_competition_diagnostics_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_competition_diagnostics');
+        check_admin_referer('opentt_unified_competition_diagnostics');
 
         $rule_id = intval($_POST['competition_rule_id'] ?? 0);
         if ($rule_id <= 0) {
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Izaberi takmičenje za dijagnostiku.'));
             exit;
         }
-        $liga_slug = sanitize_title((string) get_post_meta($rule_id, 'stkb_pravila_liga_slug', true));
-        $sezona_slug = sanitize_title((string) get_post_meta($rule_id, 'stkb_pravila_sezona_slug', true));
+        $liga_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_league_slug', true));
+        $sezona_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_season_slug', true));
         if ($liga_slug === '' || $sezona_slug === '') {
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Takmičenje nema validan liga/sezona slug.'));
             exit;
@@ -4983,7 +4983,7 @@ HTML;
     public static function handle_repair_competition_played_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_repair_competition_played');
+        check_admin_referer('opentt_unified_repair_competition_played');
 
         global $wpdb;
         $matches_table = $wpdb->prefix . 'stkb_matches';
@@ -4997,8 +4997,8 @@ HTML;
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Izaberi takmičenje za repair.'));
             exit;
         }
-        $liga_slug = sanitize_title((string) get_post_meta($rule_id, 'stkb_pravila_liga_slug', true));
-        $sezona_slug = sanitize_title((string) get_post_meta($rule_id, 'stkb_pravila_sezona_slug', true));
+        $liga_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_league_slug', true));
+        $sezona_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_season_slug', true));
         if ($liga_slug === '' || $sezona_slug === '') {
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Takmičenje nema validan liga/sezona slug.'));
             exit;
@@ -5050,8 +5050,8 @@ HTML;
         echo '</div>';
 
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-wizard-form stkb-onboarding-form" data-stkb-steps="5">';
-        wp_nonce_field('stkb_unified_onboarding_action');
-        echo '<input type="hidden" name="action" value="stkb_unified_onboarding_action">';
+        wp_nonce_field('opentt_unified_onboarding_action');
+        echo '<input type="hidden" name="action" value="opentt_unified_onboarding_action">';
         echo '<div class="stkb-wizard-steps">';
         echo '<span class="stkb-step-pill">1. Uvod</span>';
         echo '<span class="stkb-step-pill">2. Takmičenje</span>';
@@ -5108,8 +5108,8 @@ HTML;
         echo '</form>';
 
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="stkb-onboarding-skip-form">';
-        wp_nonce_field('stkb_unified_onboarding_action');
-        echo '<input type="hidden" name="action" value="stkb_unified_onboarding_action">';
+        wp_nonce_field('opentt_unified_onboarding_action');
+        echo '<input type="hidden" name="action" value="opentt_unified_onboarding_action">';
         echo '<input type="hidden" name="stkb_onboarding_action" value="skip">';
         echo '<button type="submit" class="button">Preskoči setup</button>';
         echo '</form>';
@@ -5121,18 +5121,18 @@ HTML;
     public static function handle_onboarding_action()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_onboarding_action');
+        check_admin_referer('opentt_unified_onboarding_action');
 
         $act = isset($_POST['stkb_onboarding_action']) ? sanitize_key((string) $_POST['stkb_onboarding_action']) : '';
         if ($act === 'skip') {
             update_option(self::OPTION_ONBOARDING_STATE, 'skipped', false);
-            delete_transient('stkb_unified_onboarding_redirect');
+            delete_transient('opentt_unified_onboarding_redirect');
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified'), 'success', 'First Time Setup je preskočen.'));
             exit;
         }
 
         update_option(self::OPTION_ONBOARDING_STATE, 'completed', false);
-        delete_transient('stkb_unified_onboarding_redirect');
+        delete_transient('opentt_unified_onboarding_redirect');
         wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified'), 'success', 'First Time Setup je završen.'));
         exit;
     }
@@ -5140,7 +5140,7 @@ HTML;
     public static function handle_delete_all_data()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_delete_all_data');
+        check_admin_referer('opentt_unified_delete_all_data');
 
         $phrase = isset($_POST['stkb_confirm_phrase']) ? sanitize_text_field((string) wp_unslash($_POST['stkb_confirm_phrase'])) : '';
         if (trim($phrase) !== 'saglasan sam') {
@@ -5201,7 +5201,7 @@ HTML;
         delete_option(self::OPTION_ONBOARDING_STATE);
         delete_option(self::OPTION_IMPORT_PREVIEW);
 
-        delete_transient('stkb_unified_onboarding_redirect');
+        delete_transient('opentt_unified_onboarding_redirect');
         wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-settings'), 'success', 'Svi OpenTT podaci su obrisani.'));
         exit;
     }
@@ -5209,7 +5209,7 @@ HTML;
     public static function handle_save_settings_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_save_settings');
+        check_admin_referer('opentt_unified_save_settings');
 
         $section = isset($_POST['stkb_settings_section']) ? sanitize_key((string) $_POST['stkb_settings_section']) : 'all';
         $action = isset($_POST['stkb_css_action']) ? sanitize_key((string) $_POST['stkb_css_action']) : 'save';
@@ -5286,11 +5286,11 @@ HTML;
 
     public static function render_admin_notice()
     {
-        if (!is_admin() || !isset($_GET['stkb_notice'], $_GET['stkb_msg'])) {
+        if (!is_admin() || !isset($_GET['opentt_notice'], $_GET['opentt_msg'])) {
             return;
         }
-        $type = sanitize_key((string) $_GET['stkb_notice']);
-        $msg = sanitize_text_field(rawurldecode(wp_unslash((string) $_GET['stkb_msg'])));
+        $type = sanitize_key((string) $_GET['opentt_notice']);
+        $msg = sanitize_text_field(rawurldecode(wp_unslash((string) $_GET['opentt_msg'])));
         if ($msg === '') {
             return;
         }
@@ -5300,78 +5300,78 @@ HTML;
 
     public static function handle_save_match()
     {
-        STKB_Unified_Admin_Match_Actions::handle_save_match();
+        OpenTT_Unified_Admin_Match_Actions::handle_save_match();
     }
 
     public static function handle_delete_match()
     {
-        STKB_Unified_Admin_Match_Actions::handle_delete_match();
+        OpenTT_Unified_Admin_Match_Actions::handle_delete_match();
     }
 
     public static function handle_delete_matches_bulk_admin()
     {
-        STKB_Unified_Admin_Match_Actions::handle_delete_matches_bulk_admin();
+        OpenTT_Unified_Admin_Match_Actions::handle_delete_matches_bulk_admin();
     }
 
     public static function handle_save_game()
     {
-        STKB_Unified_Admin_Match_Actions::handle_save_game();
+        OpenTT_Unified_Admin_Match_Actions::handle_save_game();
     }
 
     public static function handle_save_games_batch()
     {
-        STKB_Unified_Admin_Match_Actions::handle_save_games_batch();
+        OpenTT_Unified_Admin_Match_Actions::handle_save_games_batch();
     }
 
     public static function handle_delete_game()
     {
-        STKB_Unified_Admin_Match_Actions::handle_delete_game();
+        OpenTT_Unified_Admin_Match_Actions::handle_delete_game();
     }
 
     public static function handle_save_set()
     {
-        STKB_Unified_Admin_Match_Actions::handle_save_set();
+        OpenTT_Unified_Admin_Match_Actions::handle_save_set();
     }
 
     public static function handle_delete_set()
     {
-        STKB_Unified_Admin_Match_Actions::handle_delete_set();
+        OpenTT_Unified_Admin_Match_Actions::handle_delete_set();
     }
 
     public static function handle_save_club_admin()
     {
-        STKB_Unified_Admin_Club_Player_Actions::handle_save_club_admin();
+        OpenTT_Unified_Admin_Club_Player_Actions::handle_save_club_admin();
     }
 
     public static function handle_delete_club_admin()
     {
-        STKB_Unified_Admin_Club_Player_Actions::handle_delete_club_admin();
+        OpenTT_Unified_Admin_Club_Player_Actions::handle_delete_club_admin();
     }
 
     public static function handle_delete_clubs_bulk_admin()
     {
-        STKB_Unified_Admin_Club_Player_Actions::handle_delete_clubs_bulk_admin();
+        OpenTT_Unified_Admin_Club_Player_Actions::handle_delete_clubs_bulk_admin();
     }
 
     public static function handle_save_player_admin()
     {
-        STKB_Unified_Admin_Club_Player_Actions::handle_save_player_admin();
+        OpenTT_Unified_Admin_Club_Player_Actions::handle_save_player_admin();
     }
 
     public static function handle_delete_player_admin()
     {
-        STKB_Unified_Admin_Club_Player_Actions::handle_delete_player_admin();
+        OpenTT_Unified_Admin_Club_Player_Actions::handle_delete_player_admin();
     }
 
     public static function handle_delete_players_bulk_admin()
     {
-        STKB_Unified_Admin_Club_Player_Actions::handle_delete_players_bulk_admin();
+        OpenTT_Unified_Admin_Club_Player_Actions::handle_delete_players_bulk_admin();
     }
 
     public static function handle_save_league_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_save_league');
+        check_admin_referer('opentt_unified_save_league');
         $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
         $title = sanitize_text_field((string) ($_POST['post_title'] ?? ''));
         if ($title === '') {
@@ -5408,7 +5408,7 @@ HTML;
         if ($id <= 0) {
             wp_die('Nedostaje ID.');
         }
-        check_admin_referer('stkb_unified_delete_league_' . $id);
+        check_admin_referer('opentt_unified_delete_league_' . $id);
         wp_trash_post($id);
         wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-leagues'), 'success', 'Liga je obrisana.'));
         exit;
@@ -5417,7 +5417,7 @@ HTML;
     public static function handle_save_season_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_save_season');
+        check_admin_referer('opentt_unified_save_season');
         $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
         $title = sanitize_text_field((string) ($_POST['post_title'] ?? ''));
         if ($title === '') {
@@ -5453,7 +5453,7 @@ HTML;
         if ($id <= 0) {
             wp_die('Nedostaje ID.');
         }
-        check_admin_referer('stkb_unified_delete_season_' . $id);
+        check_admin_referer('opentt_unified_delete_season_' . $id);
         wp_trash_post($id);
         wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-seasons'), 'success', 'Sezona je obrisana.'));
         exit;
@@ -5462,7 +5462,7 @@ HTML;
     public static function handle_save_competition_rule_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_save_competition_rule');
+        check_admin_referer('opentt_unified_save_competition_rule');
 
         $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
         $league_name = sanitize_text_field((string) ($_POST['league_name'] ?? ''));
@@ -5500,17 +5500,17 @@ HTML;
         self::ensure_league_entity($liga_slug, $league_name);
         self::ensure_season_entity($sezona_slug, $season_name);
 
-        update_post_meta($rule_id, 'stkb_pravila_liga_slug', $liga_slug);
-        update_post_meta($rule_id, 'stkb_pravila_sezona_slug', $sezona_slug);
+        update_post_meta($rule_id, 'opentt_competition_league_slug', $liga_slug);
+        update_post_meta($rule_id, 'opentt_competition_season_slug', $sezona_slug);
         $rank = max(1, min(5, (int) ($_POST['rang'] ?? 3)));
-        update_post_meta($rule_id, 'stkb_pravila_rang', $rank);
-        update_post_meta($rule_id, 'stkb_pravila_promocija_broj', max(0, (int) ($_POST['promocija_broj'] ?? 0)));
-        update_post_meta($rule_id, 'stkb_pravila_promocija_baraz_broj', max(0, (int) ($_POST['promocija_baraz_broj'] ?? 0)));
-        update_post_meta($rule_id, 'stkb_pravila_ispadanje_broj', max(0, (int) ($_POST['ispadanje_broj'] ?? 0)));
-        update_post_meta($rule_id, 'stkb_pravila_ispadanje_razigravanje_broj', max(0, (int) ($_POST['ispadanje_razigravanje_broj'] ?? 0)));
-        update_post_meta($rule_id, 'stkb_pravila_bodovanje_tip', sanitize_text_field((string) ($_POST['bodovanje_tip'] ?? '2-1')));
-        update_post_meta($rule_id, 'stkb_pravila_format_partija', sanitize_text_field((string) ($_POST['format_partija'] ?? 'format_a')));
-        update_post_meta($rule_id, 'stkb_pravila_savez', self::normalize_competition_federation((string) ($_POST['savez'] ?? 'STSS')));
+        update_post_meta($rule_id, 'opentt_competition_rank', $rank);
+        update_post_meta($rule_id, 'opentt_competition_promotion_slots', max(0, (int) ($_POST['promocija_broj'] ?? 0)));
+        update_post_meta($rule_id, 'opentt_competition_promotion_playoff_slots', max(0, (int) ($_POST['promocija_baraz_broj'] ?? 0)));
+        update_post_meta($rule_id, 'opentt_competition_relegation_slots', max(0, (int) ($_POST['ispadanje_broj'] ?? 0)));
+        update_post_meta($rule_id, 'opentt_competition_relegation_playoff_slots', max(0, (int) ($_POST['ispadanje_razigravanje_broj'] ?? 0)));
+        update_post_meta($rule_id, 'opentt_competition_scoring_type', sanitize_text_field((string) ($_POST['bodovanje_tip'] ?? '2-1')));
+        update_post_meta($rule_id, 'opentt_competition_match_format', sanitize_text_field((string) ($_POST['format_partija'] ?? 'format_a')));
+        update_post_meta($rule_id, 'opentt_competition_federation', self::normalize_competition_federation((string) ($_POST['savez'] ?? 'STSS')));
         $thumb_id = isset($_POST['featured_image_id']) ? (int) $_POST['featured_image_id'] : 0;
         if ($thumb_id > 0) {
             set_post_thumbnail($rule_id, $thumb_id);
@@ -5529,7 +5529,7 @@ HTML;
         if ($id <= 0) {
             wp_die('Nedostaje ID.');
         }
-        check_admin_referer('stkb_unified_delete_competition_rule_' . $id);
+        check_admin_referer('opentt_unified_delete_competition_rule_' . $id);
         wp_trash_post($id);
         wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-competitions'), 'success', 'Takmičenje je obrisano.'));
         exit;
@@ -5538,7 +5538,7 @@ HTML;
     public static function handle_migrate_competition_rules()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_migrate_competition_rules');
+        check_admin_referer('opentt_unified_migrate_competition_rules');
         $result = self::migrate_competition_rules_from_existing_data();
         $msg = 'Migracija takmičenja završena. Kreirano/azurirano: ' . (int) $result['rules'] . '.';
         wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-competitions'), 'success', $msg));
@@ -5548,7 +5548,7 @@ HTML;
     public static function handle_migrate_league_season_slugs()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_migrate_league_season_slugs');
+        check_admin_referer('opentt_unified_migrate_league_season_slugs');
 
         $report = self::validate_league_season_migration_from_matches();
         update_option(self::OPTION_LEAGUE_SEASON_VALIDATION_REPORT, $report, false);
@@ -5567,7 +5567,7 @@ HTML;
     public static function handle_validate_league_season_migration()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_validate_league_season_migration');
+        check_admin_referer('opentt_unified_validate_league_season_migration');
 
         $report = self::validate_league_season_migration_from_matches();
         update_option(self::OPTION_LEAGUE_SEASON_VALIDATION_REPORT, $report, false);
@@ -5583,7 +5583,7 @@ HTML;
     public static function handle_validate_import()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_validate_import');
+        check_admin_referer('opentt_unified_validate_import');
 
         $report = self::validate_legacy_import();
         update_option(self::OPTION_VALIDATION_REPORT, $report, false);
@@ -5595,7 +5595,7 @@ HTML;
     public static function handle_reset_migration()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_reset_migration');
+        check_admin_referer('opentt_unified_reset_migration');
 
         update_option(self::OPTION_MIGRATION_STATE, ['offset' => 0], false);
 
@@ -5606,7 +5606,7 @@ HTML;
     public static function handle_repair_relations()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_repair_relations');
+        check_admin_referer('opentt_unified_repair_relations');
 
         $fixed = self::repair_legacy_relations();
 
@@ -5623,7 +5623,7 @@ HTML;
     public static function handle_cleanup_placeholders()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_cleanup_placeholders');
+        check_admin_referer('opentt_unified_cleanup_placeholders');
 
         $cleaned = self::cleanup_placeholder_relations();
 
@@ -5640,7 +5640,7 @@ HTML;
     public static function handle_migrate_batch()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_migrate_batch');
+        check_admin_referer('opentt_unified_migrate_batch');
 
         self::maybe_migrate_schema();
 
@@ -5937,17 +5937,17 @@ HTML;
 
     private static function parse_date_to_sql($raw)
     {
-        return STKB_Unified_Readonly_Helpers::parse_date_to_sql($raw);
+        return OpenTT_Unified_Readonly_Helpers::parse_date_to_sql($raw);
     }
 
     private static function extract_id($raw)
     {
-        return STKB_Unified_Readonly_Helpers::extract_id($raw);
+        return OpenTT_Unified_Readonly_Helpers::extract_id($raw);
     }
 
     private static function extract_ids($raw)
     {
-        return STKB_Unified_Readonly_Helpers::extract_ids($raw);
+        return OpenTT_Unified_Readonly_Helpers::extract_ids($raw);
     }
 
     private static function get_migration_state()
@@ -6215,7 +6215,7 @@ HTML;
             'post_status' => ['publish', 'private', 'draft', 'pending', 'trash'],
             'numberposts' => -1,
             'meta_query' => [[
-                'key' => '_stkb_legacy_ref_id',
+                'key' => '_opentt_legacy_ref_id',
                 'compare' => 'EXISTS',
             ]],
             'fields' => 'ids',
@@ -6251,7 +6251,7 @@ HTML;
             'post_status' => ['publish', 'private', 'draft', 'pending'],
             'numberposts' => 1,
             'meta_query' => [[
-                'key' => '_stkb_legacy_ref_id',
+                'key' => '_opentt_legacy_ref_id',
                 'value' => $id,
                 'compare' => '=',
                 'type' => 'NUMERIC',
@@ -6281,7 +6281,7 @@ HTML;
 
         if (!is_wp_error($new_id) && intval($new_id) > 0) {
             $new_id = intval($new_id);
-            update_post_meta($new_id, '_stkb_legacy_ref_id', $id);
+            update_post_meta($new_id, '_opentt_legacy_ref_id', $id);
             self::set_mapped_id($post_type, $id, $new_id);
             return $new_id;
         }
@@ -6341,7 +6341,7 @@ HTML;
         if ($post_id <= 0) {
             return 0;
         }
-        $legacy_id = intval(get_post_meta($post_id, '_stkb_legacy_ref_id', true));
+        $legacy_id = intval(get_post_meta($post_id, '_opentt_legacy_ref_id', true));
         return $legacy_id > 0 ? $legacy_id : 0;
     }
 
@@ -6359,8 +6359,8 @@ HTML;
     private static function admin_notice_url($url, $type, $message)
     {
         return add_query_arg([
-            'stkb_notice' => sanitize_key((string) $type),
-            'stkb_msg' => (string) $message,
+            'opentt_notice' => sanitize_key((string) $type),
+            'opentt_msg' => (string) $message,
         ], $url);
     }
 
@@ -6377,12 +6377,12 @@ HTML;
             'post_status' => ['publish', 'draft', 'pending', 'private'],
             'meta_query' => [
                 [
-                    'key' => 'stkb_pravila_liga_slug',
+                    'key' => 'opentt_competition_league_slug',
                     'value' => $liga_slug,
                     'compare' => '=',
                 ],
                 [
-                    'key' => 'stkb_pravila_sezona_slug',
+                    'key' => 'opentt_competition_season_slug',
                     'value' => $sezona_slug,
                     'compare' => '=',
                 ],
@@ -6473,14 +6473,14 @@ HTML;
             'id' => (int) $post->ID,
             'liga_slug' => $liga_slug,
             'sezona_slug' => $sezona_slug,
-            'rang' => max(1, min(5, (int) get_post_meta($post->ID, 'stkb_pravila_rang', true) ?: 3)),
-            'promocija_broj' => (int) get_post_meta($post->ID, 'stkb_pravila_promocija_broj', true),
-            'promocija_baraz_broj' => (int) get_post_meta($post->ID, 'stkb_pravila_promocija_baraz_broj', true),
-            'ispadanje_broj' => (int) get_post_meta($post->ID, 'stkb_pravila_ispadanje_broj', true),
-            'ispadanje_razigravanje_broj' => (int) get_post_meta($post->ID, 'stkb_pravila_ispadanje_razigravanje_broj', true),
-            'bodovanje_tip' => (string) get_post_meta($post->ID, 'stkb_pravila_bodovanje_tip', true),
-            'format_partija' => (string) get_post_meta($post->ID, 'stkb_pravila_format_partija', true),
-            'savez' => self::normalize_competition_federation((string) get_post_meta($post->ID, 'stkb_pravila_savez', true)),
+            'rang' => max(1, min(5, (int) get_post_meta($post->ID, 'opentt_competition_rank', true) ?: 3)),
+            'promocija_broj' => (int) get_post_meta($post->ID, 'opentt_competition_promotion_slots', true),
+            'promocija_baraz_broj' => (int) get_post_meta($post->ID, 'opentt_competition_promotion_playoff_slots', true),
+            'ispadanje_broj' => (int) get_post_meta($post->ID, 'opentt_competition_relegation_slots', true),
+            'ispadanje_razigravanje_broj' => (int) get_post_meta($post->ID, 'opentt_competition_relegation_playoff_slots', true),
+            'bodovanje_tip' => (string) get_post_meta($post->ID, 'opentt_competition_scoring_type', true),
+            'format_partija' => (string) get_post_meta($post->ID, 'opentt_competition_match_format', true),
+            'savez' => self::normalize_competition_federation((string) get_post_meta($post->ID, 'opentt_competition_federation', true)),
         ];
     }
 
@@ -6572,15 +6572,15 @@ HTML;
                 }
             }
 
-            update_post_meta($rule_id, 'stkb_pravila_liga_slug', $liga_slug);
-            update_post_meta($rule_id, 'stkb_pravila_sezona_slug', $sezona_slug);
-            update_post_meta($rule_id, 'stkb_pravila_rang', 3);
-            update_post_meta($rule_id, 'stkb_pravila_promocija_broj', $promo);
-            update_post_meta($rule_id, 'stkb_pravila_promocija_baraz_broj', 0);
-            update_post_meta($rule_id, 'stkb_pravila_ispadanje_broj', $releg);
-            update_post_meta($rule_id, 'stkb_pravila_ispadanje_razigravanje_broj', 0);
-            update_post_meta($rule_id, 'stkb_pravila_bodovanje_tip', $scoring);
-            update_post_meta($rule_id, 'stkb_pravila_format_partija', $format);
+            update_post_meta($rule_id, 'opentt_competition_league_slug', $liga_slug);
+            update_post_meta($rule_id, 'opentt_competition_season_slug', $sezona_slug);
+            update_post_meta($rule_id, 'opentt_competition_rank', 3);
+            update_post_meta($rule_id, 'opentt_competition_promotion_slots', $promo);
+            update_post_meta($rule_id, 'opentt_competition_promotion_playoff_slots', 0);
+            update_post_meta($rule_id, 'opentt_competition_relegation_slots', $releg);
+            update_post_meta($rule_id, 'opentt_competition_relegation_playoff_slots', 0);
+            update_post_meta($rule_id, 'opentt_competition_scoring_type', $scoring);
+            update_post_meta($rule_id, 'opentt_competition_match_format', $format);
             $count++;
         }
 
@@ -6761,12 +6761,12 @@ HTML;
 
     private static function parse_legacy_liga_sezona($liga_slug, $sezona_slug)
     {
-        return STKB_Unified_Readonly_Helpers::parse_legacy_liga_sezona($liga_slug, $sezona_slug);
+        return OpenTT_Unified_Readonly_Helpers::parse_legacy_liga_sezona($liga_slug, $sezona_slug);
     }
 
     private static function slug_to_title($slug)
     {
-        return STKB_Unified_Readonly_Helpers::slug_to_title($slug);
+        return OpenTT_Unified_Readonly_Helpers::slug_to_title($slug);
     }
 
     public static function competition_federation_options()
@@ -6857,7 +6857,7 @@ HTML;
 
     private static function leagues_dropdown_admin($name, $selected_slug, $required = true)
     {
-        return STKB_Unified_Admin_Readonly_Helpers::leagues_dropdown_admin($name, $selected_slug, $required);
+        return OpenTT_Unified_Admin_Readonly_Helpers::leagues_dropdown_admin($name, $selected_slug, $required);
     }
 
     private static function competition_rule_id_by_slugs($liga_slug, $sezona_slug)
@@ -6868,42 +6868,42 @@ HTML;
 
     private static function competition_rules_dropdown_admin($name, $selected_id, $required = true)
     {
-        return STKB_Unified_Admin_Readonly_Helpers::competition_rules_dropdown_admin($name, $selected_id, $required);
+        return OpenTT_Unified_Admin_Readonly_Helpers::competition_rules_dropdown_admin($name, $selected_id, $required);
     }
 
     private static function seasons_dropdown_admin($name, $selected_slug, $league_slug, $required = false)
     {
-        return STKB_Unified_Admin_Readonly_Helpers::seasons_dropdown_admin($name, $selected_slug, $required);
+        return OpenTT_Unified_Admin_Readonly_Helpers::seasons_dropdown_admin($name, $selected_slug, $required);
     }
 
     private static function clubs_dropdown_admin($name, $selected, $required)
     {
-        return STKB_Unified_Admin_Readonly_Helpers::clubs_dropdown_admin($name, $selected, $required);
+        return OpenTT_Unified_Admin_Readonly_Helpers::clubs_dropdown_admin($name, $selected, $required);
     }
 
     private static function municipality_dropdown_admin($name, $selected, $required)
     {
-        return STKB_Unified_Admin_Readonly_Helpers::municipality_dropdown_admin($name, $selected, $required);
+        return OpenTT_Unified_Admin_Readonly_Helpers::municipality_dropdown_admin($name, $selected, $required);
     }
 
     private static function country_dropdown_admin($name, $selected, $required)
     {
-        return STKB_Unified_Admin_Readonly_Helpers::country_dropdown_admin($name, $selected, $required);
+        return OpenTT_Unified_Admin_Readonly_Helpers::country_dropdown_admin($name, $selected, $required);
     }
 
     private static function municipality_options_admin()
     {
-        return STKB_Unified_Admin_Readonly_Helpers::municipality_options_admin();
+        return OpenTT_Unified_Admin_Readonly_Helpers::municipality_options_admin();
     }
 
     public static function country_label_by_code($code)
     {
-        return STKB_Unified_Admin_Readonly_Helpers::country_label_by_code($code);
+        return OpenTT_Unified_Admin_Readonly_Helpers::country_label_by_code($code);
     }
 
     public static function country_flag_emoji($code)
     {
-        return STKB_Unified_Admin_Readonly_Helpers::country_flag_emoji($code);
+        return OpenTT_Unified_Admin_Readonly_Helpers::country_flag_emoji($code);
     }
 
     private static function codepoint_to_utf8($cp)
@@ -6926,7 +6926,7 @@ HTML;
 
     private static function country_options_admin()
     {
-        return STKB_Unified_Admin_Readonly_Helpers::country_options_admin();
+        return OpenTT_Unified_Admin_Readonly_Helpers::country_options_admin();
     }
 
     public static function maybe_backfill_player_citizenship_default()
@@ -6961,17 +6961,17 @@ HTML;
 
     private static function players_dropdown_admin($name, $selected, $club_id, $required)
     {
-        return STKB_Unified_Admin_Readonly_Helpers::players_dropdown_admin($name, $selected, $club_id, $required);
+        return OpenTT_Unified_Admin_Readonly_Helpers::players_dropdown_admin($name, $selected, $club_id, $required);
     }
 
     private static function all_players_admin_index()
     {
-        return STKB_Unified_Admin_Readonly_Helpers::all_players_admin_index();
+        return OpenTT_Unified_Admin_Readonly_Helpers::all_players_admin_index();
     }
 
     private static function get_player_club_id($player_id)
     {
-        return STKB_Unified_Admin_Readonly_Helpers::get_player_club_id($player_id);
+        return OpenTT_Unified_Admin_Readonly_Helpers::get_player_club_id($player_id);
     }
 
     private static function require_cap()

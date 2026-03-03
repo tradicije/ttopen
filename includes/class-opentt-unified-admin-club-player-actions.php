@@ -4,12 +4,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-final class STKB_Unified_Admin_Club_Player_Actions
+final class OpenTT_Unified_Admin_Club_Player_Actions
 {
     public static function handle_save_club_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_save_club');
+        check_admin_referer('opentt_unified_save_club');
         $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
         $title = sanitize_text_field((string) ($_POST['post_title'] ?? ''));
         if ($title === '') {
@@ -36,7 +36,7 @@ final class STKB_Unified_Admin_Club_Player_Actions
         }
 
         $opstina_in = sanitize_text_field((string) ($_POST['opstina'] ?? ''));
-        $opstina_opts = STKB_Unified_Admin_Readonly_Helpers::municipality_options_admin();
+        $opstina_opts = OpenTT_Unified_Admin_Readonly_Helpers::municipality_options_admin();
         if ($opstina_in !== '' && !in_array($opstina_in, $opstina_opts, true)) {
             $opstina_in = '';
         }
@@ -74,7 +74,7 @@ final class STKB_Unified_Admin_Club_Player_Actions
         if ($id <= 0) {
             wp_die('Nedostaje ID.');
         }
-        check_admin_referer('stkb_unified_delete_club_' . $id);
+        check_admin_referer('opentt_unified_delete_club_' . $id);
         wp_trash_post($id);
         wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-clubs'), 'success', 'Klub je obrisan.'));
         exit;
@@ -83,7 +83,7 @@ final class STKB_Unified_Admin_Club_Player_Actions
     public static function handle_delete_clubs_bulk_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_delete_clubs_bulk');
+        check_admin_referer('opentt_unified_delete_clubs_bulk');
 
         $ids = isset($_POST['club_ids']) && is_array($_POST['club_ids']) ? array_map('intval', (array) $_POST['club_ids']) : [];
         $ids = array_values(array_unique(array_filter($ids, static function ($v) {
@@ -123,7 +123,7 @@ final class STKB_Unified_Admin_Club_Player_Actions
     public static function handle_save_player_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_save_player');
+        check_admin_referer('opentt_unified_save_player');
         $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
         $title = sanitize_text_field((string) ($_POST['post_title'] ?? ''));
         if ($title === '') {
@@ -155,7 +155,7 @@ final class STKB_Unified_Admin_Club_Player_Actions
         update_post_meta($player_id, 'datum_rodjenja', sanitize_text_field((string) ($_POST['datum_rodjenja'] ?? '')));
         update_post_meta($player_id, 'mesto_rodjenja', sanitize_text_field((string) ($_POST['mesto_rodjenja'] ?? '')));
         $country_code = strtoupper(sanitize_key((string) ($_POST['drzavljanstvo'] ?? 'RS')));
-        if (!array_key_exists($country_code, STKB_Unified_Admin_Readonly_Helpers::country_options_admin())) {
+        if (!array_key_exists($country_code, OpenTT_Unified_Admin_Readonly_Helpers::country_options_admin())) {
             $country_code = 'RS';
         }
         update_post_meta($player_id, 'drzavljanstvo', $country_code);
@@ -178,7 +178,7 @@ final class STKB_Unified_Admin_Club_Player_Actions
         if ($id <= 0) {
             wp_die('Nedostaje ID.');
         }
-        check_admin_referer('stkb_unified_delete_player_' . $id);
+        check_admin_referer('opentt_unified_delete_player_' . $id);
         wp_trash_post($id);
         wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-players'), 'success', 'Igrač je obrisan.'));
         exit;
@@ -187,7 +187,7 @@ final class STKB_Unified_Admin_Club_Player_Actions
     public static function handle_delete_players_bulk_admin()
     {
         self::require_cap();
-        check_admin_referer('stkb_unified_delete_players_bulk');
+        check_admin_referer('opentt_unified_delete_players_bulk');
 
         $ids = isset($_POST['player_ids']) && is_array($_POST['player_ids']) ? array_map('intval', (array) $_POST['player_ids']) : [];
         $ids = array_values(array_unique(array_filter($ids, static function ($v) {
@@ -242,7 +242,7 @@ final class STKB_Unified_Admin_Club_Player_Actions
 
     private static function require_cap()
     {
-        if (!current_user_can(STKB_Unified_Core::CAP)) {
+        if (!current_user_can(OpenTT_Unified_Core::CAP)) {
             wp_die('Nemaš dozvolu za ovu akciju.');
         }
     }
@@ -250,8 +250,8 @@ final class STKB_Unified_Admin_Club_Player_Actions
     private static function admin_notice_url($url, $type, $message)
     {
         return add_query_arg([
-            'stkb_notice' => sanitize_key((string) $type),
-            'stkb_msg' => (string) $message,
+            'opentt_notice' => sanitize_key((string) $type),
+            'opentt_msg' => (string) $message,
         ], $url);
     }
 }

@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-final class STKB_Unified_Admin_Readonly_Helpers
+final class OpenTT_Unified_Admin_Readonly_Helpers
 {
     public static function leagues_dropdown_admin($name, $selected_slug, $required = true)
     {
@@ -47,9 +47,9 @@ final class STKB_Unified_Admin_Readonly_Helpers
         $html = '<select name="' . esc_attr((string) $name) . '"' . $attr . '>';
         $html .= '<option value="">— izaberi —</option>';
         foreach ($rows as $r) {
-            $liga_slug = (string) get_post_meta($r->ID, 'stkb_pravila_liga_slug', true);
-            $sezona_slug = (string) get_post_meta($r->ID, 'stkb_pravila_sezona_slug', true);
-            $label = STKB_Unified_Readonly_Helpers::slug_to_title($liga_slug) . ' / ' . STKB_Unified_Readonly_Helpers::slug_to_title($sezona_slug);
+            $liga_slug = (string) get_post_meta($r->ID, 'opentt_competition_league_slug', true);
+            $sezona_slug = (string) get_post_meta($r->ID, 'opentt_competition_season_slug', true);
+            $label = OpenTT_Unified_Readonly_Helpers::slug_to_title($liga_slug) . ' / ' . OpenTT_Unified_Readonly_Helpers::slug_to_title($sezona_slug);
             if (trim($label) === '/') {
                 $label = (string) $r->post_title;
             }
@@ -374,12 +374,12 @@ final class STKB_Unified_Admin_Readonly_Helpers
             return 0;
         }
 
-        $club_id = STKB_Unified_Readonly_Helpers::extract_id(get_post_meta($player_id, 'povezani_klub', true));
+        $club_id = OpenTT_Unified_Readonly_Helpers::extract_id(get_post_meta($player_id, 'povezani_klub', true));
         if ($club_id > 0) {
             return $club_id;
         }
 
-        $club_id = STKB_Unified_Readonly_Helpers::extract_id(get_post_meta($player_id, 'klub_igraca', true));
+        $club_id = OpenTT_Unified_Readonly_Helpers::extract_id(get_post_meta($player_id, 'klub_igraca', true));
         if ($club_id > 0) {
             return $club_id;
         }
