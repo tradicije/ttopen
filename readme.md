@@ -170,7 +170,8 @@ Contributions are welcome:
 
 ## Project status
 
-Current version: **1.0.0**.
+Stable release: **1.0.0**.
+Pre-release: **1.1.0-beta.1**.
 
 ## Notes
 
