@@ -4482,17 +4482,21 @@ HTML;
         self::require_cap();
         check_admin_referer('opentt_unified_onboarding_action');
 
-        $act = isset($_POST['stkb_onboarding_action']) ? sanitize_key((string) $_POST['stkb_onboarding_action']) : '';
-        if ($act === 'skip') {
-            update_option(self::OPTION_ONBOARDING_STATE, 'skipped', false);
-            delete_transient('opentt_unified_onboarding_redirect');
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified'), 'success', 'First Time Setup je preskočen.'));
-            exit;
-        }
+        $state = \OpenTT\Unified\WordPress\OnboardingActionManager::resolveStateFromRequest(
+            'stkb_onboarding_action',
+            'completed'
+        );
+        \OpenTT\Unified\WordPress\OnboardingActionManager::persistStateAndClearRedirect(
+            self::OPTION_ONBOARDING_STATE,
+            $state,
+            'opentt_unified_onboarding_redirect'
+        );
 
-        update_option(self::OPTION_ONBOARDING_STATE, 'completed', false);
-        delete_transient('opentt_unified_onboarding_redirect');
-        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified'), 'success', 'First Time Setup je završen.'));
+        $message = ($state === 'skipped')
+            ? 'First Time Setup je preskočen.'
+            : 'First Time Setup je završen.';
+
+        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified'), 'success', $message));
         exit;
     }
 
@@ -4507,60 +4511,27 @@ HTML;
             exit;
         }
 
-        global $wpdb;
-        $matches_table = OpenTT_Unified_Core::db_table('matches');
-        $games_table = OpenTT_Unified_Core::db_table('games');
-        $sets_table = OpenTT_Unified_Core::db_table('sets');
+        \OpenTT\Unified\WordPress\DataPurgeManager::purgeAll([
+            'post_types' => ['pravilo_takmicenja', 'sezona', 'liga', 'igrac', 'klub'],
+            'taxonomies' => ['kolo', 'liga_sezona'],
+            'option_keys' => [
+                self::OPTION_SCHEMA_VERSION,
+                self::OPTION_MIGRATION_STATE,
+                self::OPTION_VALIDATION_REPORT,
+                self::OPTION_LEAGUE_SEASON_VALIDATION_REPORT,
+                self::OPTION_LEGACY_ID_MAP,
+                self::OPTION_PLAYER_CITIZENSHIP_BACKFILL_DONE,
+                self::OPTION_CUSTOM_SHORTCODE_CSS,
+                self::OPTION_CUSTOM_SHORTCODE_CSS_MAP,
+                self::OPTION_VISUAL_SETTINGS,
+                self::OPTION_ADMIN_UI_LANGUAGE,
+                self::OPTION_DEFAULT_PAGES_SETUP_DONE,
+                self::OPTION_ONBOARDING_STATE,
+                self::OPTION_IMPORT_PREVIEW,
+            ],
+            'transient_keys' => ['opentt_unified_onboarding_redirect'],
+        ]);
 
-        $wpdb->query("DROP TABLE IF EXISTS {$sets_table}");
-        $wpdb->query("DROP TABLE IF EXISTS {$games_table}");
-        $wpdb->query("DROP TABLE IF EXISTS {$matches_table}");
-
-        foreach (['pravilo_takmicenja', 'sezona', 'liga', 'igrac', 'klub'] as $pt) {
-            $ids = get_posts([
-                'post_type' => $pt,
-                'posts_per_page' => -1,
-                'post_status' => ['publish', 'private', 'draft', 'pending', 'future', 'trash'],
-                'fields' => 'ids',
-                'suppress_filters' => true,
-            ]);
-            foreach ((array) $ids as $id) {
-                wp_delete_post((int) $id, true);
-            }
-        }
-
-        foreach (['kolo', 'liga_sezona'] as $tax) {
-            if (!taxonomy_exists($tax)) {
-                continue;
-            }
-            $terms = get_terms([
-                'taxonomy' => $tax,
-                'hide_empty' => false,
-                'fields' => 'ids',
-            ]);
-            if (is_wp_error($terms)) {
-                continue;
-            }
-            foreach ((array) $terms as $term_id) {
-                wp_delete_term((int) $term_id, $tax);
-            }
-        }
-
-        delete_option(self::OPTION_SCHEMA_VERSION);
-        delete_option(self::OPTION_MIGRATION_STATE);
-        delete_option(self::OPTION_VALIDATION_REPORT);
-        delete_option(self::OPTION_LEAGUE_SEASON_VALIDATION_REPORT);
-        delete_option(self::OPTION_LEGACY_ID_MAP);
-        delete_option(self::OPTION_PLAYER_CITIZENSHIP_BACKFILL_DONE);
-        delete_option(self::OPTION_CUSTOM_SHORTCODE_CSS);
-        delete_option(self::OPTION_CUSTOM_SHORTCODE_CSS_MAP);
-        delete_option(self::OPTION_VISUAL_SETTINGS);
-        delete_option(self::OPTION_ADMIN_UI_LANGUAGE);
-        delete_option(self::OPTION_DEFAULT_PAGES_SETUP_DONE);
-        delete_option(self::OPTION_ONBOARDING_STATE);
-        delete_option(self::OPTION_IMPORT_PREVIEW);
-
-        delete_transient('opentt_unified_onboarding_redirect');
         wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-settings'), 'success', 'Svi OpenTT podaci su obrisani.'));
         exit;
     }
