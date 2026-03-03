@@ -3401,25 +3401,16 @@ HTML;
 
     public static function handle_export_data_admin()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_export_data');
-        $sections = self::sanitize_transfer_sections($_POST['sections'] ?? []);
-        if (empty($sections)) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Izaberi bar jednu sekciju za izvoz.'));
-            exit;
-        }
-        $payload = self::build_export_payload($sections);
-        $json = wp_json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        if (!is_string($json) || $json === '') {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Greška pri formiranju izvoznog fajla.'));
-            exit;
-        }
-
-        nocache_headers();
-        header('Content-Type: application/json; charset=utf-8');
-        header('Content-Disposition: attachment; filename="opentt-export-' . gmdate('Ymd-His') . '.json"');
-        echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-        exit;
+        \OpenTT\Unified\WordPress\DataTransferActionManager::handleExport([
+            'capability' => self::CAP,
+            'transfer_url' => admin_url('admin.php?page=stkb-unified-transfer'),
+            'sanitize_sections' => static function ($raw) {
+                return self::sanitize_transfer_sections($raw);
+            },
+            'build_export_payload' => static function ($sections) {
+                return self::build_export_payload($sections);
+            },
+        ]);
     }
 
     private static function parse_import_payload_from_upload($file_field)
@@ -3638,42 +3629,23 @@ HTML;
 
     public static function handle_import_validate_admin()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_import_validate');
-        delete_option(self::OPTION_IMPORT_PREVIEW);
-        $sections = self::sanitize_transfer_sections($_POST['sections'] ?? []);
-        if (empty($sections)) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Izaberi bar jednu sekciju za uvoz.'));
-            exit;
-        }
-        [$payload, $err] = self::parse_import_payload_from_upload('import_file');
-        if (!$payload) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', $err));
-            exit;
-        }
-
-        $validation = self::validate_import_payload($payload, $sections);
-        $player_conflicts = self::detect_player_merge_conflicts($payload, $sections);
-        // Koristi URL/key-safe token format da ne dođe do mismatch-a pri confirm koraku.
-        $token = sanitize_key(strtolower(wp_generate_password(24, false, false)));
-        if ($token === '') {
-            $token = sanitize_key(strtolower(wp_generate_uuid4()));
-        }
-        set_transient('opentt_unified_import_payload_' . $token, $payload, 30 * MINUTE_IN_SECONDS);
-        update_option(self::OPTION_IMPORT_PREVIEW, [
-            'token' => $token,
-            'sections' => $sections,
-            'summary' => $validation['summary'],
-            'issues' => $validation['issues'],
-            'player_conflicts' => $player_conflicts,
-            'valid' => !empty($validation['valid']),
-            'created_at' => current_time('mysql'),
-        ], false);
-
-        $msg = !empty($validation['valid']) ? 'Validacija uspešna. Pregledaj podatke i potvrdi uvoz.' : 'Validacija je završena, ali postoje problemi. Proveri listu i ponovo pokušaj.';
-        $type = !empty($validation['valid']) ? 'success' : 'error';
-        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), $type, $msg));
-        exit;
+        \OpenTT\Unified\WordPress\DataTransferActionManager::handleImportValidate([
+            'capability' => self::CAP,
+            'transfer_url' => admin_url('admin.php?page=stkb-unified-transfer'),
+            'import_preview_option_key' => self::OPTION_IMPORT_PREVIEW,
+            'sanitize_sections' => static function ($raw) {
+                return self::sanitize_transfer_sections($raw);
+            },
+            'parse_import_payload' => static function ($file_field) {
+                return self::parse_import_payload_from_upload($file_field);
+            },
+            'validate_import_payload' => static function ($payload, $sections) {
+                return self::validate_import_payload($payload, $sections);
+            },
+            'detect_player_conflicts' => static function ($payload, $sections) {
+                return self::detect_player_merge_conflicts($payload, $sections);
+            },
+        ]);
     }
 
     private static function upsert_post_from_import($post_type, $row, $meta_keys = [], $slug_fallback = '', $forced_post_id = 0)
@@ -4130,55 +4102,17 @@ HTML;
 
     public static function handle_import_commit_admin()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_import_commit');
-        $token = sanitize_key(strtolower((string) ($_POST['import_token'] ?? '')));
-        $preview = get_option(self::OPTION_IMPORT_PREVIEW, []);
-        $preview_token = '';
-        if (is_array($preview) && !empty($preview['token'])) {
-            $preview_token = sanitize_key(strtolower((string) $preview['token']));
-        }
-        if (!is_array($preview) || $preview_token === '' || $token === '' || $token !== $preview_token) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Nema validnog preview tokena za uvoz.'));
-            exit;
-        }
-        $payload = get_transient('opentt_unified_import_payload_' . $token);
-        if (!is_array($payload)) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Import preview je istekao. Pokreni validaciju ponovo.'));
-            exit;
-        }
-        $sections = self::sanitize_transfer_sections($preview['sections'] ?? []);
-        $player_resolution = [];
-        $resolution_in = isset($_POST['player_resolution']) && is_array($_POST['player_resolution']) ? (array) $_POST['player_resolution'] : [];
-        foreach ($resolution_in as $source => $resolution) {
-            $source_id = intval($source);
-            if ($source_id <= 0) {
-                continue;
-            }
-            $resolution = sanitize_text_field((string) wp_unslash($resolution));
-            if ($resolution === 'new' || $resolution === 'skip') {
-                $player_resolution[$source_id] = $resolution;
-                continue;
-            }
-            if (strpos($resolution, 'merge:') === 0) {
-                $merge_id = intval(substr($resolution, 6));
-                if ($merge_id > 0) {
-                    $player_resolution[$source_id] = 'merge:' . $merge_id;
-                }
-            }
-        }
-        $result = self::import_payload_apply($payload, $sections, [
-            'player_resolution' => $player_resolution,
+        \OpenTT\Unified\WordPress\DataTransferActionManager::handleImportCommit([
+            'capability' => self::CAP,
+            'transfer_url' => admin_url('admin.php?page=stkb-unified-transfer'),
+            'import_preview_option_key' => self::OPTION_IMPORT_PREVIEW,
+            'sanitize_sections' => static function ($raw) {
+                return self::sanitize_transfer_sections($raw);
+            },
+            'import_payload_apply' => static function ($payload, $sections, $import_options) {
+                return self::import_payload_apply($payload, $sections, $import_options);
+            },
         ]);
-        delete_transient('opentt_unified_import_payload_' . $token);
-        delete_option(self::OPTION_IMPORT_PREVIEW);
-
-        $msg = 'Uvoz završen. Takmičenja: ' . intval($result['competitions']) . ', klubovi: ' . intval($result['clubs']) . ', igrači: ' . intval($result['players']) . ', utakmice: ' . intval($result['matches']) . ', partije: ' . intval($result['games']) . ', setovi: ' . intval($result['sets']) . '.';
-        if (!empty($result['issues'])) {
-            $msg .= ' Upozorenja: ' . count((array) $result['issues']) . '.';
-        }
-        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'success', $msg));
-        exit;
     }
 
     public static function handle_reset_competition_matches_admin()
