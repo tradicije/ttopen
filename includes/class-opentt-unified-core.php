@@ -1803,11 +1803,11 @@ HTML;
 
     private static function render_admin_topbar()
     {
-        $logo_path = trailingslashit(self::$plugin_dir) . 'opentt-logo.png';
+        $logo_path = trailingslashit(self::$plugin_dir) . 'assets/img/admin-ui-logo.png';
         echo '<div class="opentt-admin-topbar">';
         echo '<div class="opentt-admin-brand">';
         if (is_readable($logo_path)) {
-            $logo_url = plugins_url('opentt-logo.png', self::$plugin_file);
+            $logo_url = plugins_url('assets/img/admin-ui-logo.png', self::$plugin_file);
             echo '<img class="opentt-dashboard-logo" src="' . esc_url($logo_url) . '" alt="OpenTT logo">';
         } else {
             echo '<strong>OpenTT</strong>';
@@ -4162,9 +4162,9 @@ HTML;
     {
         self::require_cap();
         $logo_url = '';
-        $logo_path = trailingslashit(self::$plugin_dir) . 'opentt-logo.png';
+        $logo_path = trailingslashit(self::$plugin_dir) . 'assets/img/admin-ui-logo.png';
         if (is_readable($logo_path)) {
-            $logo_url = plugins_url('opentt-logo.png', self::$plugin_file);
+            $logo_url = plugins_url('assets/img/admin-ui-logo.png', self::$plugin_file);
         }
 
         echo '<div class="wrap opentt-admin opentt-onboarding-wrap">';

@@ -15,6 +15,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 
 - Renamed frontend CSS override style handle namespace from `stkb-unified-*` to `opentt-unified-*`.
 - Updated admin JS initialization dataset/data flags from `stkb*` to `opentt*` keys.
+- Switched admin branding logo source (topbar + onboarding) from root `opentt-logo.png` to `assets/img/admin-ui-logo.png` without changing frontend/readme logo usage.
 
 #### Localization
 
