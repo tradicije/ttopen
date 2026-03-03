@@ -16,6 +16,10 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Renamed frontend CSS override style handle namespace from `stkb-unified-*` to `opentt-unified-*`.
 - Updated admin JS initialization dataset/data flags from `stkb*` to `opentt*` keys.
 
+#### Localization
+
+- Updated admin UI translation dictionaries in `languages/` to align key strings with the new `opentt-*`/`opentt_*` markup and action/query identifiers.
+
 ## Releases
 
 ### 1.1.0-beta.2 - 2026-03-03
