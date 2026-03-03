@@ -4747,116 +4747,79 @@ HTML;
 
     public static function handle_migrate_league_season_slugs()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_migrate_league_season_slugs');
-
-        $report = self::validate_league_season_migration_from_matches();
-        update_option(self::OPTION_LEAGUE_SEASON_VALIDATION_REPORT, $report, false);
-        if (empty($report['ok'])) {
-            $msg = 'Migracija nije pokrenuta: validacija je prijavila probleme.';
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-competitions'), 'error', $msg));
-            exit;
-        }
-
-        $result = self::migrate_league_season_from_matches();
-        $msg = 'Migracija liga/sezona završena. Lige: ' . (int) $result['leagues'] . ', sezone: ' . (int) $result['seasons'] . '.';
-        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-competitions'), 'success', $msg));
-        exit;
+        \OpenTT\Unified\WordPress\MigrationActionsManager::handleMigrateLeagueSeasonSlugs(
+            self::CAP,
+            self::OPTION_LEAGUE_SEASON_VALIDATION_REPORT,
+            static function () {
+                return self::validate_league_season_migration_from_matches();
+            },
+            static function () {
+                return self::migrate_league_season_from_matches();
+            }
+        );
     }
 
     public static function handle_validate_league_season_migration()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_validate_league_season_migration');
-
-        $report = self::validate_league_season_migration_from_matches();
-        update_option(self::OPTION_LEAGUE_SEASON_VALIDATION_REPORT, $report, false);
-
-        $msg = !empty($report['ok'])
-            ? 'Validacija je prošla. Možeš pokrenuti migraciju liga/sezona.'
-            : 'Validacija je našla probleme. Reši ih pre migracije.';
-        $type = !empty($report['ok']) ? 'success' : 'error';
-        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-competitions'), $type, $msg));
-        exit;
+        \OpenTT\Unified\WordPress\MigrationActionsManager::handleValidateLeagueSeasonMigration(
+            self::CAP,
+            self::OPTION_LEAGUE_SEASON_VALIDATION_REPORT,
+            static function () {
+                return self::validate_league_season_migration_from_matches();
+            }
+        );
     }
 
     public static function handle_validate_import()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_validate_import');
-
-        $report = self::validate_legacy_import();
-        update_option(self::OPTION_VALIDATION_REPORT, $report, false);
-
-        wp_safe_redirect(admin_url('admin.php?page=stkb-unified-migration&validated=1'));
-        exit;
+        \OpenTT\Unified\WordPress\MigrationActionsManager::handleValidateImport(
+            self::CAP,
+            self::OPTION_VALIDATION_REPORT,
+            static function () {
+                return self::validate_legacy_import();
+            }
+        );
     }
 
     public static function handle_reset_migration()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_reset_migration');
-
-        update_option(self::OPTION_MIGRATION_STATE, ['offset' => 0], false);
-
-        wp_safe_redirect(admin_url('admin.php?page=stkb-unified-migration&reset=1'));
-        exit;
+        \OpenTT\Unified\WordPress\MigrationActionsManager::handleResetMigration(
+            self::CAP,
+            self::OPTION_MIGRATION_STATE
+        );
     }
 
     public static function handle_repair_relations()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_repair_relations');
-
-        $fixed = self::repair_legacy_relations();
-
-        $url = add_query_arg([
-            'page' => 'stkb-unified-migration',
-            'repaired' => 1,
-            'fixed' => $fixed,
-        ], admin_url('admin.php'));
-
-        wp_safe_redirect($url);
-        exit;
+        \OpenTT\Unified\WordPress\MigrationActionsManager::handleRepairRelations(
+            self::CAP,
+            static function () {
+                return self::repair_legacy_relations();
+            }
+        );
     }
 
     public static function handle_cleanup_placeholders()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_cleanup_placeholders');
-
-        $cleaned = self::cleanup_placeholder_relations();
-
-        $url = add_query_arg([
-            'page' => 'stkb-unified-migration',
-            'cleaned_placeholders' => 1,
-            'cleaned' => $cleaned,
-        ], admin_url('admin.php'));
-
-        wp_safe_redirect($url);
-        exit;
+        \OpenTT\Unified\WordPress\MigrationActionsManager::handleCleanupPlaceholders(
+            self::CAP,
+            static function () {
+                return self::cleanup_placeholder_relations();
+            }
+        );
     }
 
     public static function handle_migrate_batch()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_migrate_batch');
-
-        self::maybe_migrate_schema();
-
-        $batch = isset($_POST['batch']) ? max(1, min(500, intval($_POST['batch']))) : 100;
-        $result = self::migrate_batch($batch);
-
-        $url = add_query_arg([
-            'page' => 'stkb-unified-migration',
-            'migrated' => 1,
-            'migrated_matches' => $result['matches'],
-            'migrated_games' => $result['games'],
-            'migrated_sets' => $result['sets'],
-        ], admin_url('admin.php'));
-
-        wp_safe_redirect($url);
-        exit;
+        \OpenTT\Unified\WordPress\MigrationActionsManager::handleMigrateBatch(
+            self::CAP,
+            static function () {
+                self::maybe_migrate_schema();
+            },
+            static function ($batch) {
+                return self::migrate_batch($batch);
+            }
+        );
     }
 
     private static function maybe_migrate_schema()
