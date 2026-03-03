@@ -52,7 +52,6 @@ final class OpenTT_Unified_Core
     private static $plugin_dir = '';
     private static $virtual_match_row = null;
     private static $virtual_archive_context = null;
-    private static $resolved_db_tables = [];
     private static $legacy_db_sync_ran = false;
 
     public static function init($plugin_file)
@@ -5744,7 +5743,7 @@ HTML;
             KEY game_id (game_id)
         ) {$charset_collate};");
 
-        self::$resolved_db_tables = [];
+        \OpenTT\Unified\Infrastructure\DbTableResolver::resetCache();
     }
 
     private static function maybe_sync_legacy_db_tables()
@@ -5781,7 +5780,7 @@ HTML;
             self::db_table_name('sets', false)
         );
 
-        self::$resolved_db_tables = [];
+        \OpenTT\Unified\Infrastructure\DbTableResolver::resetCache();
     }
 
     private static function maybe_copy_legacy_table_rows($legacy_table, $new_table)
@@ -7063,44 +7062,24 @@ HTML;
 
     public static function db_table($entity)
     {
-        global $wpdb;
-
-        $entity = sanitize_key((string) $entity);
-        if ($entity === '') {
-            return $wpdb->prefix . self::TABLE_MATCHES;
-        }
-        if (isset(self::$resolved_db_tables[$entity])) {
-            return self::$resolved_db_tables[$entity];
-        }
-
-        $new_table = self::db_table_name($entity, false);
-        $legacy_table = self::db_table_name($entity, true);
-        if ($new_table === '') {
-            return $wpdb->prefix . self::TABLE_MATCHES;
-        }
-
-        $new_exists = self::table_exists($new_table);
-        $legacy_exists = ($legacy_table !== '') ? self::table_exists($legacy_table) : false;
-
-        if ($new_exists && $legacy_exists) {
-            $new_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$new_table}");
-            $legacy_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$legacy_table}");
-            $resolved = ($new_count <= 0 && $legacy_count > 0) ? $legacy_table : $new_table;
-            self::$resolved_db_tables[$entity] = $resolved;
-            return $resolved;
-        }
-
-        if ($new_exists) {
-            self::$resolved_db_tables[$entity] = $new_table;
-            return $new_table;
-        }
-        if ($legacy_exists) {
-            self::$resolved_db_tables[$entity] = $legacy_table;
-            return $legacy_table;
-        }
-
-        self::$resolved_db_tables[$entity] = $new_table;
-        return $new_table;
+        return \OpenTT\Unified\Infrastructure\DbTableResolver::resolve(
+            $entity,
+            [
+                'matches' => [
+                    'new' => self::TABLE_MATCHES,
+                    'legacy' => self::LEGACY_TABLE_MATCHES,
+                ],
+                'games' => [
+                    'new' => self::TABLE_GAMES,
+                    'legacy' => self::LEGACY_TABLE_GAMES,
+                ],
+                'sets' => [
+                    'new' => self::TABLE_SETS,
+                    'legacy' => self::LEGACY_TABLE_SETS,
+                ],
+            ],
+            self::TABLE_MATCHES
+        );
     }
 
     private static function db_table_name($entity, $legacy = false)

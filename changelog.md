@@ -18,6 +18,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Introduced Phase 2 PSR-4 foundation with a new Composer package manifest and `OpenTT\\Unified\\` namespace mapping.
 - Added a namespaced plugin bootstrap (`src/Plugin.php`) that preserves existing runtime behavior through a legacy-core bridge.
 - Updated root plugin bootstrap to prefer Composer autoload when available, with safe local fallback for non-Composer installs.
+- Added a local PSR-4 autoload fallback and extracted DB table resolution/cache logic into `OpenTT\\Unified\\Infrastructure\\DbTableResolver`, reducing core responsibility while preserving legacy table compatibility behavior.
 
 ## Releases
 
