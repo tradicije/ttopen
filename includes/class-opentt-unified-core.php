@@ -3956,7 +3956,7 @@ HTML;
                     $result['issues'][] = 'Preskočeno takmičenje bez liga/sezona slug vrednosti.';
                     continue;
                 }
-                $existing = self::get_competition_rule_post_by_slugs($liga_slug, $sezona_slug);
+                $existing = \OpenTT\Unified\WordPress\CompetitionRuleStore::findBySlugs($liga_slug, $sezona_slug);
                 $post_id = self::upsert_post_from_import('pravilo_takmicenja', $row, [
                     'opentt_competition_league_slug',
                     'opentt_competition_season_slug',
@@ -4597,16 +4597,28 @@ HTML;
     {
         \OpenTT\Unified\WordPress\CompetitionRuleAdminManager::handleSave(self::CAP, [
             'find_rule_by_slugs' => static function ($liga_slug, $sezona_slug) {
-                return self::get_competition_rule_post_by_slugs($liga_slug, $sezona_slug);
+                return \OpenTT\Unified\WordPress\CompetitionRuleStore::findBySlugs($liga_slug, $sezona_slug);
             },
             'slug_to_title' => static function ($slug) {
                 return self::slug_to_title($slug);
             },
             'ensure_league_entity' => static function ($league_slug, $league_name) {
-                self::ensure_league_entity($league_slug, $league_name);
+                \OpenTT\Unified\WordPress\CompetitionRuleStore::ensureLeagueEntity(
+                    $league_slug,
+                    $league_name,
+                    static function ($slug) {
+                        return self::slug_to_title($slug);
+                    }
+                );
             },
             'ensure_season_entity' => static function ($season_slug, $season_name) {
-                self::ensure_season_entity($season_slug, $season_name);
+                \OpenTT\Unified\WordPress\CompetitionRuleStore::ensureSeasonEntity(
+                    $season_slug,
+                    $season_name,
+                    static function ($slug) {
+                        return self::slug_to_title($slug);
+                    }
+                );
             },
             'normalize_federation' => static function ($code) {
                 return self::normalize_competition_federation($code);
@@ -5474,89 +5486,6 @@ HTML;
         return \OpenTT\Unified\WordPress\AdminNoticeManager::buildUrl($url, $type, $message);
     }
 
-    private static function get_competition_rule_post_by_slugs($liga_slug, $sezona_slug)
-    {
-        $liga_slug = sanitize_title((string) $liga_slug);
-        $sezona_slug = sanitize_title((string) $sezona_slug);
-        if ($liga_slug === '' || $sezona_slug === '') {
-            return null;
-        }
-        $rows = get_posts([
-            'post_type' => 'pravilo_takmicenja',
-            'numberposts' => 1,
-            'post_status' => ['publish', 'draft', 'pending', 'private'],
-            'meta_query' => [
-                [
-                    'key' => 'opentt_competition_league_slug',
-                    'value' => $liga_slug,
-                    'compare' => '=',
-                ],
-                [
-                    'key' => 'opentt_competition_season_slug',
-                    'value' => $sezona_slug,
-                    'compare' => '=',
-                ],
-            ],
-        ]);
-        return !empty($rows) ? $rows[0] : null;
-    }
-
-    private static function ensure_league_entity($league_slug, $league_name = '')
-    {
-        $league_slug = sanitize_title((string) $league_slug);
-        if ($league_slug === '') {
-            return 0;
-        }
-        $rows = get_posts([
-            'post_type' => 'liga',
-            'name' => $league_slug,
-            'numberposts' => 1,
-            'post_status' => ['publish', 'draft', 'pending', 'private'],
-        ]);
-        if (!empty($rows)) {
-            return (int) $rows[0]->ID;
-        }
-        $title = sanitize_text_field((string) $league_name);
-        if ($title === '') {
-            $title = self::slug_to_title($league_slug);
-        }
-        $id = wp_insert_post([
-            'post_type' => 'liga',
-            'post_status' => 'publish',
-            'post_title' => $title,
-            'post_name' => $league_slug,
-        ], true);
-        return (!is_wp_error($id) && $id) ? (int) $id : 0;
-    }
-
-    private static function ensure_season_entity($season_slug, $season_name = '')
-    {
-        $season_slug = sanitize_title((string) $season_slug);
-        if ($season_slug === '') {
-            return 0;
-        }
-        $rows = get_posts([
-            'post_type' => 'sezona',
-            'name' => $season_slug,
-            'numberposts' => 1,
-            'post_status' => ['publish', 'draft', 'pending', 'private'],
-        ]);
-        if (!empty($rows)) {
-            return (int) $rows[0]->ID;
-        }
-        $title = sanitize_text_field((string) $season_name);
-        if ($title === '') {
-            $title = self::slug_to_title($season_slug);
-        }
-        $id = wp_insert_post([
-            'post_type' => 'sezona',
-            'post_status' => 'publish',
-            'post_title' => $title,
-            'post_name' => $season_slug,
-        ], true);
-        return (!is_wp_error($id) && $id) ? (int) $id : 0;
-    }
-
     private static function has_any_competition_rules()
     {
         $rows = get_posts([
@@ -5575,7 +5504,7 @@ HTML;
         if ($liga_slug === '' || $sezona_slug === '') {
             return null;
         }
-        $post = self::get_competition_rule_post_by_slugs($liga_slug, $sezona_slug);
+        $post = \OpenTT\Unified\WordPress\CompetitionRuleStore::findBySlugs($liga_slug, $sezona_slug);
         if (!$post) {
             return null;
         }
@@ -5627,7 +5556,7 @@ HTML;
                 continue;
             }
 
-            $existing = self::get_competition_rule_post_by_slugs($liga_slug, $sezona_slug);
+            $existing = \OpenTT\Unified\WordPress\CompetitionRuleStore::findBySlugs($liga_slug, $sezona_slug);
             $season_posts = get_posts([
                 'post_type' => 'sezona',
                 'name' => $sezona_slug,
@@ -5850,7 +5779,7 @@ HTML;
 
             // NEDOSTAJUĆI liga/sezona entiteti nisu blokirajući problem:
             // upravo ih kreira korak "Migriraj legacy liga/sezona slugove".
-            if ($sezona !== '' && self::has_any_competition_rules() && !self::get_competition_rule_post_by_slugs($liga, $sezona)) {
+            if ($sezona !== '' && self::has_any_competition_rules() && !\OpenTT\Unified\WordPress\CompetitionRuleStore::findBySlugs($liga, $sezona)) {
                 self::push_issue(
                     $issues,
                     $max_issues,
@@ -5972,7 +5901,7 @@ HTML;
 
     private static function competition_rule_id_by_slugs($liga_slug, $sezona_slug)
     {
-        $post = self::get_competition_rule_post_by_slugs($liga_slug, $sezona_slug);
+        $post = \OpenTT\Unified\WordPress\CompetitionRuleStore::findBySlugs($liga_slug, $sezona_slug);
         return $post ? (int) $post->ID : 0;
     }
 
