@@ -62,7 +62,6 @@ final class OpenTT_Unified_Core
     private static $plugin_dir = '';
     private static $virtual_match_row = null;
     private static $virtual_archive_context = null;
-    private static $legacy_db_sync_ran = false;
 
     public static function init($plugin_file)
     {
@@ -4523,145 +4522,20 @@ HTML;
 
     private static function maybe_migrate_schema()
     {
-        $stored = (string) get_option(self::OPTION_SCHEMA_VERSION, '');
-        if ($stored !== self::SCHEMA_VERSION) {
-            self::migrate_schema();
-            update_option(self::OPTION_SCHEMA_VERSION, self::SCHEMA_VERSION, false);
-        }
-
-        self::maybe_sync_legacy_db_tables();
-    }
-
-    private static function migrate_schema()
-    {
-        global $wpdb;
-
-        $charset_collate = $wpdb->get_charset_collate();
-        $matches = self::db_table_name('matches', false);
-        $games = self::db_table_name('games', false);
-        $sets = self::db_table_name('sets', false);
-
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
-        dbDelta("CREATE TABLE {$matches} (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            legacy_post_id bigint(20) unsigned DEFAULT NULL,
-            slug varchar(190) NOT NULL,
-            liga_slug varchar(190) NOT NULL,
-            sezona_slug varchar(190) DEFAULT '',
-            kolo_slug varchar(190) NOT NULL,
-            home_club_post_id bigint(20) unsigned NOT NULL,
-            away_club_post_id bigint(20) unsigned NOT NULL,
-            home_score smallint(6) NOT NULL DEFAULT 0,
-            away_score smallint(6) NOT NULL DEFAULT 0,
-            played tinyint(1) NOT NULL DEFAULT 0,
-            match_date datetime DEFAULT NULL,
-            created_at datetime NOT NULL,
-            updated_at datetime NOT NULL,
-            PRIMARY KEY  (id),
-            UNIQUE KEY legacy_post_id (legacy_post_id),
-            KEY liga_sezona_kolo (liga_slug, sezona_slug, kolo_slug),
-            KEY match_date (match_date)
-        ) {$charset_collate};");
-
-        dbDelta("CREATE TABLE {$games} (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            legacy_post_id bigint(20) unsigned DEFAULT NULL,
-            match_id bigint(20) unsigned NOT NULL,
-            order_no smallint(6) NOT NULL DEFAULT 0,
-            slug varchar(190) NOT NULL,
-            is_doubles tinyint(1) NOT NULL DEFAULT 0,
-            home_player_post_id bigint(20) unsigned DEFAULT NULL,
-            away_player_post_id bigint(20) unsigned DEFAULT NULL,
-            home_player2_post_id bigint(20) unsigned DEFAULT NULL,
-            away_player2_post_id bigint(20) unsigned DEFAULT NULL,
-            home_sets smallint(6) NOT NULL DEFAULT 0,
-            away_sets smallint(6) NOT NULL DEFAULT 0,
-            created_at datetime NOT NULL,
-            updated_at datetime NOT NULL,
-            PRIMARY KEY  (id),
-            UNIQUE KEY legacy_post_id (legacy_post_id),
-            KEY match_id_order (match_id, order_no)
-        ) {$charset_collate};");
-
-        dbDelta("CREATE TABLE {$sets} (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            game_id bigint(20) unsigned NOT NULL,
-            set_no tinyint(3) unsigned NOT NULL,
-            home_points smallint(6) NOT NULL DEFAULT 0,
-            away_points smallint(6) NOT NULL DEFAULT 0,
-            created_at datetime NOT NULL,
-            updated_at datetime NOT NULL,
-            PRIMARY KEY  (id),
-            UNIQUE KEY game_set_unique (game_id, set_no),
-            KEY game_id (game_id)
-        ) {$charset_collate};");
-
-        \OpenTT\Unified\Infrastructure\DbTableResolver::resetCache();
-    }
-
-    private static function maybe_sync_legacy_db_tables()
-    {
-        if (self::$legacy_db_sync_ran) {
-            return;
-        }
-        self::$legacy_db_sync_ran = true;
-
-        $entities = ['matches', 'games', 'sets'];
-        $missing_new_tables = false;
-        foreach ($entities as $entity) {
-            $new_table = self::db_table_name($entity, false);
-            if (!self::table_exists($new_table)) {
-                $missing_new_tables = true;
-                break;
-            }
-        }
-
-        if ($missing_new_tables) {
-            self::migrate_schema();
-        }
-
-        self::maybe_copy_legacy_table_rows(
-            self::db_table_name('matches', true),
-            self::db_table_name('matches', false)
-        );
-        self::maybe_copy_legacy_table_rows(
-            self::db_table_name('games', true),
-            self::db_table_name('games', false)
-        );
-        self::maybe_copy_legacy_table_rows(
-            self::db_table_name('sets', true),
-            self::db_table_name('sets', false)
-        );
-
-        \OpenTT\Unified\Infrastructure\DbTableResolver::resetCache();
-    }
-
-    private static function maybe_copy_legacy_table_rows($legacy_table, $new_table)
-    {
-        global $wpdb;
-
-        if (
-            $legacy_table === ''
-            || $new_table === ''
-            || $legacy_table === $new_table
-            || !self::table_exists($legacy_table)
-            || !self::table_exists($new_table)
-        ) {
-            return;
-        }
-
-        $legacy_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$legacy_table}");
-        if ($legacy_count <= 0) {
-            return;
-        }
-
-        $new_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$new_table}");
-        if ($new_count >= $legacy_count) {
-            return;
-        }
-
-        $wpdb->query("INSERT IGNORE INTO {$new_table} SELECT * FROM {$legacy_table}");
+        \OpenTT\Unified\Infrastructure\SchemaMigrationManager::ensureSchemaAndLegacySync([
+            'schema_version_option_key' => self::OPTION_SCHEMA_VERSION,
+            'schema_version' => self::SCHEMA_VERSION,
+            'sync_state_key' => 'opentt_core_schema_sync',
+            'table_name_resolver' => static function ($entity, $legacy) {
+                return self::db_table_name($entity, (bool) $legacy);
+            },
+            'table_exists' => static function ($table_name) {
+                return self::table_exists($table_name);
+            },
+            'reset_cache' => static function () {
+                \OpenTT\Unified\Infrastructure\DbTableResolver::resetCache();
+            },
+        ]);
     }
 
     private static function migrate_batch($batch_size)
