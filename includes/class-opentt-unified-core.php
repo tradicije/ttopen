@@ -31,7 +31,7 @@ final class OpenTT_Unified_Core
 {
     use OpenTT_Unified_Shortcodes_Trait;
 
-    const VERSION = '1.1.0-beta.1';
+    const VERSION = '1.1.0-beta.2';
     const CAP = 'edit_others_posts';
     const OPTION_SCHEMA_VERSION = 'opentt_unified_schema_version';
     const SCHEMA_VERSION = '3';

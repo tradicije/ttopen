@@ -6,41 +6,34 @@ All notable changes to the OpenTT plugin are documented in this file.
 
 ### Next
 
-#### Assets & UI
+- No entries yet.
 
-- Migrated frontend/admin asset selector namespace from `stkb-*` to `opentt-*` and aligned PHP-rendered markup/selectors accordingly.
-- Updated admin live-search/wizard/player-picker script bindings to the new `opentt-*` selectors and data attributes.
-- Standardized key admin asset microcopy in JavaScript to English (search/step/result helper text).
+## Releases
+
+### 1.1.0-beta.2 - 2026-03-03
+
+#### Highlights
+
+- Major Phase 2 refactor release focused on splitting monolithic core responsibilities into PSR-4 services, while preserving existing runtime behavior and public API contracts.
+- Core architecture is now significantly more modular across bootstrap, onboarding, settings, admin workflows, migration flows, diagnostics, competition rule handling, and frontend assets pipeline.
+- Public integration surfaces remain stable (`opentt_*` shortcodes, admin actions, option/meta namespaces, DB compatibility behavior).
 
 #### Engineering
 
-- Added refactor freeze contract document for public/internal integration boundaries: `docs/refactor/API_CONTRACT.md`.
-- Introduced Phase 2 PSR-4 foundation with a new Composer package manifest and `OpenTT\\Unified\\` namespace mapping.
-- Added a namespaced plugin bootstrap (`src/Plugin.php`) that preserves existing runtime behavior through a legacy-core bridge.
-- Updated root plugin bootstrap to prefer Composer autoload when available, with safe local fallback for non-Composer installs.
-- Added a local PSR-4 autoload fallback and extracted DB table resolution/cache logic into `OpenTT\\Unified\\Infrastructure\\DbTableResolver`, reducing core responsibility while preserving legacy table compatibility behavior.
-- Continued Phase 2 extraction by moving admin UI translation parsing/replacement to `OpenTT\\Unified\\Infrastructure\\AdminUiTranslator`, with core kept as a compatibility wrapper.
-- Extracted legacy CPT/taxonomy registration into `OpenTT\\Unified\\WordPress\\LegacyContentTypeRegistrar`, keeping `OpenTT_Unified_Core::register_legacy_content_types()` as a stable delegation point.
-- Extracted shortcode tag registration into `OpenTT\\Unified\\WordPress\\ShortcodeRegistrar` while preserving all existing `opentt_*` tags and core callback methods.
-- Extracted default page provisioning (`lige` / `[opentt_competitions]`) into `OpenTT\\Unified\\WordPress\\DefaultPagesProvisioner`, while keeping core option gating unchanged.
-- Consolidated installation lifecycle concerns into PSR-4 services: rewrite flush policy moved to `RewriteRulesManager`, and onboarding state/redirect/existing-install detection moved to `OnboardingManager`, with core kept as delegation shell.
-- Extracted visual settings domain (defaults, sanitization, option read, shortcode-title flag, CSS generation) into `OpenTT\\Unified\\Infrastructure\\VisualSettings` and reduced core to compatibility delegates.
-- Extracted frontend module CSS enqueue and custom override pipeline into `OpenTT\\Unified\\WordPress\\FrontendAssetsEnqueuer`, preserving legacy style handles and existing inline override behavior.
-- Extracted admin UI language selection/enablement and page-scope buffer bootstrap into `OpenTT\\Unified\\WordPress\\AdminUiLanguageManager`.
-- Extracted settings persistence/reset operations (visual defaults, admin UI language validation, CSS override map sanitization) into `OpenTT\\Unified\\WordPress\\SettingsManager`.
-- Extracted onboarding action submit flow into `OpenTT\\Unified\\WordPress\\OnboardingActionManager` and destructive full-data purge sequence into `OpenTT\\Unified\\WordPress\\DataPurgeManager`.
-- Extracted admin notice URL construction and request-time notice rendering into `OpenTT\\Unified\\WordPress\\AdminNoticeManager`.
-- Extracted league/season admin CRUD handlers (save/delete + validation/nonce/cap flow) into `OpenTT\\Unified\\WordPress\\LeagueSeasonAdminManager`.
-- Extracted competition rule admin flows (save/delete/migrate) into `OpenTT\\Unified\\WordPress\\CompetitionRuleAdminManager`, while preserving core helper behavior through injected callbacks.
-- Extracted migration action handlers (league/season validate+migrate, import validate, migration reset, relation repair, placeholder cleanup, batch migrate) into `OpenTT\\Unified\\WordPress\\MigrationActionsManager`.
-- Extracted competition maintenance action handlers (competition reset, diagnostics generation, played repair) into `OpenTT\\Unified\\WordPress\\CompetitionMaintenanceManager`.
-- Extracted competition rule storage helpers (find by league/season slugs + ensure league/season entities) into `OpenTT\\Unified\\WordPress\\CompetitionRuleStore`.
-- Extracted competition rule catalog helpers (federation options/normalization/data + rule ID lookup + has-any-rules check) into `OpenTT\\Unified\\WordPress\\CompetitionRuleCatalog`.
-- Extracted competition round diagnostics query/normalization into `OpenTT\\Unified\\WordPress\\CompetitionDiagnosticsQuery`.
-- Extracted competition rule profile resolution (rule data map + match format resolution) into `OpenTT\\Unified\\WordPress\\CompetitionRuleProfile`.
-- Standardized AGPL file headers across all PHP sources and aligned main plugin metadata to `1.1.0-beta.1`.
+- Added refactor compatibility contract documentation: `docs/refactor/API_CONTRACT.md`.
+- Introduced Composer PSR-4 foundation and namespaced plugin bootstrap with safe non-Composer autoload fallback.
+- Extracted infrastructure services for DB table resolution, admin UI translation, and visual settings CSS/settings domain.
+- Extracted WordPress service layer for legacy content and shortcode registration, onboarding/rewrite lifecycle, settings and notices, league/season and competition admin flows, migration and maintenance actions, and competition rule storage/catalog/profile/query helpers.
 
-## Releases
+#### Assets & UI
+
+- Migrated frontend/admin selector namespace to `opentt-*` and aligned JS bindings.
+- Standardized key admin JS microcopy to English.
+
+#### Documentation
+
+- Updated version references to `1.1.0-beta.2` in README files.
+- Standardized AGPL file headers across PHP sources.
 
 ### 1.1.0-beta.1 - 2026-03-03
 
