@@ -4616,16 +4616,7 @@ HTML;
 
     public static function render_admin_notice()
     {
-        if (!is_admin() || !isset($_GET['opentt_notice'], $_GET['opentt_msg'])) {
-            return;
-        }
-        $type = sanitize_key((string) $_GET['opentt_notice']);
-        $msg = sanitize_text_field(rawurldecode(wp_unslash((string) $_GET['opentt_msg'])));
-        if ($msg === '') {
-            return;
-        }
-        $class = $type === 'error' ? 'notice notice-error is-dismissible' : 'notice notice-success is-dismissible';
-        echo '<div class="' . esc_attr($class) . '"><p>' . esc_html($msg) . '</p></div>';
+        \OpenTT\Unified\WordPress\AdminNoticeManager::renderFromRequest();
     }
 
     public static function handle_save_match()
@@ -5754,10 +5745,7 @@ HTML;
 
     private static function admin_notice_url($url, $type, $message)
     {
-        return add_query_arg([
-            'opentt_notice' => sanitize_key((string) $type),
-            'opentt_msg' => (string) $message,
-        ], $url);
+        return \OpenTT\Unified\WordPress\AdminNoticeManager::buildUrl($url, $type, $message);
     }
 
     private static function get_competition_rule_post_by_slugs($liga_slug, $sezona_slug)
