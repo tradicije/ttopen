@@ -1102,7 +1102,7 @@ trait OpenTT_Unified_Shortcodes_Trait
             if ($kolo_slug !== '') {
                 $max_kolo = self::extract_round_no($kolo_slug);
                 global $wpdb;
-                $table = $wpdb->prefix . 'stkb_matches';
+                $table = OpenTT_Unified_Core::db_table('matches');
                 if (self::table_exists($table)) {
                     $row = $wpdb->get_row($wpdb->prepare("SELECT liga_slug, sezona_slug FROM {$table} WHERE kolo_slug=%s ORDER BY id DESC LIMIT 1", $kolo_slug));
                     if ($row) {
@@ -2978,7 +2978,7 @@ trait OpenTT_Unified_Shortcodes_Trait
             $sezona_slug = sanitize_title((string) ($parsed_ctx['season_slug'] ?? $raw_sezona));
             if ($liga_slug === '' && $sezona_slug !== '') {
                 global $wpdb;
-                $table = $wpdb->prefix . 'stkb_matches';
+                $table = OpenTT_Unified_Core::db_table('matches');
                 if (self::table_exists($table)) {
                     $liga_guess = $wpdb->get_var($wpdb->prepare("SELECT liga_slug FROM {$table} WHERE sezona_slug=%s AND liga_slug<>'' ORDER BY id DESC LIMIT 1", $sezona_slug));
                     if (is_string($liga_guess) && $liga_guess !== '') {
@@ -3398,7 +3398,7 @@ trait OpenTT_Unified_Shortcodes_Trait
             $sezona_slug = sanitize_title((string) ($parsed_ctx['season_slug'] ?? $raw_sezona));
             if ($liga_slug === '' && $sezona_slug !== '') {
                 global $wpdb;
-                $table = $wpdb->prefix . 'stkb_matches';
+                $table = OpenTT_Unified_Core::db_table('matches');
                 if (self::table_exists($table)) {
                     $liga_guess = $wpdb->get_var($wpdb->prepare("SELECT liga_slug FROM {$table} WHERE sezona_slug=%s AND liga_slug<>'' ORDER BY id DESC LIMIT 1", $sezona_slug));
                     if (is_string($liga_guess) && $liga_guess !== '') {

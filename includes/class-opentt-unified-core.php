@@ -24,7 +24,7 @@ final class OpenTT_Unified_Core
     const VERSION = '1.0.0';
     const CAP = 'edit_others_posts';
     const OPTION_SCHEMA_VERSION = 'opentt_unified_schema_version';
-    const SCHEMA_VERSION = '2';
+    const SCHEMA_VERSION = '3';
     const OPTION_MIGRATION_STATE = 'opentt_unified_migration_state';
     const OPTION_VALIDATION_REPORT = 'opentt_unified_validation_report';
     const OPTION_LEAGUE_SEASON_VALIDATION_REPORT = 'opentt_unified_league_season_validation_report';
@@ -40,12 +40,20 @@ final class OpenTT_Unified_Core
     const OPTION_IMPORT_PREVIEW = 'opentt_unified_import_preview';
     const OPTION_COMPETITION_DIAGNOSTICS = 'opentt_unified_competition_diagnostics';
     const OPTION_ADMIN_UI_LANGUAGE = 'opentt_unified_admin_ui_language';
+    const TABLE_MATCHES = 'opentt_matches';
+    const TABLE_GAMES = 'opentt_games';
+    const TABLE_SETS = 'opentt_sets';
+    const LEGACY_TABLE_MATCHES = 'stkb_matches';
+    const LEGACY_TABLE_GAMES = 'stkb_games';
+    const LEGACY_TABLE_SETS = 'stkb_sets';
     const MATCH_BLOCK_TEMPLATE_SLUG = 'stkb-match';
 
     private static $plugin_file = '';
     private static $plugin_dir = '';
     private static $virtual_match_row = null;
     private static $virtual_archive_context = null;
+    private static $resolved_db_tables = [];
+    private static $legacy_db_sync_ran = false;
 
     public static function init($plugin_file)
     {
@@ -135,7 +143,7 @@ final class OpenTT_Unified_Core
         }
 
         global $wpdb;
-        $matches_table = $wpdb->prefix . 'stkb_matches';
+        $matches_table = OpenTT_Unified_Core::db_table('matches');
         if (self::table_exists($matches_table)) {
             $rows = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$matches_table}");
             if ($rows > 0) {
@@ -1077,7 +1085,7 @@ final class OpenTT_Unified_Core
         }
         if ($liga === '' && $sezona !== '') {
             global $wpdb;
-            $table = $wpdb->prefix . 'stkb_matches';
+            $table = OpenTT_Unified_Core::db_table('matches');
             if (self::table_exists($table)) {
                 $liga_guess = $wpdb->get_var($wpdb->prepare("SELECT liga_slug FROM {$table} WHERE sezona_slug=%s AND liga_slug<>'' ORDER BY id DESC LIMIT 1", $sezona));
                 if (is_string($liga_guess) && $liga_guess !== '') {
@@ -1562,8 +1570,8 @@ final class OpenTT_Unified_Core
         self::require_cap();
         global $wpdb;
         $counts = self::get_migration_counts();
-        $matches_table = $wpdb->prefix . 'stkb_matches';
-        $games_table = $wpdb->prefix . 'stkb_games';
+        $matches_table = OpenTT_Unified_Core::db_table('matches');
+        $games_table = OpenTT_Unified_Core::db_table('games');
         $latest_players = get_posts([
             'post_type' => 'igrac',
             'numberposts' => 5,
@@ -1771,7 +1779,7 @@ JS;
     {
         self::require_cap();
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
         $rows = [];
         $liga_options = [];
         $sezona_options = [];
@@ -1840,11 +1848,12 @@ JS;
                     break;
             }
 
+            $games_table = OpenTT_Unified_Core::db_table('games');
             $sql = "SELECT m.*, COALESCE(gc.games_count,0) AS games_count
                     FROM {$table} m
                     LEFT JOIN (
                         SELECT match_id, COUNT(*) AS games_count
-                        FROM {$wpdb->prefix}stkb_games
+                        FROM {$games_table}
                         GROUP BY match_id
                     ) gc ON gc.match_id = m.id
                     WHERE " . implode(' AND ', $where) . $order_sql . ' LIMIT 400';
@@ -2075,7 +2084,7 @@ JS;
             $sort_dir = 'ASC';
         }
 
-        $matches_table = $wpdb->prefix . 'stkb_matches';
+        $matches_table = OpenTT_Unified_Core::db_table('matches');
         $liga_options = [];
         $club_leagues = [];
         if (self::table_exists($matches_table)) {
@@ -2472,8 +2481,8 @@ HTML;
     {
         self::require_cap();
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
-        $games_table = $wpdb->prefix . 'stkb_games';
+        $table = OpenTT_Unified_Core::db_table('matches');
+        $games_table = OpenTT_Unified_Core::db_table('games');
         $action = isset($_GET['action']) ? sanitize_key((string) $_GET['action']) : 'new';
         $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
@@ -2519,7 +2528,7 @@ HTML;
         echo '</form>';
 
         if ($match) {
-            $sets_table = $wpdb->prefix . 'stkb_sets';
+            $sets_table = OpenTT_Unified_Core::db_table('sets');
             $games = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$games_table} WHERE match_id=%d ORDER BY order_no ASC, id ASC", (int) $match->id)) ?: [];
             $games_by_order = [];
             $sets_by_game = [];
@@ -3934,7 +3943,7 @@ HTML;
     private static function export_matches_data()
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
         if (!self::table_exists($table)) {
             return [];
         }
@@ -3962,7 +3971,7 @@ HTML;
     private static function export_games_data()
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_games';
+        $table = OpenTT_Unified_Core::db_table('games');
         if (!self::table_exists($table)) {
             return [];
         }
@@ -3989,7 +3998,7 @@ HTML;
     private static function export_sets_data()
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_sets';
+        $table = OpenTT_Unified_Core::db_table('sets');
         if (!self::table_exists($table)) {
             return [];
         }
@@ -4467,9 +4476,9 @@ HTML;
             : [];
 
         self::maybe_migrate_schema();
-        $matches_table = $wpdb->prefix . 'stkb_matches';
-        $games_table = $wpdb->prefix . 'stkb_games';
-        $sets_table = $wpdb->prefix . 'stkb_sets';
+        $matches_table = OpenTT_Unified_Core::db_table('matches');
+        $games_table = OpenTT_Unified_Core::db_table('games');
+        $sets_table = OpenTT_Unified_Core::db_table('sets');
 
         $map = [
             'club' => [],
@@ -4828,9 +4837,9 @@ HTML;
         check_admin_referer('opentt_unified_reset_competition_matches');
 
         global $wpdb;
-        $matches_table = $wpdb->prefix . 'stkb_matches';
-        $games_table = $wpdb->prefix . 'stkb_games';
-        $sets_table = $wpdb->prefix . 'stkb_sets';
+        $matches_table = OpenTT_Unified_Core::db_table('matches');
+        $games_table = OpenTT_Unified_Core::db_table('games');
+        $sets_table = OpenTT_Unified_Core::db_table('sets');
 
         if (!self::table_exists($matches_table) || !self::table_exists($games_table) || !self::table_exists($sets_table)) {
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Nedostaju OpenTT DB tabele za reset.'));
@@ -4890,8 +4899,8 @@ HTML;
     private static function get_competition_round_diagnostics($liga_slug, $sezona_slug)
     {
         global $wpdb;
-        $matches_table = $wpdb->prefix . 'stkb_matches';
-        $games_table = $wpdb->prefix . 'stkb_games';
+        $matches_table = OpenTT_Unified_Core::db_table('matches');
+        $games_table = OpenTT_Unified_Core::db_table('games');
         $liga_slug = sanitize_title((string) $liga_slug);
         $sezona_slug = sanitize_title((string) $sezona_slug);
         if ($liga_slug === '' || $sezona_slug === '' || !self::table_exists($matches_table) || !self::table_exists($games_table)) {
@@ -4986,7 +4995,7 @@ HTML;
         check_admin_referer('opentt_unified_repair_competition_played');
 
         global $wpdb;
-        $matches_table = $wpdb->prefix . 'stkb_matches';
+        $matches_table = OpenTT_Unified_Core::db_table('matches');
         if (!self::table_exists($matches_table)) {
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Nedostaje tabela utakmica.'));
             exit;
@@ -5149,9 +5158,9 @@ HTML;
         }
 
         global $wpdb;
-        $matches_table = $wpdb->prefix . 'stkb_matches';
-        $games_table = $wpdb->prefix . 'stkb_games';
-        $sets_table = $wpdb->prefix . 'stkb_sets';
+        $matches_table = OpenTT_Unified_Core::db_table('matches');
+        $games_table = OpenTT_Unified_Core::db_table('games');
+        $sets_table = OpenTT_Unified_Core::db_table('sets');
 
         $wpdb->query("DROP TABLE IF EXISTS {$sets_table}");
         $wpdb->query("DROP TABLE IF EXISTS {$games_table}");
@@ -5662,12 +5671,12 @@ HTML;
     private static function maybe_migrate_schema()
     {
         $stored = (string) get_option(self::OPTION_SCHEMA_VERSION, '');
-        if ($stored === self::SCHEMA_VERSION) {
-            return;
+        if ($stored !== self::SCHEMA_VERSION) {
+            self::migrate_schema();
+            update_option(self::OPTION_SCHEMA_VERSION, self::SCHEMA_VERSION, false);
         }
 
-        self::migrate_schema();
-        update_option(self::OPTION_SCHEMA_VERSION, self::SCHEMA_VERSION, false);
+        self::maybe_sync_legacy_db_tables();
     }
 
     private static function migrate_schema()
@@ -5675,9 +5684,9 @@ HTML;
         global $wpdb;
 
         $charset_collate = $wpdb->get_charset_collate();
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
-        $sets = $wpdb->prefix . 'stkb_sets';
+        $matches = self::db_table_name('matches', false);
+        $games = self::db_table_name('games', false);
+        $sets = self::db_table_name('sets', false);
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
@@ -5734,6 +5743,72 @@ HTML;
             UNIQUE KEY game_set_unique (game_id, set_no),
             KEY game_id (game_id)
         ) {$charset_collate};");
+
+        self::$resolved_db_tables = [];
+    }
+
+    private static function maybe_sync_legacy_db_tables()
+    {
+        if (self::$legacy_db_sync_ran) {
+            return;
+        }
+        self::$legacy_db_sync_ran = true;
+
+        $entities = ['matches', 'games', 'sets'];
+        $missing_new_tables = false;
+        foreach ($entities as $entity) {
+            $new_table = self::db_table_name($entity, false);
+            if (!self::table_exists($new_table)) {
+                $missing_new_tables = true;
+                break;
+            }
+        }
+
+        if ($missing_new_tables) {
+            self::migrate_schema();
+        }
+
+        self::maybe_copy_legacy_table_rows(
+            self::db_table_name('matches', true),
+            self::db_table_name('matches', false)
+        );
+        self::maybe_copy_legacy_table_rows(
+            self::db_table_name('games', true),
+            self::db_table_name('games', false)
+        );
+        self::maybe_copy_legacy_table_rows(
+            self::db_table_name('sets', true),
+            self::db_table_name('sets', false)
+        );
+
+        self::$resolved_db_tables = [];
+    }
+
+    private static function maybe_copy_legacy_table_rows($legacy_table, $new_table)
+    {
+        global $wpdb;
+
+        if (
+            $legacy_table === ''
+            || $new_table === ''
+            || $legacy_table === $new_table
+            || !self::table_exists($legacy_table)
+            || !self::table_exists($new_table)
+        ) {
+            return;
+        }
+
+        $legacy_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$legacy_table}");
+        if ($legacy_count <= 0) {
+            return;
+        }
+
+        $new_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$new_table}");
+        if ($new_count >= $legacy_count) {
+            return;
+        }
+
+        $wpdb->query("INSERT IGNORE INTO {$new_table} SELECT * FROM {$legacy_table}");
     }
 
     private static function migrate_batch($batch_size)
@@ -5782,7 +5857,7 @@ HTML;
     private static function migrate_single_match($post_id)
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
 
         $slug = get_post_field('post_name', $post_id);
         $liga_terms = wp_get_post_terms($post_id, 'liga_sezona', ['fields' => 'slugs']);
@@ -5839,8 +5914,8 @@ HTML;
     private static function migrate_games_for_match($legacy_match_id, $db_match_id)
     {
         global $wpdb;
-        $games_table = $wpdb->prefix . 'stkb_games';
-        $sets_table = $wpdb->prefix . 'stkb_sets';
+        $games_table = OpenTT_Unified_Core::db_table('games');
+        $sets_table = OpenTT_Unified_Core::db_table('sets');
 
         $q = new WP_Query([
             'post_type' => 'partija',
@@ -5966,9 +6041,9 @@ HTML;
     {
         global $wpdb;
 
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
-        $sets = $wpdb->prefix . 'stkb_sets';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
+        $sets = OpenTT_Unified_Core::db_table('sets');
         $posts = $wpdb->posts;
         $legacy_matches = intval($wpdb->get_var("SELECT COUNT(*) FROM {$posts} WHERE post_type='utakmica'"));
         $legacy_games = intval($wpdb->get_var("SELECT COUNT(*) FROM {$posts} WHERE post_type='partija'"));
@@ -6499,7 +6574,7 @@ HTML;
     private static function migrate_competition_rules_from_existing_data()
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
         if (!self::table_exists($table)) {
             return ['rules' => 0];
         }
@@ -6540,8 +6615,8 @@ HTML;
             }
 
             // Inferencija iz već migriranih partija: ako postoji dubl na #7 -> format_b, #4 -> format_a.
-            $games_table = $wpdb->prefix . 'stkb_games';
-            $matches_table = $wpdb->prefix . 'stkb_matches';
+            $games_table = OpenTT_Unified_Core::db_table('games');
+            $matches_table = OpenTT_Unified_Core::db_table('matches');
             if (self::table_exists($games_table) && self::table_exists($matches_table)) {
                 $doubles_orders = $wpdb->get_col($wpdb->prepare(
                     "SELECT DISTINCT g.order_no
@@ -6590,7 +6665,7 @@ HTML;
     private static function migrate_league_season_from_matches()
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
         if (!self::table_exists($table)) {
             return ['leagues' => 0, 'seasons' => 0];
         }
@@ -6696,13 +6771,13 @@ HTML;
     private static function validate_league_season_migration_from_matches()
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
         $issues = [];
         $max_issues = 120;
         $checked_pairs = 0;
 
         if (!self::table_exists($table)) {
-            self::push_issue($issues, $max_issues, 'table_missing', 'Tabela stkb_matches ne postoji.');
+            self::push_issue($issues, $max_issues, 'table_missing', 'Tabela mečeva ne postoji: ' . $table . '.');
             return [
                 'ok' => false,
                 'generated_at' => current_time('mysql'),
@@ -6714,7 +6789,7 @@ HTML;
 
         $rows = $wpdb->get_results("SELECT id, liga_slug, sezona_slug FROM {$table} ORDER BY id ASC");
         if (!$rows) {
-            self::push_issue($issues, $max_issues, 'no_matches', 'Nema utakmica u DB tabeli stkb_matches.');
+            self::push_issue($issues, $max_issues, 'no_matches', 'Nema utakmica u DB tabeli: ' . $table . '.');
             return [
                 'ok' => false,
                 'generated_at' => current_time('mysql'),
@@ -6984,6 +7059,75 @@ HTML;
     private static function is_legacy_match_cpt_enabled()
     {
         return false;
+    }
+
+    public static function db_table($entity)
+    {
+        global $wpdb;
+
+        $entity = sanitize_key((string) $entity);
+        if ($entity === '') {
+            return $wpdb->prefix . self::TABLE_MATCHES;
+        }
+        if (isset(self::$resolved_db_tables[$entity])) {
+            return self::$resolved_db_tables[$entity];
+        }
+
+        $new_table = self::db_table_name($entity, false);
+        $legacy_table = self::db_table_name($entity, true);
+        if ($new_table === '') {
+            return $wpdb->prefix . self::TABLE_MATCHES;
+        }
+
+        $new_exists = self::table_exists($new_table);
+        $legacy_exists = ($legacy_table !== '') ? self::table_exists($legacy_table) : false;
+
+        if ($new_exists && $legacy_exists) {
+            $new_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$new_table}");
+            $legacy_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$legacy_table}");
+            $resolved = ($new_count <= 0 && $legacy_count > 0) ? $legacy_table : $new_table;
+            self::$resolved_db_tables[$entity] = $resolved;
+            return $resolved;
+        }
+
+        if ($new_exists) {
+            self::$resolved_db_tables[$entity] = $new_table;
+            return $new_table;
+        }
+        if ($legacy_exists) {
+            self::$resolved_db_tables[$entity] = $legacy_table;
+            return $legacy_table;
+        }
+
+        self::$resolved_db_tables[$entity] = $new_table;
+        return $new_table;
+    }
+
+    private static function db_table_name($entity, $legacy = false)
+    {
+        global $wpdb;
+
+        $map = [
+            'matches' => [
+                'new' => self::TABLE_MATCHES,
+                'legacy' => self::LEGACY_TABLE_MATCHES,
+            ],
+            'games' => [
+                'new' => self::TABLE_GAMES,
+                'legacy' => self::LEGACY_TABLE_GAMES,
+            ],
+            'sets' => [
+                'new' => self::TABLE_SETS,
+                'legacy' => self::LEGACY_TABLE_SETS,
+            ],
+        ];
+
+        if (!isset($map[$entity])) {
+            return '';
+        }
+
+        $suffix = $legacy ? $map[$entity]['legacy'] : $map[$entity]['new'];
+        return $wpdb->prefix . $suffix;
     }
 
     private static function table_exists($table_name)

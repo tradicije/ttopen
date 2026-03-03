@@ -9,8 +9,8 @@ final class OpenTT_Unified_Shortcode_Match_Query_Service
     public static function db_get_matches($args)
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
 
         $limit = isset($args['limit']) ? intval($args['limit']) : 5;
         $liga_slug = isset($args['liga_slug']) ? (string) $args['liga_slug'] : '';
@@ -73,7 +73,7 @@ final class OpenTT_Unified_Shortcode_Match_Query_Service
     public static function db_get_match_by_legacy_id($legacy_id)
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
         $legacy_id = intval($legacy_id);
         if ($legacy_id <= 0 || !self::table_exists($table)) {
             return null;
@@ -86,7 +86,7 @@ final class OpenTT_Unified_Shortcode_Match_Query_Service
     public static function db_get_match_by_keys($liga_slug, $sezona_slug, $kolo_slug, $slug)
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
         if (!self::table_exists($table)) {
             return null;
         }
@@ -126,7 +126,7 @@ final class OpenTT_Unified_Shortcode_Match_Query_Service
     public static function db_get_h2h_matches($current_match_db_id, $home_club_id, $away_club_id)
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
         if (!self::table_exists($table)) {
             return [];
         }
@@ -150,7 +150,7 @@ final class OpenTT_Unified_Shortcode_Match_Query_Service
     public static function db_get_games_for_match_id($match_id)
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_games';
+        $table = OpenTT_Unified_Core::db_table('games');
         $match_id = intval($match_id);
         if ($match_id <= 0 || !self::table_exists($table)) {
             return [];
@@ -165,7 +165,7 @@ final class OpenTT_Unified_Shortcode_Match_Query_Service
     public static function db_get_sets_for_game_id($game_id)
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_sets';
+        $table = OpenTT_Unified_Core::db_table('sets');
         $game_id = intval($game_id);
         if ($game_id <= 0 || !self::table_exists($table)) {
             return [];
@@ -180,7 +180,7 @@ final class OpenTT_Unified_Shortcode_Match_Query_Service
     public static function db_get_latest_liga_for_club($club_id)
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
         $club_id = intval($club_id);
         if ($club_id <= 0 || !self::table_exists($table)) {
             return '';

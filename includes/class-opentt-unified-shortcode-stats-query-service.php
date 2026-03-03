@@ -9,9 +9,9 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_top_players_data($liga_slug, $sezona_slug = '', $max_kolo = null)
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
-        $sets = $wpdb->prefix . 'stkb_sets';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
+        $sets = OpenTT_Unified_Core::db_table('sets');
 
         if (!self::table_exists($matches) || !self::table_exists($games) || !self::table_exists($sets)) {
             return [];
@@ -142,7 +142,7 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_played_matches_count_by_club($liga_slug, $sezona_slug = '', $max_kolo = null)
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
+        $matches = OpenTT_Unified_Core::db_table('matches');
         if (!self::table_exists($matches)) {
             return [];
         }
@@ -183,8 +183,8 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_latest_competition_with_games()
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
         if (!self::table_exists($matches) || !self::table_exists($games)) {
             return null;
         }
@@ -222,8 +222,8 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
             }
         }
 
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
         if (!self::table_exists($matches) || !self::table_exists($games)) {
             return null;
         }
@@ -258,7 +258,7 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_latest_competition_for_club($club_id)
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
+        $matches = OpenTT_Unified_Core::db_table('matches');
         $club_id = intval($club_id);
         if ($club_id <= 0 || !self::table_exists($matches)) {
             return null;
@@ -285,7 +285,7 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_recent_club_matches($club_id, $limit = 5)
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
         $club_id = intval($club_id);
         $limit = max(1, intval($limit));
         if ($club_id <= 0 || !self::table_exists($table)) {
@@ -308,8 +308,8 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_player_season_club_history($player_id)
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
         $player_id = intval($player_id);
         if ($player_id <= 0 || !self::table_exists($matches) || !self::table_exists($games)) {
             return [];
@@ -386,8 +386,8 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_player_stats($player_id, $season_slug = '')
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
         $player_id = intval($player_id);
         $season_slug = sanitize_title((string) $season_slug);
 
@@ -447,8 +447,8 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_player_season_options($player_id)
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
         $player_id = intval($player_id);
         if ($player_id <= 0 || !self::table_exists($matches) || !self::table_exists($games)) {
             return [];
@@ -486,7 +486,7 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_club_season_options($club_id)
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
+        $matches = OpenTT_Unified_Core::db_table('matches');
         $club_id = intval($club_id);
         if ($club_id <= 0 || !self::table_exists($matches)) {
             return [];
@@ -521,8 +521,8 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_latest_liga_for_player_and_season($player_id, $season_slug = '')
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
         $player_id = intval($player_id);
         $season_slug = sanitize_title((string) $season_slug);
         if ($player_id <= 0 || !self::table_exists($matches) || !self::table_exists($games) || $season_slug === '') {
@@ -553,7 +553,7 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_latest_liga_for_club_and_season($club_id, $season_slug = '')
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
+        $matches = OpenTT_Unified_Core::db_table('matches');
         $club_id = intval($club_id);
         $season_slug = sanitize_title((string) $season_slug);
         if ($club_id <= 0 || !self::table_exists($matches)) {
@@ -591,8 +591,8 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_club_team_stats($club_id, $season_slug = '')
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
         $club_id = intval($club_id);
         $season_slug = sanitize_title((string) $season_slug);
 
@@ -707,8 +707,8 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_club_season_best_player_by_success($club_id, $season_slug)
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
         $club_id = intval($club_id);
         $season_slug = sanitize_title((string) $season_slug);
         if ($club_id <= 0 || $season_slug === '' || !self::table_exists($matches) || !self::table_exists($games)) {
@@ -791,7 +791,7 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_competition_club_ids($liga_slug, $sezona_slug = '')
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
+        $matches = OpenTT_Unified_Core::db_table('matches');
         if (!self::table_exists($matches)) {
             return [];
         }
@@ -829,8 +829,8 @@ final class OpenTT_Unified_Shortcode_Stats_Query_Service
     public static function db_get_player_mvp_count($player_id, $season_slug = '')
     {
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
         $player_id = intval($player_id);
         $season_slug = sanitize_title((string) $season_slug);
         if ($player_id <= 0 || !self::table_exists($matches) || !self::table_exists($games)) {

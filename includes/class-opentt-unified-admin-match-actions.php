@@ -11,7 +11,7 @@ final class OpenTT_Unified_Admin_Match_Actions
         self::require_cap();
         check_admin_referer('opentt_unified_save_match');
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('matches');
 
         $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
         $competition_rule_id = isset($_POST['competition_rule_id']) ? (int) $_POST['competition_rule_id'] : 0;
@@ -121,9 +121,9 @@ final class OpenTT_Unified_Admin_Match_Actions
         check_admin_referer('opentt_unified_delete_match_' . $id);
 
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
-        $sets = $wpdb->prefix . 'stkb_sets';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
+        $sets = OpenTT_Unified_Core::db_table('sets');
 
         $game_ids = $wpdb->get_col($wpdb->prepare("SELECT id FROM {$games} WHERE match_id=%d", $id)) ?: [];
         foreach ($game_ids as $gid) {
@@ -163,9 +163,9 @@ final class OpenTT_Unified_Admin_Match_Actions
         }
 
         global $wpdb;
-        $matches = $wpdb->prefix . 'stkb_matches';
-        $games = $wpdb->prefix . 'stkb_games';
-        $sets = $wpdb->prefix . 'stkb_sets';
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $games = OpenTT_Unified_Core::db_table('games');
+        $sets = OpenTT_Unified_Core::db_table('sets');
         $deleted = 0;
 
         foreach ($ids as $id) {
@@ -196,8 +196,8 @@ final class OpenTT_Unified_Admin_Match_Actions
         self::require_cap();
         check_admin_referer('opentt_unified_save_game');
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_games';
-        $matches_table = $wpdb->prefix . 'stkb_matches';
+        $table = OpenTT_Unified_Core::db_table('games');
+        $matches_table = OpenTT_Unified_Core::db_table('matches');
 
         $match_id = isset($_POST['match_id']) ? (int) $_POST['match_id'] : 0;
         $game_id = isset($_POST['game_id']) ? (int) $_POST['game_id'] : 0;
@@ -308,9 +308,9 @@ final class OpenTT_Unified_Admin_Match_Actions
         self::require_cap();
         check_admin_referer('opentt_unified_save_games_batch');
         global $wpdb;
-        $games_table = $wpdb->prefix . 'stkb_games';
-        $sets_table = $wpdb->prefix . 'stkb_sets';
-        $matches_table = $wpdb->prefix . 'stkb_matches';
+        $games_table = OpenTT_Unified_Core::db_table('games');
+        $sets_table = OpenTT_Unified_Core::db_table('sets');
+        $matches_table = OpenTT_Unified_Core::db_table('matches');
 
         $match_id = isset($_POST['match_id']) ? (int) $_POST['match_id'] : 0;
         if ($match_id <= 0) {
@@ -473,8 +473,8 @@ final class OpenTT_Unified_Admin_Match_Actions
         check_admin_referer('opentt_unified_delete_game_' . $id);
 
         global $wpdb;
-        $games = $wpdb->prefix . 'stkb_games';
-        $sets = $wpdb->prefix . 'stkb_sets';
+        $games = OpenTT_Unified_Core::db_table('games');
+        $sets = OpenTT_Unified_Core::db_table('sets');
         $wpdb->delete($sets, ['game_id' => $id]);
         $wpdb->delete($games, ['id' => $id]);
 
@@ -487,7 +487,7 @@ final class OpenTT_Unified_Admin_Match_Actions
         self::require_cap();
         check_admin_referer('opentt_unified_save_set');
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_sets';
+        $table = OpenTT_Unified_Core::db_table('sets');
 
         $match_id = isset($_POST['match_id']) ? (int) $_POST['match_id'] : 0;
         $game_id = isset($_POST['game_id']) ? (int) $_POST['game_id'] : 0;
@@ -519,7 +519,7 @@ final class OpenTT_Unified_Admin_Match_Actions
         }
         check_admin_referer('opentt_unified_delete_set_' . $id);
         global $wpdb;
-        $table = $wpdb->prefix . 'stkb_sets';
+        $table = OpenTT_Unified_Core::db_table('sets');
         $wpdb->delete($table, ['id' => $id]);
         wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-add-match&action=edit&id=' . $match_id), 'success', 'Set je obrisan.'));
         exit;
