@@ -97,7 +97,7 @@ trait OpenTT_Unified_Shortcodes_Trait
             echo self::shortcode_title_html('Utakmice');
             echo '<div class="opentt-kolo-filter-wrap">';
             echo '<label for="opentt-kolo">Izaberi kolo:</label>';
-            echo '<select id="opentt-kolo" onchange="stkbFilterKoloChange(this)">';
+            echo '<select id="opentt-kolo" onchange="openttFilterKoloChange(this)">';
             echo '<option value="">Sva kola</option>';
             foreach ($options as $opt) {
                 echo '<option value="' . esc_attr($opt['slug']) . '">' . esc_html($opt['name']) . '</option>';
@@ -107,7 +107,7 @@ trait OpenTT_Unified_Shortcodes_Trait
             echo self::render_matches_grid_html($rows, $columns, true);
             ?>
             <script>
-            function stkbFilterKoloChange(sel) {
+            function openttFilterKoloChange(sel) {
                 var selected = sel.value;
                 var items = document.querySelectorAll('.opentt-item');
                 items.forEach(function(it){
@@ -121,9 +121,9 @@ trait OpenTT_Unified_Shortcodes_Trait
         }
 
         if ($enable_filters) {
-            $selected_kolo = isset($_GET['stkb_kolo']) ? sanitize_title((string) wp_unslash($_GET['stkb_kolo'])) : '';
-            $selected_club = isset($_GET['stkb_klub']) ? intval($_GET['stkb_klub']) : 0;
-            $selected_sort = isset($_GET['stkb_sort']) ? sanitize_key((string) wp_unslash($_GET['stkb_sort'])) : 'kolo_desc';
+            $selected_kolo = isset($_GET['opentt_kolo']) ? sanitize_title((string) wp_unslash($_GET['opentt_kolo'])) : '';
+            $selected_club = isset($_GET['opentt_club']) ? intval($_GET['opentt_club']) : 0;
+            $selected_sort = isset($_GET['opentt_sort']) ? sanitize_key((string) wp_unslash($_GET['opentt_sort'])) : 'kolo_desc';
             if (!in_array($selected_sort, ['kolo_desc', 'kolo_asc', 'date_desc', 'date_asc'], true)) {
                 $selected_sort = 'kolo_desc';
             }
@@ -211,7 +211,7 @@ trait OpenTT_Unified_Shortcodes_Trait
             echo '<form method="get" class="opentt-grid-filters">';
             foreach ($_GET as $k => $v) {
                 $k = (string) $k;
-                if (in_array($k, ['stkb_kolo', 'stkb_klub', 'stkb_sort'], true)) {
+                if (in_array($k, ['opentt_kolo', 'opentt_club', 'opentt_sort'], true)) {
                     continue;
                 }
                 if (is_array($v)) {
@@ -219,26 +219,26 @@ trait OpenTT_Unified_Shortcodes_Trait
                 }
                 echo '<input type="hidden" name="' . esc_attr($k) . '" value="' . esc_attr((string) wp_unslash($v)) . '">';
             }
-            echo '<label>Kolo <select name="stkb_kolo" class="opentt-grid-filter-kolo" onchange="this.form.submit()"><option value="">Sva kola</option>';
+            echo '<label>Kolo <select name="opentt_kolo" class="opentt-grid-filter-kolo" onchange="this.form.submit()"><option value="">Sva kola</option>';
             foreach ($kolo_options as $opt) {
                 echo '<option value="' . esc_attr((string) $opt['slug']) . '" ' . selected($selected_kolo, (string) $opt['slug'], false) . '>' . esc_html((string) $opt['name']) . '</option>';
             }
             echo '</select></label>';
 
-            echo '<label>Klub <select name="stkb_klub" class="opentt-grid-filter-club" onchange="this.form.submit()"><option value="">Svi klubovi</option>';
+            echo '<label>Klub <select name="opentt_club" class="opentt-grid-filter-club" onchange="this.form.submit()"><option value="">Svi klubovi</option>';
             foreach ($club_options as $opt) {
                 echo '<option value="' . esc_attr((string) $opt['id']) . '" ' . selected($selected_club, intval($opt['id']), false) . '>' . esc_html((string) $opt['name']) . '</option>';
             }
             echo '</select></label>';
 
-            echo '<label>Sortiranje <select name="stkb_sort" class="opentt-grid-filter-sort" onchange="this.form.submit()">';
+            echo '<label>Sortiranje <select name="opentt_sort" class="opentt-grid-filter-sort" onchange="this.form.submit()">';
             echo '<option value="kolo_desc" ' . selected($selected_sort, 'kolo_desc', false) . '>Kolo: najnovije</option>';
             echo '<option value="kolo_asc" ' . selected($selected_sort, 'kolo_asc', false) . '>Kolo: najstarije</option>';
             echo '<option value="date_desc" ' . selected($selected_sort, 'date_desc', false) . '>Datum: najnovije</option>';
             echo '<option value="date_asc" ' . selected($selected_sort, 'date_asc', false) . '>Datum: najstarije</option>';
             echo '</select></label>';
-            if ($selected_kolo !== '' || $selected_club > 0 || isset($_GET['stkb_sort'])) {
-                echo '<a class="button opentt-grid-filter-reset" href="' . esc_url(remove_query_arg(['stkb_kolo', 'stkb_klub', 'stkb_sort'])) . '">Reset</a>';
+            if ($selected_kolo !== '' || $selected_club > 0 || isset($_GET['opentt_sort'])) {
+                echo '<a class="button opentt-grid-filter-reset" href="' . esc_url(remove_query_arg(['opentt_kolo', 'opentt_club', 'opentt_sort'])) . '">Reset</a>';
             }
             echo '</form>';
 
@@ -585,9 +585,9 @@ trait OpenTT_Unified_Shortcodes_Trait
         });
 
         if ($enable_filters) {
-            $selected_liga = isset($_GET['stkb_klub_liga']) ? sanitize_title((string) wp_unslash($_GET['stkb_klub_liga'])) : '';
-            $selected_opstina = isset($_GET['stkb_klub_opstina']) ? sanitize_title((string) wp_unslash($_GET['stkb_klub_opstina'])) : '';
-            $selected_sort = isset($_GET['stkb_klub_sort']) ? sanitize_key((string) wp_unslash($_GET['stkb_klub_sort'])) : 'name_asc';
+            $selected_liga = isset($_GET['opentt_club_league']) ? sanitize_title((string) wp_unslash($_GET['opentt_club_league'])) : '';
+            $selected_opstina = isset($_GET['opentt_club_municipality']) ? sanitize_title((string) wp_unslash($_GET['opentt_club_municipality'])) : '';
+            $selected_sort = isset($_GET['opentt_club_sort']) ? sanitize_key((string) wp_unslash($_GET['opentt_club_sort'])) : 'name_asc';
             if (!in_array($selected_sort, ['name_asc', 'name_desc'], true)) {
                 $selected_sort = 'name_asc';
             }
@@ -614,7 +614,7 @@ trait OpenTT_Unified_Shortcodes_Trait
             echo '<form method="get" class="opentt-grid-filters">';
             foreach ($_GET as $k => $v) {
                 $k = (string) $k;
-                if (in_array($k, ['stkb_klub_liga', 'stkb_klub_opstina', 'stkb_klub_sort'], true)) {
+                if (in_array($k, ['opentt_club_league', 'opentt_club_municipality', 'opentt_club_sort'], true)) {
                     continue;
                 }
                 if (is_array($v)) {
@@ -622,24 +622,24 @@ trait OpenTT_Unified_Shortcodes_Trait
                 }
                 echo '<input type="hidden" name="' . esc_attr($k) . '" value="' . esc_attr((string) wp_unslash($v)) . '">';
             }
-            echo '<label>Liga <select name="stkb_klub_liga" onchange="this.form.submit()"><option value="">Sve lige</option>';
+            echo '<label>Liga <select name="opentt_club_league" onchange="this.form.submit()"><option value="">Sve lige</option>';
             foreach ($league_options as $slug => $label) {
                 echo '<option value="' . esc_attr((string) $slug) . '"' . selected($selected_liga, (string) $slug, false) . '>' . esc_html((string) $label) . '</option>';
             }
             echo '</select></label>';
 
-            echo '<label>Opština <select name="stkb_klub_opstina" onchange="this.form.submit()"><option value="">Sve opštine</option>';
+            echo '<label>Opština <select name="opentt_club_municipality" onchange="this.form.submit()"><option value="">Sve opštine</option>';
             foreach ($opstina_options as $slug => $label) {
                 echo '<option value="' . esc_attr((string) $slug) . '"' . selected($selected_opstina, (string) $slug, false) . '>' . esc_html((string) $label) . '</option>';
             }
             echo '</select></label>';
 
-            echo '<label>Sortiranje <select name="stkb_klub_sort" onchange="this.form.submit()">';
+            echo '<label>Sortiranje <select name="opentt_club_sort" onchange="this.form.submit()">';
             echo '<option value="name_asc"' . selected($selected_sort, 'name_asc', false) . '>Ime: A-Z</option>';
             echo '<option value="name_desc"' . selected($selected_sort, 'name_desc', false) . '>Ime: Z-A</option>';
             echo '</select></label>';
-            if ($selected_liga !== '' || $selected_opstina !== '' || isset($_GET['stkb_klub_sort'])) {
-                echo '<a class="button opentt-grid-filter-reset" href="' . esc_url(remove_query_arg(['stkb_klub_liga', 'stkb_klub_opstina', 'stkb_klub_sort'])) . '">Reset</a>';
+            if ($selected_liga !== '' || $selected_opstina !== '' || isset($_GET['opentt_club_sort'])) {
+                echo '<a class="button opentt-grid-filter-reset" href="' . esc_url(remove_query_arg(['opentt_club_league', 'opentt_club_municipality', 'opentt_club_sort'])) . '">Reset</a>';
             }
             echo '</form>';
 
@@ -1861,7 +1861,7 @@ trait OpenTT_Unified_Shortcodes_Trait
         }
 
         $enable_filter = in_array(strtolower(trim((string) $atts['filter'])), ['1', 'true', 'yes', 'da', 'on'], true);
-        $season_key = 'stkb_player_season_' . $player_id;
+        $season_key = 'opentt_player_season_' . $player_id;
         $selected_season = isset($_GET[$season_key]) ? sanitize_title((string) wp_unslash($_GET[$season_key])) : '';
 
         $season_options = [];
@@ -2097,7 +2097,7 @@ trait OpenTT_Unified_Shortcodes_Trait
         }
 
         $enable_filter = in_array(strtolower(trim((string) $atts['filter'])), ['1', 'true', 'yes', 'da', 'on'], true);
-        $season_key = 'stkb_team_season_' . $club_id;
+        $season_key = 'opentt_team_season_' . $club_id;
         $season_options = [];
         if ($enable_filter) {
             $season_options = self::db_get_club_season_options($club_id);
@@ -3104,7 +3104,7 @@ trait OpenTT_Unified_Shortcodes_Trait
         $season_options = [];
         $selected_season = '';
         if ($enable_filter) {
-            $selected_season = isset($_GET['stkb_takm_sezona']) ? sanitize_title((string) wp_unslash($_GET['stkb_takm_sezona'])) : '';
+            $selected_season = isset($_GET['opentt_competition_season']) ? sanitize_title((string) wp_unslash($_GET['opentt_competition_season'])) : '';
             $season_pool = [];
             foreach ($rows as $r) {
                 $s = sanitize_title((string) get_post_meta($r->ID, 'opentt_competition_season_slug', true));
@@ -3180,7 +3180,7 @@ trait OpenTT_Unified_Shortcodes_Trait
             echo '<form method="get" class="opentt-grid-filters">';
             foreach ($_GET as $k => $v) {
                 $k = (string) $k;
-                if ($k === 'stkb_takm_sezona') {
+                if ($k === 'opentt_competition_season') {
                     continue;
                 }
                 if (is_array($v)) {
@@ -3188,13 +3188,13 @@ trait OpenTT_Unified_Shortcodes_Trait
                 }
                 echo '<input type="hidden" name="' . esc_attr($k) . '" value="' . esc_attr((string) wp_unslash($v)) . '">';
             }
-            echo '<label>Sezona <select name="stkb_takm_sezona" onchange="this.form.submit()">';
+            echo '<label>Sezona <select name="opentt_competition_season" onchange="this.form.submit()">';
             foreach ($season_options as $slug => $label) {
                 echo '<option value="' . esc_attr((string) $slug) . '"' . selected($selected_season, (string) $slug, false) . '>' . esc_html((string) $label) . '</option>';
             }
             echo '</select></label>';
-            if (isset($_GET['stkb_takm_sezona'])) {
-                echo '<a class="button opentt-grid-filter-reset" href="' . esc_url(remove_query_arg(['stkb_takm_sezona'])) . '">Reset</a>';
+            if (isset($_GET['opentt_competition_season'])) {
+                echo '<a class="button opentt-grid-filter-reset" href="' . esc_url(remove_query_arg(['opentt_competition_season'])) . '">Reset</a>';
             }
             echo '</form>';
         }

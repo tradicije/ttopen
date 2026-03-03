@@ -6,7 +6,15 @@ All notable changes to the OpenTT plugin are documented in this file.
 
 ### Next
 
-- No entries yet.
+#### Naming Consistency
+
+- Replaced remaining non-legacy `stkb` identifiers in shortcode filter/query keys with `opentt_*` equivalents (matches, clubs, competitions, player/team season filters).
+- Unified remaining internal admin/UI identifiers to `opentt` (settings form keys, onboarding action key, confirm phrase field, thumbnail picker IDs/selectors, live-search hit class, help modal target, shortcode builder/card classes).
+
+#### Assets
+
+- Renamed frontend CSS override style handle namespace from `stkb-unified-*` to `opentt-unified-*`.
+- Updated admin JS initialization dataset/data flags from `stkb*` to `opentt*` keys.
 
 ## Releases
 

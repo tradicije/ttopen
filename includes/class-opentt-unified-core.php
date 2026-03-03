@@ -1086,7 +1086,7 @@ final class OpenTT_Unified_Core
         echo <<<'JS'
 <script>
 (function(){
-  var modal = document.getElementById('stkb-help-modal');
+  var modal = document.getElementById('opentt-help-modal');
   if (!modal) { return; }
   var body = modal.querySelector('.opentt-help-body');
   function showOverview(){
@@ -1779,7 +1779,7 @@ JS;
       var txt = String(row.textContent || '').toLowerCase();
       var hit = !q || txt.indexOf(q) !== -1;
       row.style.display = hit ? '' : 'none';
-      row.classList.toggle('stkb-live-hit', !!q && hit);
+      row.classList.toggle('opentt-live-hit', !!q && hit);
     });
   }
 
@@ -2035,7 +2035,7 @@ HTML;
         echo '<table class="form-table"><tbody>';
         echo '<tr data-opentt-step="1"><th>Naziv kluba</th><td><input name="post_title" type="text" class="regular-text" value="' . esc_attr($club_title) . '" required></td></tr>';
         echo '<tr data-opentt-step="1"><th>Opis</th><td><textarea name="post_content" rows="6" class="large-text">' . esc_textarea($club_content) . '</textarea></td></tr>';
-        echo '<tr data-opentt-step="2"><th>Grb</th><td><div id="stkb_club_thumb_preview">' . $thumb_html . '</div><input type="hidden" id="stkb_club_thumb_id" name="featured_image_id" value="' . esc_attr((string) $thumb_id) . '"><p><button type="button" class="button" id="stkb_club_thumb_btn">Izaberi grb</button> <button type="button" class="button" id="stkb_club_thumb_remove">Ukloni</button></p></td></tr>';
+        echo '<tr data-opentt-step="2"><th>Grb</th><td><div id="opentt_club_thumb_preview">' . $thumb_html . '</div><input type="hidden" id="opentt_club_thumb_id" name="featured_image_id" value="' . esc_attr((string) $thumb_id) . '"><p><button type="button" class="button" id="opentt_club_thumb_btn">Izaberi grb</button> <button type="button" class="button" id="opentt_club_thumb_remove">Ukloni</button></p></td></tr>';
         $opstina_selected = (string) get_post_meta($club_id, 'opstina', true);
         if ($opstina_selected === '') {
             $opstina_selected = (string) get_post_meta($club_id, 'grad', true);
@@ -2063,20 +2063,20 @@ HTML;
 <script>
 (function($){
     var frame;
-    $('#stkb_club_thumb_btn').on('click', function(e){
+    $('#opentt_club_thumb_btn').on('click', function(e){
         e.preventDefault();
         if (frame) { frame.open(); return; }
         frame = wp.media({ title: 'Izaberi grb', button: { text: 'Postavi grb' }, multiple: false });
         frame.on('select', function(){
             var att = frame.state().get('selection').first().toJSON();
-            $('#stkb_club_thumb_id').val(att.id);
-            $('#stkb_club_thumb_preview').html('<img src="' + att.url + '" style="max-width:180px;height:auto;" />');
+            $('#opentt_club_thumb_id').val(att.id);
+            $('#opentt_club_thumb_preview').html('<img src="' + att.url + '" style="max-width:180px;height:auto;" />');
         });
         frame.open();
     });
-    $('#stkb_club_thumb_remove').on('click', function(){
-        $('#stkb_club_thumb_id').val('');
-        $('#stkb_club_thumb_preview').html('<div style="width:120px;height:120px;background:#f2f2f2;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;">Nema grba</div>');
+    $('#opentt_club_thumb_remove').on('click', function(){
+        $('#opentt_club_thumb_id').val('');
+        $('#opentt_club_thumb_preview').html('<div style="width:120px;height:120px;background:#f2f2f2;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;">Nema grba</div>');
     });
 })(jQuery);
 </script>
@@ -2114,7 +2114,7 @@ JS;
         echo '<table class="form-table"><tbody>';
         echo '<tr data-opentt-step="1"><th>Ime i prezime</th><td><input name="post_title" type="text" class="regular-text" value="' . esc_attr($player_title) . '" required></td></tr>';
         echo '<tr data-opentt-step="1"><th>Biografija</th><td><textarea name="post_content" rows="6" class="large-text">' . esc_textarea($player_content) . '</textarea></td></tr>';
-        echo '<tr data-opentt-step="2"><th>Slika</th><td><div id="stkb_player_thumb_preview">' . $thumb_html . '</div><input type="hidden" id="stkb_player_thumb_id" name="featured_image_id" value="' . esc_attr((string) $thumb_id) . '"><p><button type="button" class="button" id="stkb_player_thumb_btn">Izaberi sliku</button> <button type="button" class="button" id="stkb_player_thumb_remove">Ukloni</button></p></td></tr>';
+        echo '<tr data-opentt-step="2"><th>Slika</th><td><div id="opentt_player_thumb_preview">' . $thumb_html . '</div><input type="hidden" id="opentt_player_thumb_id" name="featured_image_id" value="' . esc_attr((string) $thumb_id) . '"><p><button type="button" class="button" id="opentt_player_thumb_btn">Izaberi sliku</button> <button type="button" class="button" id="opentt_player_thumb_remove">Ukloni</button></p></td></tr>';
         echo '<tr data-opentt-step="2"><th>Povezani klub</th><td>' . self::clubs_dropdown_admin('povezani_klub', self::get_player_club_id($player_id), false) . '</td></tr>';
         echo '<tr data-opentt-step="3"><th>Datum rođenja</th><td><input name="datum_rodjenja" type="date" value="' . esc_attr((string) get_post_meta($player_id, 'datum_rodjenja', true)) . '"></td></tr>';
         echo '<tr data-opentt-step="3"><th>Mesto rođenja</th><td><input name="mesto_rodjenja" type="text" class="regular-text" value="' . esc_attr((string) get_post_meta($player_id, 'mesto_rodjenja', true)) . '"></td></tr>';
@@ -2135,20 +2135,20 @@ JS;
 <script>
 (function($){
     var frame;
-    $('#stkb_player_thumb_btn').on('click', function(e){
+    $('#opentt_player_thumb_btn').on('click', function(e){
         e.preventDefault();
         if (frame) { frame.open(); return; }
         frame = wp.media({ title: 'Izaberi sliku', button: { text: 'Postavi sliku' }, multiple: false });
         frame.on('select', function(){
             var att = frame.state().get('selection').first().toJSON();
-            $('#stkb_player_thumb_id').val(att.id);
-            $('#stkb_player_thumb_preview').html('<img src="' + att.url + '" style="max-width:180px;height:auto;" />');
+            $('#opentt_player_thumb_id').val(att.id);
+            $('#opentt_player_thumb_preview').html('<img src="' + att.url + '" style="max-width:180px;height:auto;" />');
         });
         frame.open();
     });
-    $('#stkb_player_thumb_remove').on('click', function(){
-        $('#stkb_player_thumb_id').val('');
-        $('#stkb_player_thumb_preview').html('<div style="width:120px;height:120px;background:#f2f2f2;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;">Nema slike</div>');
+    $('#opentt_player_thumb_remove').on('click', function(){
+        $('#opentt_player_thumb_id').val('');
+        $('#opentt_player_thumb_preview').html('<div style="width:120px;height:120px;background:#f2f2f2;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;">Nema slike</div>');
     });
 })(jQuery);
 </script>
@@ -2482,7 +2482,7 @@ JS;
             echo '<option value="' . esc_attr((string) $i) . '" ' . selected($rank, $i, false) . '>' . esc_html((string) $i) . '</option>';
         }
         echo '</select><p class="description">1 = najprestižnije, 5 = najniži rang.</p></td></tr>';
-        echo '<tr data-opentt-step="1"><th>Grb takmičenja</th><td><div id="stkb_comp_thumb_preview">' . $thumb_html . '</div><input type="hidden" id="stkb_comp_thumb_id" name="featured_image_id" value="' . esc_attr((string) $thumb_id) . '"><p><button type="button" class="button" id="stkb_comp_thumb_btn">Izaberi grb</button> <button type="button" class="button" id="stkb_comp_thumb_remove">Ukloni</button></p></td></tr>';
+        echo '<tr data-opentt-step="1"><th>Grb takmičenja</th><td><div id="opentt_comp_thumb_preview">' . $thumb_html . '</div><input type="hidden" id="opentt_comp_thumb_id" name="featured_image_id" value="' . esc_attr((string) $thumb_id) . '"><p><button type="button" class="button" id="opentt_comp_thumb_btn">Izaberi grb</button> <button type="button" class="button" id="opentt_comp_thumb_remove">Ukloni</button></p></td></tr>';
         echo '<tr data-opentt-step="2"><th>Koliko ekipa ide gore</th><td><input type="number" min="0" name="promocija_broj" value="' . esc_attr((string) $promo) . '" style="width:120px;"></td></tr>';
         echo '<tr data-opentt-step="2"><th>Baraž za ulazak (gore)</th><td><input type="number" min="0" name="promocija_baraz_broj" value="' . esc_attr((string) $promo_baraz) . '" style="width:120px;"><p class="description">Broj ekipa ispod direktne promocije koje igraju baraž za viši rang.</p></td></tr>';
         echo '<tr data-opentt-step="2"><th>Koliko ekipa ispada</th><td><input type="number" min="0" name="ispadanje_broj" value="' . esc_attr((string) $releg) . '" style="width:120px;"></td></tr>';
@@ -2502,20 +2502,20 @@ JS;
 <script>
 (function($){
     var frame;
-    $('#stkb_comp_thumb_btn').on('click', function(e){
+    $('#opentt_comp_thumb_btn').on('click', function(e){
         e.preventDefault();
         if (frame) { frame.open(); return; }
         frame = wp.media({ title: 'Izaberi grb takmičenja', button: { text: 'Postavi grb' }, multiple: false });
         frame.on('select', function(){
             var att = frame.state().get('selection').first().toJSON();
-            $('#stkb_comp_thumb_id').val(att.id);
-            $('#stkb_comp_thumb_preview').html('<img src="' + att.url + '" style="max-width:180px;height:auto;" />');
+            $('#opentt_comp_thumb_id').val(att.id);
+            $('#opentt_comp_thumb_preview').html('<img src="' + att.url + '" style="max-width:180px;height:auto;" />');
         });
         frame.open();
     });
-    $('#stkb_comp_thumb_remove').on('click', function(){
-        $('#stkb_comp_thumb_id').val('');
-        $('#stkb_comp_thumb_preview').html('<div style="width:120px;height:120px;background:#f2f2f2;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;">Nema grba takmičenja</div>');
+    $('#opentt_comp_thumb_remove').on('click', function(){
+        $('#opentt_comp_thumb_id').val('');
+        $('#opentt_comp_thumb_preview').html('<div style="width:120px;height:120px;background:#f2f2f2;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;">Nema grba takmičenja</div>');
     });
 })(jQuery);
 </script>
@@ -2656,7 +2656,7 @@ JS;
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="opentt-settings-css-form">';
         wp_nonce_field('opentt_unified_save_settings');
         echo '<input type="hidden" name="action" value="opentt_unified_save_settings">';
-        echo '<input type="hidden" name="stkb_settings_section" value="ui_lang">';
+        echo '<input type="hidden" name="opentt_settings_section" value="ui_lang">';
         $available_langs = self::get_available_admin_ui_languages();
         echo '<label><span>Jezik</span><select name="admin_ui_language">';
         foreach ($available_langs as $code => $label) {
@@ -2727,7 +2727,7 @@ JS;
         wp_nonce_field('opentt_unified_delete_all_data');
         echo '<input type="hidden" name="action" value="opentt_unified_delete_all_data">';
         echo '<label><strong>Potvrda:</strong> upiši tačno <code>saglasan sam</code></label>';
-        echo '<input type="text" name="stkb_confirm_phrase" class="regular-text" placeholder="saglasan sam" autocomplete="off">';
+        echo '<input type="text" name="opentt_confirm_phrase" class="regular-text" placeholder="saglasan sam" autocomplete="off">';
         echo '<div class="opentt-settings-actions">';
         echo '<button type="submit" class="button button-link-delete" onclick="return confirm(\'Da li ste sigurni? Ovim brišete sve podatke i ne možete ih vratiti.\')">Obriši sve podatke</button>';
         echo '</div>';
@@ -2766,7 +2766,7 @@ JS;
     if (!wrap) { return; }
     fields.forEach(function(field){
       var row = document.createElement('div');
-      row.className = 'stkb-shortcode-field-row';
+      row.className = 'opentt-shortcode-field-row';
       var label = document.createElement('label');
       label.textContent = field.label || field.name || '';
       var input = document.createElement('input');
@@ -2818,7 +2818,7 @@ HTML;
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="opentt-settings-css-form">';
         wp_nonce_field('opentt_unified_save_settings');
         echo '<input type="hidden" name="action" value="opentt_unified_save_settings">';
-        echo '<input type="hidden" name="stkb_settings_section" value="visual">';
+        echo '<input type="hidden" name="opentt_settings_section" value="visual">';
         echo '<div class="opentt-visual-grid">';
         echo '<label><span>Boja pozadine kontejnera</span><small>Menja pozadinu kartica i glavnih blokova shortcode-ova.</small><input type="text" name="visual_settings[container_bg]" value="' . esc_attr((string) $visual['container_bg']) . '" class="opentt-color-field"></label>';
         echo '<label><span>Boja ivice kontejnera</span><small>Menja linije/okvire kartica, tabela i listi.</small><input type="text" name="visual_settings[container_border]" value="' . esc_attr((string) $visual['container_border']) . '" class="opentt-color-field"></label>';
@@ -2829,8 +2829,8 @@ HTML;
         echo '<label><span>Naslovi shortcode-ova</span><small>Uključi ili isključi automatske naslove sekcija koje plugin prikazuje na frontendu.</small><span style="display:flex;align-items:center;gap:8px;margin-top:8px;"><input type="hidden" name="visual_settings[show_shortcode_titles]" value="0"><input type="checkbox" name="visual_settings[show_shortcode_titles]" value="1" ' . checked((int) ($visual['show_shortcode_titles'] ?? 1), 1, false) . '> Prikaži naslove shortcode-ova</span></label>';
         echo '</div>';
         echo '<div class="opentt-settings-actions">';
-        echo '<button type="submit" name="stkb_css_action" value="save" class="button button-primary">Sačuvaj globalni stil</button>';
-        echo '<button type="submit" name="stkb_css_action" value="reset" class="button" onclick="return confirm(\'Resetovati globalnu stilizaciju?\')">Reset globalnog stila</button>';
+        echo '<button type="submit" name="opentt_css_action" value="save" class="button button-primary">Sačuvaj globalni stil</button>';
+        echo '<button type="submit" name="opentt_css_action" value="reset" class="button" onclick="return confirm(\'Resetovati globalnu stilizaciju?\')">Reset globalnog stila</button>';
         echo '</div>';
         echo '</form>';
         echo '</div>';
@@ -2841,7 +2841,7 @@ HTML;
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="opentt-settings-css-form">';
         wp_nonce_field('opentt_unified_save_settings');
         echo '<input type="hidden" name="action" value="opentt_unified_save_settings">';
-        echo '<input type="hidden" name="stkb_settings_section" value="css">';
+        echo '<input type="hidden" name="opentt_settings_section" value="css">';
         echo '<h3>Globalni CSS Override</h3>';
         echo '<textarea name="custom_shortcode_css" class="opentt-settings-css-editor" spellcheck="false" placeholder=".opentt-item { border-radius: 12px; }">' . esc_textarea($custom_css) . '</textarea>';
         echo '<h3>CSS Override po Shortcode-u</h3>';
@@ -2861,7 +2861,7 @@ HTML;
             $classes = isset($meta['classes']) && is_array($meta['classes']) ? $meta['classes'] : [];
             $value = isset($css_map[$tag]) && is_string($css_map[$tag]) ? (string) $css_map[$tag] : '';
             $is_changed = trim($value) !== '';
-            $card_class = 'stkb-css-shortcode-card' . ($is_changed ? ' is-changed' : '');
+            $card_class = 'opentt-css-shortcode-card' . ($is_changed ? ' is-changed' : '');
             echo '<details class="' . esc_attr($card_class) . '">';
             echo '<summary><code>[' . esc_html($tag) . ']</code> <span>' . esc_html($module) . '</span>';
             if ($is_changed) {
@@ -2883,8 +2883,8 @@ HTML;
         }
         echo '</div>';
         echo '<div class="opentt-settings-actions">';
-        echo '<button type="submit" name="stkb_css_action" value="save" class="button button-primary">Sačuvaj CSS</button>';
-        echo '<button type="submit" name="stkb_css_action" value="reset" class="button" onclick="return confirm(\'Resetovati sav custom CSS override?\')">Reset CSS</button>';
+        echo '<button type="submit" name="opentt_css_action" value="save" class="button button-primary">Sačuvaj CSS</button>';
+        echo '<button type="submit" name="opentt_css_action" value="reset" class="button" onclick="return confirm(\'Resetovati sav custom CSS override?\')">Reset CSS</button>';
         echo '</div>';
         echo '</form>';
         echo '</div>';
@@ -4234,7 +4234,7 @@ HTML;
             $logo_url = plugins_url('opentt-logo.png', self::$plugin_file);
         }
 
-        echo '<div class="wrap stkb-admin opentt-onboarding-wrap">';
+        echo '<div class="wrap opentt-admin opentt-onboarding-wrap">';
         echo '<div class="opentt-panel opentt-onboarding-panel">';
         echo '<div class="opentt-onboarding-head">';
         if ($logo_url !== '') {
@@ -4298,14 +4298,14 @@ HTML;
         echo '<div class="opentt-onboarding-actions">';
         echo '<button type="button" class="button opentt-wizard-prev">Nazad</button>';
         echo '<button type="button" class="button opentt-wizard-next">Dalje</button>';
-        echo '<button type="submit" name="stkb_onboarding_action" value="complete" class="button button-primary opentt-wizard-submit">Završi setup</button>';
+        echo '<button type="submit" name="opentt_onboarding_action" value="complete" class="button button-primary opentt-wizard-submit">Završi setup</button>';
         echo '</div>';
         echo '</form>';
 
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="opentt-onboarding-skip-form">';
         wp_nonce_field('opentt_unified_onboarding_action');
         echo '<input type="hidden" name="action" value="opentt_unified_onboarding_action">';
-        echo '<input type="hidden" name="stkb_onboarding_action" value="skip">';
+        echo '<input type="hidden" name="opentt_onboarding_action" value="skip">';
         echo '<button type="submit" class="button">Preskoči setup</button>';
         echo '</form>';
 
@@ -4319,7 +4319,7 @@ HTML;
         check_admin_referer('opentt_unified_onboarding_action');
 
         $state = \OpenTT\Unified\WordPress\OnboardingActionManager::resolveStateFromRequest(
-            'stkb_onboarding_action',
+            'opentt_onboarding_action',
             'completed'
         );
         \OpenTT\Unified\WordPress\OnboardingActionManager::persistStateAndClearRedirect(
@@ -4341,7 +4341,7 @@ HTML;
         self::require_cap();
         check_admin_referer('opentt_unified_delete_all_data');
 
-        $phrase = isset($_POST['stkb_confirm_phrase']) ? sanitize_text_field((string) wp_unslash($_POST['stkb_confirm_phrase'])) : '';
+        $phrase = isset($_POST['opentt_confirm_phrase']) ? sanitize_text_field((string) wp_unslash($_POST['opentt_confirm_phrase'])) : '';
         if (trim($phrase) !== 'saglasan sam') {
             wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-settings'), 'error', 'Brisanje nije izvršeno. Upiši tačno: saglasan sam.'));
             exit;
@@ -4377,8 +4377,8 @@ HTML;
         self::require_cap();
         check_admin_referer('opentt_unified_save_settings');
 
-        $section = isset($_POST['stkb_settings_section']) ? sanitize_key((string) $_POST['stkb_settings_section']) : 'all';
-        $action = isset($_POST['stkb_css_action']) ? sanitize_key((string) $_POST['stkb_css_action']) : 'save';
+        $section = isset($_POST['opentt_settings_section']) ? sanitize_key((string) $_POST['opentt_settings_section']) : 'all';
+        $action = isset($_POST['opentt_css_action']) ? sanitize_key((string) $_POST['opentt_css_action']) : 'save';
         $settings_url = admin_url('admin.php?page=stkb-unified-settings');
         $customize_url = admin_url('admin.php?page=stkb-unified-customize');
 

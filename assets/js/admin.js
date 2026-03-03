@@ -304,11 +304,11 @@
       return;
     }
     document.querySelectorAll(".opentt-settings-css-editor").forEach(function (el) {
-      if (el.dataset.stkbCodeEditorReady === "1") {
+      if (el.dataset.openttCodeEditorReady === "1") {
         return;
       }
       wp.codeEditor.initialize(el, window.openttCodeEditorSettings);
-      el.dataset.stkbCodeEditorReady = "1";
+      el.dataset.openttCodeEditorReady = "1";
     });
   }
 
@@ -318,11 +318,11 @@
     }
     jQuery(".opentt-color-field").each(function () {
       var el = jQuery(this);
-      if (el.data("stkbColorReady") === 1) {
+      if (el.data("openttColorReady") === 1) {
         return;
       }
       el.wpColorPicker();
-      el.data("stkbColorReady", 1);
+      el.data("openttColorReady", 1);
     });
   }
 

@@ -28,7 +28,7 @@ final class OpenTT_Unified_Admin_Readonly_Helpers
 
         $selected_slug = sanitize_title((string) $selected_slug);
         $attr = $required ? ' required' : '';
-        $html = '<select name="' . esc_attr((string) $name) . '" id="stkb_league_select"' . $attr . '>';
+        $html = '<select name="' . esc_attr((string) $name) . '" id="opentt_league_select"' . $attr . '>';
         $html .= '<option value="">— izaberi —</option>';
         $seen = [];
         foreach ($rows as $r) {
@@ -81,7 +81,7 @@ final class OpenTT_Unified_Admin_Readonly_Helpers
 
         $selected_slug = sanitize_title((string) $selected_slug);
         $attr = $required ? ' required' : '';
-        $html = '<select name="' . esc_attr((string) $name) . '" id="stkb_season_select"' . $attr . '>';
+        $html = '<select name="' . esc_attr((string) $name) . '" id="opentt_season_select"' . $attr . '>';
         $html .= '<option value="">— bez sezone —</option>';
         $seen = [];
         foreach ($rows as $r) {
@@ -324,10 +324,10 @@ final class OpenTT_Unified_Admin_Readonly_Helpers
         }
 
         $attr = $required ? ' required' : '';
-        $select_id = 'stkb_' . preg_replace('/[^a-z0-9_]+/i', '_', (string) $name);
+        $select_id = 'opentt_' . preg_replace('/[^a-z0-9_]+/i', '_', (string) $name);
         $select_id = trim((string) $select_id, '_');
         if ($select_id === '') {
-            $select_id = 'stkb_player_' . wp_unique_id();
+            $select_id = 'opentt_player_' . wp_unique_id();
         }
         $html = '<div class="opentt-player-field">';
         $html .= '<div class="opentt-player-field-main">';

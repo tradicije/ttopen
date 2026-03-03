@@ -46,7 +46,7 @@ final class FrontendAssetsEnqueuer
                 continue;
             }
             wp_enqueue_style(
-                'stkb-unified-' . $mod,
+                'opentt-unified-' . $mod,
                 plugins_url($rel, $pluginFile),
                 [],
                 filemtime($path)
@@ -79,9 +79,9 @@ final class FrontendAssetsEnqueuer
         }
 
         if (!empty($chunks)) {
-            wp_register_style('stkb-unified-custom-overrides', false, [], $version);
-            wp_enqueue_style('stkb-unified-custom-overrides');
-            wp_add_inline_style('stkb-unified-custom-overrides', implode("\n\n", $chunks));
+            wp_register_style('opentt-unified-custom-overrides', false, [], $version);
+            wp_enqueue_style('opentt-unified-custom-overrides');
+            wp_add_inline_style('opentt-unified-custom-overrides', implode("\n\n", $chunks));
         }
     }
 }
