@@ -26,6 +26,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Consolidated installation lifecycle concerns into PSR-4 services: rewrite flush policy moved to `RewriteRulesManager`, and onboarding state/redirect/existing-install detection moved to `OnboardingManager`, with core kept as delegation shell.
 - Extracted visual settings domain (defaults, sanitization, option read, shortcode-title flag, CSS generation) into `OpenTT\\Unified\\Infrastructure\\VisualSettings` and reduced core to compatibility delegates.
 - Extracted frontend module CSS enqueue and custom override pipeline into `OpenTT\\Unified\\WordPress\\FrontendAssetsEnqueuer`, preserving legacy style handles and existing inline override behavior.
+- Extracted admin UI language selection/enablement and page-scope buffer bootstrap into `OpenTT\\Unified\\WordPress\\AdminUiLanguageManager`.
 - Standardized AGPL file headers across all PHP sources and aligned main plugin metadata to `1.1.0-beta.1`.
 
 ## Releases

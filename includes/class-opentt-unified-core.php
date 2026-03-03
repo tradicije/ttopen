@@ -159,31 +159,28 @@ final class OpenTT_Unified_Core
 
     private static function get_admin_ui_language()
     {
-        $lang = (string) get_option(self::OPTION_ADMIN_UI_LANGUAGE, 'sr');
-        $available = self::get_available_admin_ui_languages();
-        if (!isset($available[$lang])) {
-            $lang = 'sr';
-        }
-        return $lang;
+        return \OpenTT\Unified\WordPress\AdminUiLanguageManager::resolveCurrentLanguage(
+            self::OPTION_ADMIN_UI_LANGUAGE,
+            self::get_available_admin_ui_languages(),
+            'sr'
+        );
     }
 
     private static function is_admin_ui_translation_enabled()
     {
-        return self::get_admin_ui_language() !== 'sr';
+        return \OpenTT\Unified\WordPress\AdminUiLanguageManager::isTranslationEnabled(
+            self::get_admin_ui_language(),
+            'sr'
+        );
     }
 
     public static function maybe_enable_admin_ui_translation()
     {
-        if (!is_admin() || !self::is_admin_ui_translation_enabled()) {
-            return;
-        }
-
-        $page = isset($_GET['page']) ? sanitize_key((string) $_GET['page']) : '';
-        if ($page === '' || strpos($page, 'stkb-unified') !== 0) {
-            return;
-        }
-
-        ob_start([__CLASS__, 'translate_admin_ui_buffer']);
+        \OpenTT\Unified\WordPress\AdminUiLanguageManager::maybeStartTranslationBuffer(
+            self::is_admin_ui_translation_enabled(),
+            'stkb-unified',
+            [__CLASS__, 'translate_admin_ui_buffer']
+        );
     }
 
     private static function get_available_admin_ui_languages()
