@@ -33,6 +33,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Extracted league/season admin CRUD handlers (save/delete + validation/nonce/cap flow) into `OpenTT\\Unified\\WordPress\\LeagueSeasonAdminManager`.
 - Extracted competition rule admin flows (save/delete/migrate) into `OpenTT\\Unified\\WordPress\\CompetitionRuleAdminManager`, while preserving core helper behavior through injected callbacks.
 - Extracted migration action handlers (league/season validate+migrate, import validate, migration reset, relation repair, placeholder cleanup, batch migrate) into `OpenTT\\Unified\\WordPress\\MigrationActionsManager`.
+- Extracted competition maintenance action handlers (competition reset, diagnostics generation, played repair) into `OpenTT\\Unified\\WordPress\\CompetitionMaintenanceManager`.
 - Standardized AGPL file headers across all PHP sources and aligned main plugin metadata to `1.1.0-beta.1`.
 
 ## Releases

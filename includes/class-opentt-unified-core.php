@@ -4183,67 +4183,15 @@ HTML;
 
     public static function handle_reset_competition_matches_admin()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_reset_competition_matches');
-
-        global $wpdb;
-        $matches_table = OpenTT_Unified_Core::db_table('matches');
-        $games_table = OpenTT_Unified_Core::db_table('games');
-        $sets_table = OpenTT_Unified_Core::db_table('sets');
-
-        if (!self::table_exists($matches_table) || !self::table_exists($games_table) || !self::table_exists($sets_table)) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Nedostaju OpenTT DB tabele za reset.'));
-            exit;
-        }
-
-        $rule_id = intval($_POST['competition_rule_id'] ?? 0);
-        if ($rule_id <= 0) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Izaberi takmičenje za reset.'));
-            exit;
-        }
-
-        $liga_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_league_slug', true));
-        $sezona_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_season_slug', true));
-        if ($liga_slug === '' || $sezona_slug === '') {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Takmičenje nema validan liga/sezona slug.'));
-            exit;
-        }
-
-        $match_ids = $wpdb->get_col($wpdb->prepare(
-            "SELECT id FROM {$matches_table} WHERE liga_slug=%s AND sezona_slug=%s",
-            $liga_slug,
-            $sezona_slug
-        )) ?: [];
-        $match_ids = array_values(array_filter(array_map('intval', (array) $match_ids), static function ($id) {
-            return $id > 0;
-        }));
-
-        if (empty($match_ids)) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'success', 'Nema utakmica za reset u izabranom takmičenju.'));
-            exit;
-        }
-
-        $id_list = implode(',', $match_ids);
-        $game_ids = $wpdb->get_col("SELECT id FROM {$games_table} WHERE match_id IN ({$id_list})") ?: [];
-        $game_ids = array_values(array_filter(array_map('intval', (array) $game_ids), static function ($id) {
-            return $id > 0;
-        }));
-
-        $deleted_sets = 0;
-        if (!empty($game_ids)) {
-            $game_list = implode(',', $game_ids);
-            $deleted_sets = (int) $wpdb->query("DELETE FROM {$sets_table} WHERE game_id IN ({$game_list})");
-        }
-
-        $deleted_games = (int) $wpdb->query("DELETE FROM {$games_table} WHERE match_id IN ({$id_list})");
-        $deleted_matches = (int) $wpdb->query("DELETE FROM {$matches_table} WHERE id IN ({$id_list})");
-
-        $msg = 'Reset završen za ' . self::slug_to_title($liga_slug) . ' / ' . self::slug_to_title($sezona_slug)
-            . '. Obrisano utakmica: ' . max(0, $deleted_matches)
-            . ', partija: ' . max(0, $deleted_games)
-            . ', setova: ' . max(0, $deleted_sets) . '.';
-        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'success', $msg));
-        exit;
+        \OpenTT\Unified\WordPress\CompetitionMaintenanceManager::handleResetMatches(
+            self::CAP,
+            static function ($table_name) {
+                return self::table_exists($table_name);
+            },
+            static function ($slug) {
+                return self::slug_to_title($slug);
+            }
+        );
     }
 
     private static function get_competition_round_diagnostics($liga_slug, $sezona_slug)
@@ -4296,97 +4244,33 @@ HTML;
 
     public static function handle_competition_diagnostics_admin()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_competition_diagnostics');
-
-        $rule_id = intval($_POST['competition_rule_id'] ?? 0);
-        if ($rule_id <= 0) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Izaberi takmičenje za dijagnostiku.'));
-            exit;
-        }
-        $liga_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_league_slug', true));
-        $sezona_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_season_slug', true));
-        if ($liga_slug === '' || $sezona_slug === '') {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Takmičenje nema validan liga/sezona slug.'));
-            exit;
-        }
-
-        $rows = self::get_competition_round_diagnostics($liga_slug, $sezona_slug);
-        update_option(self::OPTION_COMPETITION_DIAGNOSTICS, [
-            'liga_slug' => $liga_slug,
-            'sezona_slug' => $sezona_slug,
-            'rows' => $rows,
-            'generated_at' => current_time('mysql'),
-        ], false);
-
-        if (empty($rows)) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Nema utakmica za izabranu ligu/sezonu.'));
-            exit;
-        }
-
-        $mismatch = 0;
-        foreach ($rows as $row) {
-            if (intval($row['matches_played'] ?? 0) !== intval($row['matches_with_score'] ?? 0)) {
-                $mismatch++;
+        \OpenTT\Unified\WordPress\CompetitionMaintenanceManager::handleDiagnostics(
+            self::CAP,
+            self::OPTION_COMPETITION_DIAGNOSTICS,
+            static function ($liga_slug, $sezona_slug) {
+                return self::get_competition_round_diagnostics($liga_slug, $sezona_slug);
+            },
+            static function ($slug) {
+                return self::slug_to_title($slug);
             }
-        }
-        $msg = 'Dijagnostika generisana za ' . self::slug_to_title($liga_slug) . ' / ' . self::slug_to_title($sezona_slug)
-            . '. Kola: ' . count($rows) . '.';
-        if ($mismatch > 0) {
-            $msg .= ' Mismatch kola: ' . $mismatch . '.';
-        }
-        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'success', $msg));
-        exit;
+        );
     }
 
     public static function handle_repair_competition_played_admin()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_repair_competition_played');
-
-        global $wpdb;
-        $matches_table = OpenTT_Unified_Core::db_table('matches');
-        if (!self::table_exists($matches_table)) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Nedostaje tabela utakmica.'));
-            exit;
-        }
-
-        $rule_id = intval($_POST['competition_rule_id'] ?? 0);
-        if ($rule_id <= 0) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Izaberi takmičenje za repair.'));
-            exit;
-        }
-        $liga_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_league_slug', true));
-        $sezona_slug = sanitize_title((string) get_post_meta($rule_id, 'opentt_competition_season_slug', true));
-        if ($liga_slug === '' || $sezona_slug === '') {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Takmičenje nema validan liga/sezona slug.'));
-            exit;
-        }
-
-        $updated = $wpdb->query($wpdb->prepare(
-            "UPDATE {$matches_table}
-             SET played = CASE WHEN (home_score + away_score) > 0 THEN 1 ELSE 0 END
-             WHERE liga_slug=%s AND sezona_slug=%s",
-            $liga_slug,
-            $sezona_slug
-        ));
-        if ($updated === false) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'error', 'Repair nije uspeo.'));
-            exit;
-        }
-
-        $rows = self::get_competition_round_diagnostics($liga_slug, $sezona_slug);
-        update_option(self::OPTION_COMPETITION_DIAGNOSTICS, [
-            'liga_slug' => $liga_slug,
-            'sezona_slug' => $sezona_slug,
-            'rows' => $rows,
-            'generated_at' => current_time('mysql'),
-        ], false);
-
-        $msg = 'Repair played završen za ' . self::slug_to_title($liga_slug) . ' / ' . self::slug_to_title($sezona_slug)
-            . '. Ažurirano redova: ' . intval($updated) . '.';
-        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-transfer'), 'success', $msg));
-        exit;
+        \OpenTT\Unified\WordPress\CompetitionMaintenanceManager::handleRepairPlayed(
+            self::CAP,
+            self::OPTION_COMPETITION_DIAGNOSTICS,
+            static function ($table_name) {
+                return self::table_exists($table_name);
+            },
+            static function ($liga_slug, $sezona_slug) {
+                return self::get_competition_round_diagnostics($liga_slug, $sezona_slug);
+            },
+            static function ($slug) {
+                return self::slug_to_title($slug);
+            }
+        );
     }
 
     public static function render_onboarding_page()
