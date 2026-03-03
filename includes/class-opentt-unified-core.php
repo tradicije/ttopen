@@ -128,72 +128,18 @@ final class OpenTT_Unified_Core
 
     public static function enqueue_frontend_assets()
     {
-        $modules = [
-            'ekipe',
-            'utakmice',
-            'tabela',
-            'takmicenje-info',
-            'takmicenja-prikaz',
-            'forma-kluba',
-            'statistika-igraca',
-            'statistika-ekipe',
-            'transferi',
-            'partije',
-            'mvp',
-            'h2h',
-            'snimak',
-            'izvestaj',
-            'rang-lista',
-            'prikaz-igraca',
-            'vesti-kluba',
-            'related-posts',
-            'info-kluba',
-            'info-igraca',
-            'prikaz-klubova',
-        ];
-
-        foreach ($modules as $mod) {
-            $rel = 'assets/css/modules/' . $mod . '.css';
-            $path = self::$plugin_dir . $rel;
-            if (!is_readable($path)) {
-                continue;
-            }
-            wp_enqueue_style(
-                'stkb-unified-' . $mod,
-                plugins_url($rel, self::$plugin_file),
-                [],
-                filemtime($path)
-            );
-        }
-
         $visual_css = self::build_visual_settings_css(self::get_visual_settings());
         $custom_css = (string) get_option(self::OPTION_CUSTOM_SHORTCODE_CSS, '');
         $custom_css_map = get_option(self::OPTION_CUSTOM_SHORTCODE_CSS_MAP, []);
-        if (!is_array($custom_css_map)) {
-            $custom_css_map = [];
-        }
-        $chunks = [];
-        if ($visual_css !== '') {
-            $chunks[] = $visual_css;
-        }
-        $global_css = trim($custom_css);
-        if ($global_css !== '') {
-            $chunks[] = $global_css;
-        }
-        foreach ($custom_css_map as $css_part) {
-            if (!is_string($css_part)) {
-                continue;
-            }
-            $css_part = trim($css_part);
-            if ($css_part !== '') {
-                $chunks[] = $css_part;
-            }
-        }
-        if (!empty($chunks)) {
-            wp_register_style('stkb-unified-custom-overrides', false, [], self::VERSION);
-            wp_enqueue_style('stkb-unified-custom-overrides');
-            wp_add_inline_style('stkb-unified-custom-overrides', implode("\n\n", $chunks));
-        }
+
+        \OpenTT\Unified\WordPress\FrontendAssetsEnqueuer::enqueue(
+            self::$plugin_dir,
+            self::$plugin_file,
+            self::VERSION,
+            $visual_css,
+            $custom_css,
+            $custom_css_map
+        );
     }
 
     private static function default_visual_settings()
