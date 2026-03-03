@@ -12,6 +12,7 @@ require_once __DIR__ . '/modules/class-stkb-unified-legacy-module.php';
 require_once __DIR__ . '/modules/trait-stkb-unified-shortcodes.php';
 require_once __DIR__ . '/class-stkb-unified-readonly-helpers.php';
 require_once __DIR__ . '/class-stkb-unified-admin-readonly-helpers.php';
+require_once __DIR__ . '/class-stkb-unified-shortcode-match-query-service.php';
 
 final class STKB_Unified_Core
 {
