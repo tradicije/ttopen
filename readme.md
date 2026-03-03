@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="opentt-logo.png" alt="OpenTT logo" width="200" />
+  <img src="opentt-logo.png" alt="OpenTT logo" width="256" />
 </p>
 
 **OpenTT** is a free and open WordPress plugin for managing, displaying, and archiving table tennis competitions: matches, clubs, players, and statistics in one unified system.
