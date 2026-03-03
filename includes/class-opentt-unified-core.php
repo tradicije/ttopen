@@ -1,4 +1,14 @@
 <?php
+/**
+ * OpenTT - Table Tennis Management Plugin
+ * Copyright (C) 2026 Aleksa Dimitrijević
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ */
+
 
 if (!defined('ABSPATH')) {
     exit;
@@ -21,7 +31,7 @@ final class OpenTT_Unified_Core
 {
     use OpenTT_Unified_Shortcodes_Trait;
 
-    const VERSION = '1.0.0';
+    const VERSION = '1.1.0-beta.1';
     const CAP = 'edit_others_posts';
     const OPTION_SCHEMA_VERSION = 'opentt_unified_schema_version';
     const SCHEMA_VERSION = '3';
@@ -368,95 +378,10 @@ final class OpenTT_Unified_Core
 
         ob_start([__CLASS__, 'translate_admin_ui_buffer']);
     }
-    private static function available_admin_ui_language_labels()
-    {
-        return [
-            'sr' => 'Srpski',
-            'en' => 'English',
-            'de' => 'Deutsch',
-            'fr' => 'Français',
-            'es' => 'Español',
-            'it' => 'Italiano',
-            'pt' => 'Português',
-            'ru' => 'Русский',
-            'hu' => 'Magyar',
-            'ro' => 'Română',
-        ];
-    }
 
     private static function get_available_admin_ui_languages()
     {
-        static $cache = null;
-        if (is_array($cache)) {
-            return $cache;
-        }
-
-        $langs = ['sr' => 'sr', 'en' => 'en'];
-        $glob_pattern = trailingslashit(self::$plugin_dir) . 'languages/admin-ui-*.txt';
-        $files = glob($glob_pattern);
-        if (is_array($files)) {
-            foreach ($files as $file) {
-                $base = wp_basename((string) $file);
-                if ($base === 'admin-ui-all-strings.txt' || $base === 'admin-ui-source-sr-to-en.txt') {
-                    continue;
-                }
-                if (preg_match('/^admin-ui-([a-z0-9_-]+)\.txt$/i', $base, $m)) {
-                    $code = sanitize_key((string) $m[1]);
-                    if ($code !== '') {
-                        $langs[$code] = $code;
-                    }
-                }
-            }
-        }
-
-        $labels = self::available_admin_ui_language_labels();
-        $out = [];
-        foreach ($langs as $code) {
-            $out[$code] = isset($labels[$code]) ? $labels[$code] : strtoupper((string) $code);
-        }
-        $cache = $out;
-        return $out;
-    }
-
-    private static function parse_admin_ui_txt_map($path)
-    {
-        if (!is_string($path) || $path === '' || !is_readable($path)) {
-            return [];
-        }
-
-        $lines = file($path, FILE_IGNORE_NEW_LINES);
-        if (!is_array($lines)) {
-            return [];
-        }
-
-        $map = [];
-        foreach ($lines as $line) {
-            $line = trim((string) $line);
-            if ($line === '' || strpos($line, '#') === 0) {
-                continue;
-            }
-
-            $sepPos = strpos($line, ' = ');
-            if ($sepPos !== false) {
-                $key = trim((string) substr($line, 0, $sepPos));
-                $val = trim((string) substr($line, $sepPos + 3));
-            } else {
-                $parts = explode('=', $line, 2);
-                if (count($parts) !== 2) {
-                    continue;
-                }
-                $key = trim((string) $parts[0]);
-                $val = trim((string) $parts[1]);
-            }
-            if ($key === '') {
-                continue;
-            }
-
-            $key = str_replace(['\n', '\='], ["\n", '='], $key);
-            $val = str_replace(['\n', '\='], ["\n", '='], $val);
-            $map[$key] = $val;
-        }
-        return $map;
+        return \OpenTT\Unified\Infrastructure\AdminUiTranslator::availableLanguages(self::$plugin_dir);
     }
 
     public static function translate_admin_ui_buffer($html)
@@ -470,70 +395,11 @@ final class OpenTT_Unified_Core
             return $html;
         }
 
-        static $bridgeMap = null;
-        if (!is_array($bridgeMap)) {
-            $bridgePath = trailingslashit(self::$plugin_dir) . 'languages/admin-ui-source-sr-to-en.txt';
-            $bridgeMap = self::parse_admin_ui_txt_map($bridgePath);
-        }
-
-        if (!empty($bridgeMap)) {
-            $safeBridge = [];
-            foreach ($bridgeMap as $key => $val) {
-                if (self::is_safe_admin_translation_key((string) $key)) {
-                    $safeBridge[(string) $key] = (string) $val;
-                }
-            }
-            if (!empty($safeBridge)) {
-                $html = strtr($html, $safeBridge);
-            }
-        }
-
-        if ($lang === 'en') {
-            return $html;
-        }
-
-        static $langMapCache = [];
-        if (!isset($langMapCache[$lang]) || !is_array($langMapCache[$lang])) {
-            $langPath = trailingslashit(self::$plugin_dir) . 'languages/admin-ui-' . $lang . '.txt';
-            $langMapCache[$lang] = self::parse_admin_ui_txt_map($langPath);
-        }
-        $map = $langMapCache[$lang];
-        if (empty($map)) {
-            return $html;
-        }
-
-        $safeMap = [];
-        foreach ($map as $key => $val) {
-            if (self::is_safe_admin_translation_key((string) $key)) {
-                $safeMap[(string) $key] = (string) $val;
-            }
-        }
-
-        if (empty($safeMap)) {
-            return $html;
-        }
-
-        return strtr($html, $safeMap);
-    }
-
-    private static function is_safe_admin_translation_key($key)
-    {
-        $key = (string) $key;
-        if ($key === '') {
-            return false;
-        }
-
-        // HTML-context keys are safe (e.g. <th>Savez</th>).
-        if (strpos($key, '<') !== false || strpos($key, '>') !== false) {
-            return true;
-        }
-
-        // Keep phrase/sentence keys, skip short one-word tokens (can alter user-provided names).
-        if (preg_match('/[\s:\.\,\?\!\(\)\[\]\/]/u', $key)) {
-            return true;
-        }
-
-        return mb_strlen($key, 'UTF-8') >= 16;
+        return \OpenTT\Unified\Infrastructure\AdminUiTranslator::translateHtml(
+            $html,
+            self::$plugin_dir,
+            $lang
+        );
     }
 
     public static function should_show_shortcode_titles()
