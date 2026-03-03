@@ -1,8 +1,8 @@
 # Contributing to OpenTT
 
-First of all — thank you for taking the time to look at this project.
+First of all — thank you for taking the time to explore OpenTT.
 
-OpenTT started as a practical solution for managing table tennis leagues at a local club level. It is actively evolving, and contributions, feedback, and ideas are welcome.
+This project started as a practical solution for managing table tennis competitions at a local club level. It is actively evolving, and contributions, feedback, and ideas are welcome.
 
 ---
 
@@ -10,12 +10,12 @@ OpenTT started as a practical solution for managing table tennis leagues at a lo
 
 OpenTT aims to be:
 
-- Open-source and community-friendly
+- Free and open-source
 - Transparent and self-hosted
-- Practical rather than over-engineered
+- Practical and community-driven
 - Gradually improving in structure and maintainability
 
-The project is still evolving architecturally. Refactoring and modularization are ongoing.
+The architecture is continuously being refined and modularized.
 
 ---
 
@@ -30,7 +30,7 @@ If you find a bug:
    - Expected behavior
    - WordPress + PHP version (if relevant)
 
-The more context you provide, the easier it is to fix.
+Clear reports help fix issues faster.
 
 ---
 
@@ -38,12 +38,32 @@ The more context you provide, the easier it is to fix.
 
 Feature suggestions are welcome, especially if they:
 
-- Improve league management workflows
+- Improve real-world league management workflows
 - Keep the plugin self-hosted
 - Avoid unnecessary complexity
 - Align with the project's open-source philosophy
 
-Please describe the real-world problem your suggestion solves.
+Please describe the actual problem your suggestion solves.
+
+---
+
+## 🌍 Contributing Translations
+
+OpenTT supports a simple file-based localization system for the admin UI.
+
+If you'd like to contribute a translation:
+
+- Translation files are located in:
+  `languages/admin-ui-<lang_code>.txt`
+- Format:
+  `english_reference = translation`
+- Use:
+  `languages/admin-ui-template.example.txt`
+  as a starting template.
+
+New language files are automatically detected and listed in the plugin's Settings page.
+
+Translation contributions are highly appreciated and help make OpenTT accessible to more communities.
 
 ---
 
@@ -53,33 +73,33 @@ Before opening a PR:
 
 - Make sure the code works and does not break existing functionality.
 - Keep changes focused and minimal.
-- Avoid large, unrelated refactors in a single PR.
-- Write clear commit messages.
+- Avoid mixing unrelated refactors in a single PR.
+- Write clear commit messages (imperative style preferred).
 
-If your change is architectural, please explain the reasoning behind it.
+If your change affects architecture or structure, please explain your reasoning.
 
 ---
 
 ## 🧱 Code Structure
 
-The project is currently being refactored from a larger core file into smaller, modular components (helpers, services, etc.).
+OpenTT is currently transitioning from a larger core file toward smaller, modular components (helpers, services, etc.).
 
 Goals:
 
 - Separation of concerns
 - Clear responsibility per file
 - Reduced monolithic logic
-- Gradual move toward cleaner structure
+- Improved readability and maintainability
 
-Contributions that improve clarity and maintainability are highly appreciated.
+Refactor-focused contributions are welcome, but should preserve existing functionality.
 
 ---
 
 ## 🤝 Communication
 
 Be respectful.
-Constructive criticism is welcome.
-This is a learning project as much as it is a functional one.
+Constructive criticism is encouraged.
+This project is both a functional tool and a continuous learning process.
 
 ---
 

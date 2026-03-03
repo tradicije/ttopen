@@ -14,6 +14,7 @@ All notable changes for the OpenTT plugin.
 - Refactor Phase 3 (part 2): extracted shortcode statistics/query methods into new `includes/class-stkb-unified-shortcode-stats-query-service.php`.
 - Refactor Phase 3 (part 2): moved remaining read-only stats/data methods from shortcode trait to stats service via delegations (`db_get_top_players_data`, `db_get_played_matches_count_by_club`, competition/player/club season lookups, team stats, MVP stats, competition club IDs).
 - Wired the new shortcode stats query service into core bootstrap includes.
+- Refactor Core admin actions (matches): extracted match/game/set admin action handlers into new `includes/class-stkb-unified-admin-match-actions.php` and kept `STKB_Unified_Core` methods as delegating wrappers for backward-compatible hooks.
 - Updated `readme.md` and `readme-sr.md`: removed top-level `# OpenTT` heading and added centered root logo (`opentt-logo.png`) at the top.
 
 ### 2026-03-02
