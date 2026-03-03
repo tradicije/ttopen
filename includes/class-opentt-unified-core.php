@@ -3274,7 +3274,7 @@ HTML;
             foreach ($meta_keys as $key) {
                 $meta[$key] = get_post_meta($id, $key, true);
             }
-            $club_id = (int) (self::extract_id($meta['povezani_klub']) ?: self::extract_id($meta['klub_igraca']));
+            $club_id = (int) (OpenTT_Unified_Readonly_Helpers::extract_id($meta['povezani_klub']) ?: OpenTT_Unified_Readonly_Helpers::extract_id($meta['klub_igraca']));
             $out[] = [
                 'source_id' => $id,
                 'post_title' => (string) $r->post_title,
@@ -4597,15 +4597,15 @@ HTML;
             return 0;
         }
 
-        $home_club = self::extract_id(get_post_meta($post_id, 'klub_domacina', true));
-        $away_club = self::extract_id(get_post_meta($post_id, 'klub_gostiju', true));
+        $home_club = OpenTT_Unified_Readonly_Helpers::extract_id(get_post_meta($post_id, 'klub_domacina', true));
+        $away_club = OpenTT_Unified_Readonly_Helpers::extract_id(get_post_meta($post_id, 'klub_gostiju', true));
 
         $home_score = intval(get_post_meta($post_id, 'rezultat_domacina', true));
         $away_score = intval(get_post_meta($post_id, 'rezultat_gostiju', true));
         $played = intval(get_post_meta($post_id, 'odigrana', true)) ? 1 : 0;
 
         $date_raw = (string) get_post_meta($post_id, 'datum_utakmice', true);
-        $date_sql = self::parse_date_to_sql($date_raw);
+        $date_sql = OpenTT_Unified_Readonly_Helpers::parse_date_to_sql($date_raw);
         $now = current_time('mysql');
 
         $existing_id = intval($wpdb->get_var($wpdb->prepare(
@@ -4670,8 +4670,8 @@ HTML;
                 $game_post_id
             )));
 
-            $home_players = self::extract_ids(get_post_meta($game_post_id, 'igrac_domacin', true));
-            $away_players = self::extract_ids(get_post_meta($game_post_id, 'igrac_gost', true));
+            $home_players = OpenTT_Unified_Readonly_Helpers::extract_ids(get_post_meta($game_post_id, 'igrac_domacin', true));
+            $away_players = OpenTT_Unified_Readonly_Helpers::extract_ids(get_post_meta($game_post_id, 'igrac_gost', true));
 
             $is_doubles = (count($home_players) > 1 || count($away_players) > 1) ? 1 : 0;
             $order_no = intval(get_post_meta($game_post_id, 'redni_broj', true));
@@ -4735,21 +4735,6 @@ HTML;
             'games' => $migrated_games,
             'sets' => $migrated_sets,
         ];
-    }
-
-    private static function parse_date_to_sql($raw)
-    {
-        return OpenTT_Unified_Readonly_Helpers::parse_date_to_sql($raw);
-    }
-
-    private static function extract_id($raw)
-    {
-        return OpenTT_Unified_Readonly_Helpers::extract_id($raw);
-    }
-
-    private static function extract_ids($raw)
-    {
-        return OpenTT_Unified_Readonly_Helpers::extract_ids($raw);
     }
 
     private static function get_migration_state()
@@ -4832,8 +4817,8 @@ HTML;
                 self::push_issue($issues, $max_issues, 'match_missing_kolo', 'Utakmica ID ' . intval($match_id) . ' nema kolo termin.');
             }
 
-            $home = self::extract_id(get_post_meta($match_id, 'klub_domacina', true));
-            $away = self::extract_id(get_post_meta($match_id, 'klub_gostiju', true));
+            $home = OpenTT_Unified_Readonly_Helpers::extract_id(get_post_meta($match_id, 'klub_domacina', true));
+            $away = OpenTT_Unified_Readonly_Helpers::extract_id(get_post_meta($match_id, 'klub_gostiju', true));
             if ($home <= 0 || get_post_type($home) !== 'klub') {
                 self::push_issue($issues, $max_issues, 'match_bad_home_club', 'Utakmica ID ' . intval($match_id) . ' ima neispravan klub_domacina.');
             }
@@ -4845,13 +4830,13 @@ HTML;
         foreach ($games as $game_id) {
             $checked_games++;
 
-            $match_id = self::extract_id(get_post_meta($game_id, 'povezana_utakmica', true));
+            $match_id = OpenTT_Unified_Readonly_Helpers::extract_id(get_post_meta($game_id, 'povezana_utakmica', true));
             if ($match_id <= 0 || get_post_type($match_id) !== 'utakmica') {
                 self::push_issue($issues, $max_issues, 'game_bad_match_ref', 'Partija ID ' . intval($game_id) . ' ima neispravno povezanu utakmicu.');
             }
 
-            $home_players = self::extract_ids(get_post_meta($game_id, 'igrac_domacin', true));
-            $away_players = self::extract_ids(get_post_meta($game_id, 'igrac_gost', true));
+            $home_players = OpenTT_Unified_Readonly_Helpers::extract_ids(get_post_meta($game_id, 'igrac_domacin', true));
+            $away_players = OpenTT_Unified_Readonly_Helpers::extract_ids(get_post_meta($game_id, 'igrac_gost', true));
             if (empty($home_players)) {
                 self::push_issue($issues, $max_issues, 'game_no_home_player', 'Partija ID ' . intval($game_id) . ' nema igrac_domacin.');
             }
@@ -4903,12 +4888,12 @@ HTML;
             $home_resolved = self::resolve_or_create_reference_id('klub', $home_raw);
             $away_resolved = self::resolve_or_create_reference_id('klub', $away_raw);
 
-            if ($home_resolved > 0 && intval(self::extract_id($home_raw)) !== $home_resolved) {
+            if ($home_resolved > 0 && intval(OpenTT_Unified_Readonly_Helpers::extract_id($home_raw)) !== $home_resolved) {
                 update_post_meta($match_id, 'klub_domacina', $home_resolved);
                 $fixed++;
             }
 
-            if ($away_resolved > 0 && intval(self::extract_id($away_raw)) !== $away_resolved) {
+            if ($away_resolved > 0 && intval(OpenTT_Unified_Readonly_Helpers::extract_id($away_raw)) !== $away_resolved) {
                 update_post_meta($match_id, 'klub_gostiju', $away_resolved);
                 $fixed++;
             }
@@ -4970,7 +4955,7 @@ HTML;
             $match_id = (int) $match_id;
             foreach (['klub_domacina', 'klub_gostiju'] as $key) {
                 $raw = get_post_meta($match_id, $key, true);
-                $legacy_id = self::extract_legacy_ref_id_from_post_id(self::extract_id($raw));
+                $legacy_id = self::extract_legacy_ref_id_from_post_id(OpenTT_Unified_Readonly_Helpers::extract_id($raw));
                 if ($legacy_id > 0) {
                     update_post_meta($match_id, $key, $legacy_id);
                     $cleaned++;
@@ -4988,7 +4973,7 @@ HTML;
         foreach ($games as $game_id) {
             $game_id = (int) $game_id;
             foreach (['igrac_domacin', 'igrac_gost'] as $key) {
-                $ids = self::extract_ids(get_post_meta($game_id, $key, true));
+                $ids = OpenTT_Unified_Readonly_Helpers::extract_ids(get_post_meta($game_id, $key, true));
                 if (empty($ids)) {
                     continue;
                 }
@@ -5034,7 +5019,7 @@ HTML;
 
     private static function resolve_or_create_reference_id($post_type, $raw)
     {
-        $id = self::extract_id($raw);
+        $id = OpenTT_Unified_Readonly_Helpers::extract_id($raw);
         if ($id > 0 && get_post_type($id) === $post_type) {
             return $id;
         }
@@ -5093,7 +5078,7 @@ HTML;
 
     private static function resolve_reference_ids($post_type, $raw, $max_items)
     {
-        $ids = self::extract_ids($raw);
+        $ids = OpenTT_Unified_Readonly_Helpers::extract_ids($raw);
         if (empty($ids)) {
             return [];
         }
@@ -5156,11 +5141,6 @@ HTML;
             'code' => (string) $code,
             'message' => (string) $message,
         ];
-    }
-
-    private static function admin_notice_url($url, $type, $message)
-    {
-        return \OpenTT\Unified\WordPress\AdminNoticeManager::buildUrl($url, $type, $message);
     }
 
     public static function get_competition_rule_data($liga_slug, $sezona_slug)

@@ -25,6 +25,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Extracted admin settings/onboarding/data-purge action orchestration from core into `src/WordPress/AdminSettingsActionManager.php`, keeping `includes/class-opentt-unified-core.php` as a delegating entry layer.
 - Extracted import/export admin action orchestration into `src/WordPress/DataTransferActionManager.php` while keeping existing transfer/validation/import algorithms unchanged via delegated callbacks.
 - Extracted DB schema migration and legacy table sync orchestration into `src/Infrastructure/SchemaMigrationManager.php`, reducing `includes` core DB bootstrap responsibilities.
+- Removed redundant core wrapper methods for notice URL and ID/date parsing, and switched core call sites to direct helper/service usage.
 
 ## Releases
 
