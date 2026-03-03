@@ -4194,61 +4194,13 @@ HTML;
         );
     }
 
-    private static function get_competition_round_diagnostics($liga_slug, $sezona_slug)
-    {
-        global $wpdb;
-        $matches_table = OpenTT_Unified_Core::db_table('matches');
-        $games_table = OpenTT_Unified_Core::db_table('games');
-        $liga_slug = sanitize_title((string) $liga_slug);
-        $sezona_slug = sanitize_title((string) $sezona_slug);
-        if ($liga_slug === '' || $sezona_slug === '' || !self::table_exists($matches_table) || !self::table_exists($games_table)) {
-            return [];
-        }
-
-        $sql = $wpdb->prepare(
-            "SELECT
-                m.kolo_slug AS kolo_slug,
-                COUNT(*) AS matches_total,
-                SUM(CASE WHEN m.played=1 THEN 1 ELSE 0 END) AS matches_played,
-                SUM(CASE WHEN (m.home_score + m.away_score) > 0 THEN 1 ELSE 0 END) AS matches_with_score,
-                SUM(COALESCE(g.cnt_games, 0)) AS games_total
-             FROM {$matches_table} m
-             LEFT JOIN (
-                SELECT match_id, COUNT(*) AS cnt_games
-                FROM {$games_table}
-                GROUP BY match_id
-             ) g ON g.match_id = m.id
-             WHERE m.liga_slug=%s AND m.sezona_slug=%s
-             GROUP BY m.kolo_slug
-             ORDER BY CAST(m.kolo_slug AS UNSIGNED) ASC, m.kolo_slug ASC",
-            $liga_slug,
-            $sezona_slug
-        );
-        $rows = $wpdb->get_results($sql) ?: [];
-        if (empty($rows)) {
-            return [];
-        }
-
-        $out = [];
-        foreach ($rows as $r) {
-            $out[] = [
-                'kolo_slug' => sanitize_title((string) ($r->kolo_slug ?? '')),
-                'matches_total' => intval($r->matches_total ?? 0),
-                'matches_played' => intval($r->matches_played ?? 0),
-                'matches_with_score' => intval($r->matches_with_score ?? 0),
-                'games_total' => intval($r->games_total ?? 0),
-            ];
-        }
-        return $out;
-    }
-
     public static function handle_competition_diagnostics_admin()
     {
         \OpenTT\Unified\WordPress\CompetitionMaintenanceManager::handleDiagnostics(
             self::CAP,
             self::OPTION_COMPETITION_DIAGNOSTICS,
             static function ($liga_slug, $sezona_slug) {
-                return self::get_competition_round_diagnostics($liga_slug, $sezona_slug);
+                return \OpenTT\Unified\WordPress\CompetitionDiagnosticsQuery::roundDiagnostics($liga_slug, $sezona_slug);
             },
             static function ($slug) {
                 return self::slug_to_title($slug);
@@ -4265,7 +4217,7 @@ HTML;
                 return self::table_exists($table_name);
             },
             static function ($liga_slug, $sezona_slug) {
-                return self::get_competition_round_diagnostics($liga_slug, $sezona_slug);
+                return \OpenTT\Unified\WordPress\CompetitionDiagnosticsQuery::roundDiagnostics($liga_slug, $sezona_slug);
             },
             static function ($slug) {
                 return self::slug_to_title($slug);
