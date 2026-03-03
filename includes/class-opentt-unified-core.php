@@ -4711,88 +4711,38 @@ HTML;
 
     public static function handle_save_competition_rule_admin()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_save_competition_rule');
-
-        $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
-        $league_name = sanitize_text_field((string) ($_POST['league_name'] ?? ''));
-        $season_name = sanitize_text_field((string) ($_POST['season_name'] ?? ''));
-        $liga_slug = sanitize_title($league_name);
-        $sezona_slug = sanitize_title($season_name);
-        if ($liga_slug === '' || $sezona_slug === '') {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-add-competition'), 'error', 'Liga i sezona su obavezne.'));
-            exit;
-        }
-
-        $existing = self::get_competition_rule_post_by_slugs($liga_slug, $sezona_slug);
-        if ($existing && (int) $existing->ID !== $id) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-add-competition'), 'error', 'Takmičenje za ovu ligu i sezonu već postoji.'));
-            exit;
-        }
-
-        $title = self::slug_to_title($liga_slug) . ' / ' . self::slug_to_title($sezona_slug);
-        $post_data = [
-            'post_type' => 'pravilo_takmicenja',
-            'post_title' => $title,
-            'post_status' => 'publish',
-        ];
-        if ($id > 0) {
-            $post_data['ID'] = $id;
-            $rule_id = wp_update_post($post_data, true);
-        } else {
-            $rule_id = wp_insert_post($post_data, true);
-        }
-        if (!$rule_id || is_wp_error($rule_id)) {
-            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-add-competition'), 'error', 'Neuspešno čuvanje takmičenja.'));
-            exit;
-        }
-
-        self::ensure_league_entity($liga_slug, $league_name);
-        self::ensure_season_entity($sezona_slug, $season_name);
-
-        update_post_meta($rule_id, 'opentt_competition_league_slug', $liga_slug);
-        update_post_meta($rule_id, 'opentt_competition_season_slug', $sezona_slug);
-        $rank = max(1, min(5, (int) ($_POST['rang'] ?? 3)));
-        update_post_meta($rule_id, 'opentt_competition_rank', $rank);
-        update_post_meta($rule_id, 'opentt_competition_promotion_slots', max(0, (int) ($_POST['promocija_broj'] ?? 0)));
-        update_post_meta($rule_id, 'opentt_competition_promotion_playoff_slots', max(0, (int) ($_POST['promocija_baraz_broj'] ?? 0)));
-        update_post_meta($rule_id, 'opentt_competition_relegation_slots', max(0, (int) ($_POST['ispadanje_broj'] ?? 0)));
-        update_post_meta($rule_id, 'opentt_competition_relegation_playoff_slots', max(0, (int) ($_POST['ispadanje_razigravanje_broj'] ?? 0)));
-        update_post_meta($rule_id, 'opentt_competition_scoring_type', sanitize_text_field((string) ($_POST['bodovanje_tip'] ?? '2-1')));
-        update_post_meta($rule_id, 'opentt_competition_match_format', sanitize_text_field((string) ($_POST['format_partija'] ?? 'format_a')));
-        update_post_meta($rule_id, 'opentt_competition_federation', self::normalize_competition_federation((string) ($_POST['savez'] ?? 'STSS')));
-        $thumb_id = isset($_POST['featured_image_id']) ? (int) $_POST['featured_image_id'] : 0;
-        if ($thumb_id > 0) {
-            set_post_thumbnail($rule_id, $thumb_id);
-        } else {
-            delete_post_thumbnail($rule_id);
-        }
-
-        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-competitions'), 'success', 'Takmičenje je sačuvano.'));
-        exit;
+        \OpenTT\Unified\WordPress\CompetitionRuleAdminManager::handleSave(self::CAP, [
+            'find_rule_by_slugs' => static function ($liga_slug, $sezona_slug) {
+                return self::get_competition_rule_post_by_slugs($liga_slug, $sezona_slug);
+            },
+            'slug_to_title' => static function ($slug) {
+                return self::slug_to_title($slug);
+            },
+            'ensure_league_entity' => static function ($league_slug, $league_name) {
+                self::ensure_league_entity($league_slug, $league_name);
+            },
+            'ensure_season_entity' => static function ($season_slug, $season_name) {
+                self::ensure_season_entity($season_slug, $season_name);
+            },
+            'normalize_federation' => static function ($code) {
+                return self::normalize_competition_federation($code);
+            },
+        ]);
     }
 
     public static function handle_delete_competition_rule_admin()
     {
-        self::require_cap();
-        $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
-        if ($id <= 0) {
-            wp_die('Nedostaje ID.');
-        }
-        check_admin_referer('opentt_unified_delete_competition_rule_' . $id);
-        wp_trash_post($id);
-        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-competitions'), 'success', 'Takmičenje je obrisano.'));
-        exit;
+        \OpenTT\Unified\WordPress\CompetitionRuleAdminManager::handleDelete(self::CAP);
     }
 
     public static function handle_migrate_competition_rules()
     {
-        self::require_cap();
-        check_admin_referer('opentt_unified_migrate_competition_rules');
-        $result = self::migrate_competition_rules_from_existing_data();
-        $msg = 'Migracija takmičenja završena. Kreirano/azurirano: ' . (int) $result['rules'] . '.';
-        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-competitions'), 'success', $msg));
-        exit;
+        \OpenTT\Unified\WordPress\CompetitionRuleAdminManager::handleMigrate(
+            self::CAP,
+            static function () {
+                return self::migrate_competition_rules_from_existing_data();
+            }
+        );
     }
 
     public static function handle_migrate_league_season_slugs()
