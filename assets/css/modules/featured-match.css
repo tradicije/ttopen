@@ -12,10 +12,10 @@
   color: #ffffff;
   text-decoration: none;
   background: linear-gradient(
-    90deg,
+    110deg,
     var(--opentt-featured-home) 0%,
-    rgba(3, 23, 69, 0.95) 40%,
-    rgba(3, 23, 69, 0.95) 60%,
+    rgba(3, 23, 69, 0.95) 45%,
+    rgba(3, 23, 69, 0.95) 55%,
     var(--opentt-featured-away) 100%
   );
   box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
