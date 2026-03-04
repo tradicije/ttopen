@@ -909,121 +909,23 @@ trait OpenTT_Unified_Shortcodes_Trait
 
     public static function shortcode_player_transfers($atts = [])
     {
-        $atts = shortcode_atts([
-            'igrac' => '',
-        ], $atts);
-
-        $player_id = 0;
-        if (!empty($atts['igrac'])) {
-            $lookup = sanitize_title((string) $atts['igrac']);
-            $post = get_page_by_path($lookup, OBJECT, 'igrac');
-            if (!$post) {
-                $post = get_page_by_title((string) $atts['igrac'], OBJECT, 'igrac');
-            }
-            if ($post && !is_wp_error($post)) {
-                $player_id = intval($post->ID);
-            }
-        } elseif (is_singular('igrac')) {
-            $player_id = intval(get_the_ID());
-        }
-
-        if ($player_id <= 0) {
-            return '';
-        }
-
-        $history = self::db_get_player_season_club_history($player_id);
-        if (empty($history)) {
-            return '<div class="opentt-transferi"><p>Nema podataka o transferima za ovog igrača.</p></div>';
-        }
-
-        $stints = self::build_player_stints($history);
-        if (empty($stints)) {
-            return '<div class="opentt-transferi"><p>Nema podataka o transferima za ovog igrača.</p></div>';
-        }
-
-        $transfers = [];
-        for ($i = 1; $i < count($stints); $i++) {
-            $prev = $stints[$i - 1];
-            $curr = $stints[$i];
-            $transfers[] = [
-                'season_slug' => (string) ($curr['from_season'] ?? ''),
-                'from_club_id' => intval($prev['club_id'] ?? 0),
-                'to_club_id' => intval($curr['club_id'] ?? 0),
-            ];
-        }
-        $stints_desc = array_reverse($stints);
-        $transfers_desc = array_reverse($transfers);
-
-        ob_start();
-        echo self::shortcode_title_html('Transferi');
-        echo '<section class="opentt-transferi">';
-
-        echo '<div class="opentt-transferi-block">';
-        echo '<h4>Istorija klubova</h4>';
-        echo '<table class="opentt-transferi-table"><thead><tr><th>Period</th><th>Klub</th></tr></thead><tbody>';
-        foreach ($stints_desc as $s) {
-            $from_slug = (string) ($s['from_season'] ?? '');
-            $to_slug = (string) ($s['to_season'] ?? '');
-            $period = self::season_display_name($from_slug);
-            if ($to_slug !== '' && $to_slug !== $from_slug) {
-                $period .= ' - ' . self::season_display_name($to_slug);
-            }
-            $club_id = intval($s['club_id'] ?? 0);
-            $club_name = $club_id > 0 ? (string) get_the_title($club_id) : '—';
-            $club_link = $club_id > 0 ? (string) get_permalink($club_id) : '';
-            $club_logo = $club_id > 0 ? self::club_logo_html($club_id, 'thumbnail', ['class' => 'opentt-transferi-club-grb']) : '';
-            echo '<tr><td>' . esc_html($period) . '</td><td>';
-            echo '<span class="opentt-transferi-club">';
-            if ($club_logo) {
-                echo $club_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-            }
-            if ($club_link !== '') {
-                echo '<a href="' . esc_url($club_link) . '">' . esc_html($club_name) . '</a>';
-            } else {
-                echo esc_html($club_name);
-            }
-            echo '</span>';
-            echo '</td></tr>';
-        }
-        echo '</tbody></table>';
-        echo '</div>';
-
-        if (!empty($transfers_desc)) {
-            echo '<div class="opentt-transferi-block">';
-            echo '<h4>Promene kluba</h4>';
-            echo '<table class="opentt-transferi-table"><thead><tr><th>Sezona</th><th>Transfer</th></tr></thead><tbody>';
-            foreach ($transfers_desc as $t) {
-                $season_label = self::season_display_name((string) $t['season_slug']);
-                $from_id = intval($t['from_club_id']);
-                $to_id = intval($t['to_club_id']);
-                $from_name = $from_id > 0 ? (string) get_the_title($from_id) : '—';
-                $to_name = $to_id > 0 ? (string) get_the_title($to_id) : '—';
-                $from_logo = $from_id > 0 ? self::club_logo_html($from_id, 'thumbnail', ['class' => 'opentt-transferi-club-grb']) : '';
-                $to_logo = $to_id > 0 ? self::club_logo_html($to_id, 'thumbnail', ['class' => 'opentt-transferi-club-grb']) : '';
-                echo '<tr><td>' . esc_html($season_label) . '</td><td>';
-                echo '<span class="opentt-transferi-move">';
-                echo '<span class="opentt-transferi-club">';
-                if ($from_logo) {
-                    echo $from_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-                }
-                echo '<span>' . esc_html($from_name) . '</span>';
-                echo '</span>';
-                echo '<span class="opentt-transferi-arrow">-></span>';
-                echo '<span class="opentt-transferi-club">';
-                if ($to_logo) {
-                    echo $to_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-                }
-                echo '<span>' . esc_html($to_name) . '</span>';
-                echo '</span>';
-                echo '</span>';
-                echo '</td></tr>';
-            }
-            echo '</tbody></table>';
-            echo '</div>';
-        }
-
-        echo '</section>';
-        return ob_get_clean();
+        return \OpenTT\Unified\WordPress\Shortcodes\PlayerTransfersShortcode::render($atts, [
+            'shortcode_title_html' => static function ($title) {
+                return self::shortcode_title_html($title);
+            },
+            'db_get_player_season_club_history' => static function ($player_id) {
+                return self::db_get_player_season_club_history($player_id);
+            },
+            'build_player_stints' => static function ($history) {
+                return self::build_player_stints($history);
+            },
+            'season_display_name' => static function ($sezona_slug) {
+                return self::season_display_name($sezona_slug);
+            },
+            'club_logo_html' => static function ($club_id, $size = 'thumbnail', $attr = []) {
+                return self::club_logo_html($club_id, $size, $attr);
+            },
+        ]);
     }
 
     public static function shortcode_club_info($atts = [])
@@ -1716,155 +1618,41 @@ trait OpenTT_Unified_Shortcodes_Trait
 
     public static function shortcode_top_players_list($atts = [])
     {
-        global $post;
-
-        $atts = shortcode_atts([
-            'limit' => 5,
-            'liga' => '',
-            'sezona' => '',
-        ], $atts);
-
-        $limit = intval($atts['limit']);
-        if ($limit === 0) {
-            $limit = 5;
-        }
-        $limit = $limit < -1 ? -1 : $limit;
-
-        $liga_slug = '';
-        $sezona_slug = '';
-        $max_kolo = null;
-        $highlight_klubovi = [];
-        $current_igrac_id = (is_singular('igrac') && get_post_type((int) get_the_ID()) === 'igrac') ? (int) get_the_ID() : 0;
-        $ctx = null;
-        $archive_ctx = self::current_archive_context();
-
-        $liga_param = sanitize_title((string) ($atts['liga'] ?? ''));
-        $sezona_param = sanitize_title((string) ($atts['sezona'] ?? ''));
-
-        if ($liga_param !== '') {
-            $parsed = self::parse_legacy_liga_sezona($liga_param, $sezona_param);
-            $liga_slug = sanitize_title((string) ($parsed['league_slug'] ?? $liga_param));
-            $sezona_slug = sanitize_title((string) ($parsed['season_slug'] ?? $sezona_param));
-        } elseif (is_array($archive_ctx) && ($archive_ctx['type'] ?? '') === 'liga_sezona') {
-            $raw_liga = sanitize_title((string) ($archive_ctx['liga_slug'] ?? ''));
-            $raw_sezona = sanitize_title((string) ($archive_ctx['sezona_slug'] ?? ''));
-            $parsed_ctx = self::parse_legacy_liga_sezona($raw_liga, $raw_sezona);
-            $liga_slug = sanitize_title((string) ($parsed_ctx['league_slug'] ?? $raw_liga));
-            $sezona_slug = sanitize_title((string) ($parsed_ctx['season_slug'] ?? $raw_sezona));
-            if ($liga_slug === '' && $sezona_slug !== '') {
-                global $wpdb;
-                $table = OpenTT_Unified_Core::db_table('matches');
-                if (self::table_exists($table)) {
-                    $liga_guess = $wpdb->get_var($wpdb->prepare("SELECT liga_slug FROM {$table} WHERE sezona_slug=%s AND liga_slug<>'' ORDER BY id DESC LIMIT 1", $sezona_slug));
-                    if (is_string($liga_guess) && $liga_guess !== '') {
-                        $liga_slug = sanitize_title($liga_guess);
-                    }
-                }
-            }
-
-            $kolo_virtual = sanitize_title((string) ($archive_ctx['kolo_slug'] ?? ''));
-            if ($kolo_virtual !== '') {
-                $max_kolo = self::extract_round_no($kolo_virtual);
-            }
-        } elseif (is_tax('liga_sezona')) {
-            $term = get_queried_object();
-            if ($term && !is_wp_error($term) && !empty($term->slug)) {
-                $parsed = self::parse_legacy_liga_sezona((string) $term->slug, '');
-                $liga_slug = sanitize_title((string) ($parsed['league_slug'] ?? ''));
-                $sezona_slug = sanitize_title((string) ($parsed['season_slug'] ?? ''));
-            }
-        } else {
-            $ctx = self::current_match_context();
-            if ($ctx && !empty($ctx['db_row'])) {
-                $row = $ctx['db_row'];
-                $liga_slug = sanitize_title((string) $row->liga_slug);
-                $sezona_slug = sanitize_title((string) $row->sezona_slug);
-                $max_kolo = self::extract_round_no((string) $row->kolo_slug);
-                $highlight_klubovi[] = intval($row->home_club_post_id);
-                $highlight_klubovi[] = intval($row->away_club_post_id);
-            } elseif ($current_igrac_id > 0) {
-                $player_comp = self::db_get_latest_competition_for_player($current_igrac_id);
-                if ($player_comp) {
-                    $liga_slug = (string) $player_comp['liga_slug'];
-                    $sezona_slug = (string) $player_comp['sezona_slug'];
-                }
-            } elseif (is_singular('utakmica') && !empty($post->ID)) {
-                $legacy_liga_terms = wp_get_post_terms((int) $post->ID, 'liga_sezona', ['fields' => 'slugs']);
-                if (!empty($legacy_liga_terms) && !is_wp_error($legacy_liga_terms)) {
-                    $parsed = self::parse_legacy_liga_sezona((string) $legacy_liga_terms[0], '');
-                    $liga_slug = sanitize_title((string) ($parsed['league_slug'] ?? ''));
-                    $sezona_slug = sanitize_title((string) ($parsed['season_slug'] ?? ''));
-                }
-            } else {
-                $latest_comp = self::db_get_latest_competition_with_games();
-                if ($latest_comp) {
-                    $liga_slug = (string) $latest_comp['liga_slug'];
-                    $sezona_slug = (string) $latest_comp['sezona_slug'];
-                }
-            }
-        }
-
-        $liga_slug = sanitize_title($liga_slug);
-        $sezona_slug = sanitize_title($sezona_slug);
-        if ($liga_slug === '') {
-            return '';
-        }
-
-        $data = self::db_get_top_players_data($liga_slug, $sezona_slug, $max_kolo);
-        if (empty($data)) {
-            return self::shortcode_title_html('Rang lista igrača') . '<div class="no-players-message">Trenutno nema igrača za prikaz.</div>';
-        }
-
-        ob_start();
-        echo self::shortcode_title_html('Rang lista igrača');
-        echo '<div class="top-igraci-list">';
-        $i = 1;
-        foreach ($data as $igrac_id => $info) {
-            if ($limit !== -1 && $i > $limit) {
-                break;
-            }
-            $highlight = false;
-            if ($current_igrac_id > 0 && intval($igrac_id) === $current_igrac_id) {
-                $highlight = true;
-            }
-            if (!empty($highlight_klubovi) && in_array(intval($info['klub']), $highlight_klubovi, true)) {
-                $highlight = true;
-            }
-            if ($igrac_id > 0 && get_post_type($igrac_id) === 'igrac') {
-                echo self::render_top_player_card_list($igrac_id, $i, $info, $highlight); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-            }
-            $i++;
-        }
-
-        if ($current_igrac_id > 0 && get_post_type($current_igrac_id) === 'igrac' && $limit > 0) {
-            $rank = 1;
-            foreach ($data as $igrac_id => $info) {
-                if (intval($igrac_id) === $current_igrac_id && $rank > $limit) {
-                    echo '<div class="top-igraci-separator"></div>';
-                    echo self::render_top_player_card_list($igrac_id, $rank, $info, true); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-                    break;
-                }
-                $rank++;
-            }
-        }
-
-        if ($ctx && !empty($highlight_klubovi) && $limit > 0) {
-            $rank = 1;
-            foreach ($data as $igrac_id => $info) {
-                if ($rank <= $limit) {
-                    $rank++;
-                    continue;
-                }
-                if (in_array(intval($info['klub']), $highlight_klubovi, true)) {
-                    echo '<div class="top-igraci-separator"></div>';
-                    echo self::render_top_player_card_list($igrac_id, $rank, $info, true); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-                }
-                $rank++;
-            }
-        }
-
-        echo '</div>';
-        return ob_get_clean();
+        return \OpenTT\Unified\WordPress\Shortcodes\TopPlayersListShortcode::render($atts, [
+            'current_archive_context' => static function () {
+                return self::current_archive_context();
+            },
+            'parse_legacy_liga_sezona' => static function ($liga_slug, $sezona_slug = '') {
+                return self::parse_legacy_liga_sezona($liga_slug, $sezona_slug);
+            },
+            'db_table' => static function ($table_alias) {
+                return OpenTT_Unified_Core::db_table($table_alias);
+            },
+            'table_exists' => static function ($table_name) {
+                return self::table_exists($table_name);
+            },
+            'extract_round_no' => static function ($slug) {
+                return self::extract_round_no($slug);
+            },
+            'current_match_context' => static function () {
+                return self::current_match_context();
+            },
+            'db_get_latest_competition_for_player' => static function ($player_id) {
+                return self::db_get_latest_competition_for_player($player_id);
+            },
+            'db_get_latest_competition_with_games' => static function () {
+                return self::db_get_latest_competition_with_games();
+            },
+            'db_get_top_players_data' => static function ($liga_slug, $sezona_slug = '', $max_kolo = null) {
+                return self::db_get_top_players_data($liga_slug, $sezona_slug, $max_kolo);
+            },
+            'shortcode_title_html' => static function ($title) {
+                return self::shortcode_title_html($title);
+            },
+            'render_top_player_card_list' => static function ($player_id, $rank, $info, $highlight = false) {
+                return self::render_top_player_card_list($player_id, $rank, $info, $highlight);
+            },
+        ]);
     }
 
     private static function db_get_top_players_data($liga_slug, $sezona_slug = '', $max_kolo = null)
