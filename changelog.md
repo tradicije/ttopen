@@ -12,6 +12,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Fixed shortcode dropdown/toggle form controls to inherit the active user/theme font instead of browser default (applied in both `assets/css/main.css` and `assets/css/modules/legacy-ui.css`).
 - Enhanced `opentt_matches_grid` calendar hover behavior with per-day match preview rows (`HOME | SCORE | AWAY`) and compact club naming (`BUB` for single-word names, `TSK` initials for multi-word names).
 - Added direct navigation from `opentt_matches_grid` calendar hover preview: each match row is now a clickable link to that match page.
+- Fixed round label rendering across frontend shortcodes so `kolo` slugs like `11-kolo` are displayed as `11. kolo`.
 
 ## Releases
 

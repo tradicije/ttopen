@@ -1544,11 +1544,27 @@ trait OpenTT_Unified_Shortcodes_Trait
         if ($slug === '') {
             return '';
         }
+
+        $term_name = '';
         $term = get_term_by('slug', $slug, 'kolo');
         if ($term && !is_wp_error($term) && !empty($term->name)) {
-            return (string) $term->name;
+            $term_name = trim((string) $term->name);
         }
-        return $slug;
+
+        $candidate = $term_name !== '' ? $term_name : $slug;
+        $candidate_slug = sanitize_title($candidate);
+        $round_no = self::extract_round_no($candidate_slug !== '' ? $candidate_slug : $candidate);
+        if ($round_no > 0) {
+            if ($candidate_slug === (string) $round_no || strpos($candidate_slug, 'kolo') !== false) {
+                return $round_no . '. kolo';
+            }
+        }
+
+        if ($term_name !== '') {
+            return $term_name;
+        }
+
+        return OpenTT_Unified_Readonly_Helpers::slug_to_title($slug);
     }
 
     private static function extract_round_no($kolo_slug)
