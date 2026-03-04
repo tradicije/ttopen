@@ -34,7 +34,7 @@ final class OpenTT_Unified_Core
     const VERSION = '1.1.0-beta.2';
     const CAP = 'edit_others_posts';
     const OPTION_SCHEMA_VERSION = 'opentt_unified_schema_version';
-    const SCHEMA_VERSION = '4';
+    const SCHEMA_VERSION = '5';
     const OPTION_MIGRATION_STATE = 'opentt_unified_migration_state';
     const OPTION_VALIDATION_REPORT = 'opentt_unified_validation_report';
     const OPTION_LEAGUE_SEASON_VALIDATION_REPORT = 'opentt_unified_league_season_validation_report';
@@ -1752,9 +1752,10 @@ JS;
             );
         }
 
+        wp_enqueue_style('wp-color-picker');
+        wp_enqueue_script('wp-color-picker');
+
         if ($page === 'stkb-unified-settings' || $page === 'stkb-unified-customize') {
-            wp_enqueue_style('wp-color-picker');
-            wp_enqueue_script('wp-color-picker');
             $cm_settings = wp_enqueue_code_editor(['type' => 'text/css']);
             if (!empty($cm_settings)) {
                 wp_localize_script('stkb-unified-admin', 'openttCodeEditorSettings', $cm_settings);
@@ -1858,6 +1859,7 @@ HTML;
         $m_hs = $match ? (int) $match->home_score : 0;
         $m_as = $match ? (int) $match->away_score : 0;
         $m_featured = $match ? (int) ($match->featured ?? 0) : 0;
+        $m_location = $match ? trim((string) ($match->location ?? '')) : '';
 
         echo '<div class="wrap opentt-admin">';
         self::render_admin_topbar();
@@ -1871,6 +1873,7 @@ HTML;
         echo '<tr data-opentt-step="1"><th>Takmičenje</th><td>' . self::competition_rules_dropdown_admin('competition_rule_id', self::competition_rule_id_by_slugs($m_liga, $m_sezona), true) . '<p class="description">U meniju <strong>Takmičenja</strong> dodaješ liga+sezona i pravila.</p></td></tr>';
         echo '<tr data-opentt-step="1"><th>Kolo slug</th><td><input type="text" class="regular-text" name="kolo_slug" value="' . esc_attr($m_kolo) . '" required><p class="description">Primer: <code>12-kolo</code>.</p></td></tr>';
         echo '<tr data-opentt-step="1"><th>Datum i vreme</th><td><input name="match_date" type="datetime-local" value="' . esc_attr($match && !empty($match->match_date) ? str_replace(' ', 'T', substr((string) $match->match_date, 0, 16)) : '') . '"></td></tr>';
+        echo '<tr data-opentt-step="1"><th>Lokacija</th><td><input name="location" type="text" class="regular-text" value="' . esc_attr($m_location) . '" placeholder="Hala, sala ili adresa"></td></tr>';
         echo '<tr data-opentt-step="2"><th>Domaći klub</th><td>' . self::clubs_dropdown_admin('home_club_post_id', $m_home, true) . '</td></tr>';
         echo '<tr data-opentt-step="2"><th>Gostujući klub</th><td>' . self::clubs_dropdown_admin('away_club_post_id', $m_away, true) . '</td></tr>';
         echo '<tr data-opentt-step="2"><th>Rezultat</th><td><input name="home_score" type="number" min="0" max="7" value="' . esc_attr((string) $m_hs) . '" style="width:90px;"> : <input name="away_score" type="number" min="0" max="7" value="' . esc_attr((string) $m_as) . '" style="width:90px;"></td></tr>';
@@ -3334,6 +3337,7 @@ HTML;
                 'kolo_slug' => (string) $r->kolo_slug,
                 'slug' => (string) $r->slug,
                 'match_date' => (string) $r->match_date,
+                'location' => (string) ($r->location ?? ''),
                 'home_score' => (int) $r->home_score,
                 'away_score' => (int) $r->away_score,
                 'played' => (int) $r->played,
@@ -3962,6 +3966,7 @@ HTML;
                     'kolo_slug' => $kolo_slug,
                     'slug' => $slug,
                     'match_date' => (string) ($row['match_date'] ?? current_time('mysql')),
+                    'location' => sanitize_text_field((string) ($row['location'] ?? '')),
                     'home_club_post_id' => $home_id,
                     'away_club_post_id' => $away_id,
                     'home_score' => (int) ($row['home_score'] ?? 0),
@@ -3971,14 +3976,14 @@ HTML;
                     'legacy_post_id' => (int) ($row['legacy_post_id'] ?? 0),
                 ];
                 if ($existing_id > 0) {
-                    $ok = $wpdb->update($matches_table, $data_row, ['id' => $existing_id], ['%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d'], ['%d']);
+                    $ok = $wpdb->update($matches_table, $data_row, ['id' => $existing_id], ['%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d'], ['%d']);
                     if ($ok === false) {
                         $result['issues'][] = 'Greška update utakmice ' . $slug . ': ' . (string) $wpdb->last_error;
                         continue;
                     }
                     $new_id = $existing_id;
                 } else {
-                    $ok = $wpdb->insert($matches_table, $data_row, ['%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d']);
+                    $ok = $wpdb->insert($matches_table, $data_row, ['%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d']);
                     if ($ok === false) {
                         $result['issues'][] = 'Greška insert utakmice ' . $slug . ': ' . (string) $wpdb->last_error;
                         continue;

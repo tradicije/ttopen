@@ -18,12 +18,14 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Updated `opentt_featured_match` auto mode to support legacy matches without kickoff time by filtering by date and treating `00:00:00` entries as end-of-day for upcoming selection.
 - Refined `opentt_featured_match` auto mode selection: it now ignores matches considered played (`played=1` or score not `0:0`), prioritizes upcoming matches with explicit kickoff time, and falls back to date-only matches when needed.
 - Aligned `opentt_featured_match` auto context detection with `opentt_matches_grid` by reusing the same match query context builder (`build_match_query_args`) for league/season resolution.
+- Enqueued WordPress color picker assets across OpenTT admin pages so club `boja_dresa` consistently renders as a visual color picker (not plain HEX input).
 
 #### Admin & Data
 
 - Added `featured` match flag to match schema and import/export payloads.
 - Added featured controls in admin matches workflow: quick list toggle action (`Feature/Unfeature`), featured indicator column, and featured checkbox in match edit details.
 - Bumped schema version to force migration and added runtime fallback for auto-adding missing `featured` column when older installs hit admin featured actions.
+- Added dedicated match `location` field in admin match form and persistence layer, and switched featured/match venue rendering to prefer this match-level location over club address fallbacks.
 
 ## Releases
 

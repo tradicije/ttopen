@@ -49,6 +49,7 @@ final class OpenTT_Unified_Admin_Match_Actions
         $featured = !empty($_POST['featured']) ? 1 : 0;
         $match_date = (string) ($_POST['match_date'] ?? '');
         $match_date = $match_date ? str_replace('T', ' ', $match_date) . ':00' : null;
+        $location = sanitize_text_field((string) ($_POST['location'] ?? ''));
 
         if (self::has_any_competition_rules() && $competition_rule_id <= 0) {
             $url = $id > 0
@@ -103,6 +104,9 @@ final class OpenTT_Unified_Admin_Match_Actions
         ];
         if (self::has_featured_column($table)) {
             $data['featured'] = $featured;
+        }
+        if (self::has_location_column($table)) {
+            $data['location'] = $location;
         }
 
         if ($id > 0) {
@@ -200,6 +204,24 @@ final class OpenTT_Unified_Admin_Match_Actions
             return;
         }
         $wpdb->query("ALTER TABLE {$table} ADD COLUMN featured tinyint(1) NOT NULL DEFAULT 0 AFTER played");
+    }
+
+    private static function has_location_column($table)
+    {
+        self::maybe_add_location_column($table);
+        global $wpdb;
+        $column = $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$table} LIKE %s", 'location'));
+        return !empty($column);
+    }
+
+    private static function maybe_add_location_column($table)
+    {
+        global $wpdb;
+        $column = $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$table} LIKE %s", 'location'));
+        if (!empty($column)) {
+            return;
+        }
+        $wpdb->query("ALTER TABLE {$table} ADD COLUMN location varchar(255) NOT NULL DEFAULT '' AFTER match_date");
     }
 
     public static function handle_delete_matches_bulk_admin()

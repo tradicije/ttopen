@@ -69,6 +69,7 @@ final class SchemaMigrationManager
             played tinyint(1) NOT NULL DEFAULT 0,
             featured tinyint(1) NOT NULL DEFAULT 0,
             match_date datetime DEFAULT NULL,
+            location varchar(255) NOT NULL DEFAULT '',
             created_at datetime NOT NULL,
             updated_at datetime NOT NULL,
             PRIMARY KEY  (id),
@@ -183,6 +184,21 @@ final class SchemaMigrationManager
             return;
         }
 
-        $wpdb->query("INSERT IGNORE INTO {$newTable} SELECT * FROM {$legacyTable}");
+        $legacyColumns = $wpdb->get_col("SHOW COLUMNS FROM {$legacyTable}") ?: [];
+        $newColumns = $wpdb->get_col("SHOW COLUMNS FROM {$newTable}") ?: [];
+        if (empty($legacyColumns) || empty($newColumns)) {
+            return;
+        }
+
+        $commonColumns = array_values(array_intersect($newColumns, $legacyColumns));
+        if (empty($commonColumns)) {
+            return;
+        }
+
+        $quoted = array_map(static function ($column) {
+            return '`' . str_replace('`', '``', (string) $column) . '`';
+        }, $commonColumns);
+        $columnsSql = implode(', ', $quoted);
+        $wpdb->query("INSERT IGNORE INTO {$newTable} ({$columnsSql}) SELECT {$columnsSql} FROM {$legacyTable}");
     }
 }

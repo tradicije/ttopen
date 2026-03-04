@@ -57,7 +57,7 @@ final class FeaturedMatchShortcode
         $koloLabel = (string) $call('kolo_name_from_slug', $kolo);
 
         $metaTop = trim(implode(' • ', array_values(array_filter([$ligaLabel, $sezonaLabel, $koloLabel]))));
-        $location = self::matchLocationLabel($homeId);
+        $location = self::matchLocationLabel($match);
         $centerLabel = self::centerLabel($match);
         $targetDate = self::matchTargetDateAttr((string) ($match->match_date ?? ''));
         $uid = 'opentt-featured-' . wp_unique_id();
@@ -412,21 +412,23 @@ final class FeaturedMatchShortcode
         return 'Uskoro';
     }
 
-    private static function matchLocationLabel($homeId)
+    private static function matchLocationLabel($match)
     {
-        $homeId = intval($homeId);
-        if ($homeId <= 0) {
+        if (!is_object($match)) {
             return '';
         }
-        $hall = trim((string) get_post_meta($homeId, 'adresa_sale', true));
-        if ($hall !== '') {
-            return $hall;
+
+        $location = trim((string) ($match->location ?? ''));
+        if ($location !== '') {
+            return $location;
         }
-        $clubAddress = trim((string) get_post_meta($homeId, 'adresa_kluba', true));
-        if ($clubAddress !== '') {
-            return $clubAddress;
+
+        $location = trim((string) ($match->lokacija ?? ''));
+        if ($location !== '') {
+            return $location;
         }
-        return trim((string) get_post_meta($homeId, 'grad', true));
+
+        return trim((string) ($match->lokacija_utakmice ?? ''));
     }
 
     private static function matchTargetDateAttr($matchDate)

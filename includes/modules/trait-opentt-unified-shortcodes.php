@@ -750,6 +750,19 @@ trait OpenTT_Unified_Shortcodes_Trait
 
     private static function match_venue_label($row)
     {
+        if (is_object($row)) {
+            $direct_keys = ['location', 'lokacija', 'lokacija_utakmice'];
+            foreach ($direct_keys as $key) {
+                if (!isset($row->{$key})) {
+                    continue;
+                }
+                $value = trim((string) $row->{$key});
+                if ($value !== '') {
+                    return $value;
+                }
+            }
+        }
+
         $legacy_id = isset($row->legacy_post_id) ? intval($row->legacy_post_id) : 0;
         if ($legacy_id > 0) {
             $keys = [
