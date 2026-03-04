@@ -36,6 +36,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 #### Fixes
 
 - Fixed `opentt_matches_grid` contextual league-season filtering so league archives now respect the active `sezona` context instead of aggregating matches from all seasons of the same league.
+- Updated `opentt_match_teams` center display logic to show scheduled match time (for example `19h`) instead of `0:0` for not-yet-played matches, using backend `played`, match date, and score fallback checks.
 
 #### Architecture
 

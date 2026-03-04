@@ -1717,12 +1717,25 @@ trait OpenTT_Unified_Shortcodes_Trait
         $away_logo = self::club_logo_html($away_id, 'thumbnail');
         $home_score = intval($row->home_score);
         $away_score = intval($row->away_score);
+        $played_flag = isset($row->played) ? intval($row->played) : null;
+        $is_score_zero = ($home_score === 0 && $away_score === 0);
+        $match_raw_date = (string) ($row->match_date ?? '');
+        $match_ts = strtotime($match_raw_date);
+        $now_ts = current_time('timestamp');
+        $is_future_match = ($match_ts !== false && intval($match_ts) > intval($now_ts));
+        $is_unplayed = ($played_flag !== null ? $played_flag !== 1 : false) || $is_future_match || $is_score_zero;
+        $match_time_label = '';
+        if (preg_match('/\b([01]?\d|2[0-3]):([0-5]\d)\b/', $match_raw_date, $time_parts)) {
+            $hour = intval($time_parts[1]);
+            $minute = (string) ($time_parts[2] ?? '00');
+            $match_time_label = ($minute === '00') ? ($hour . 'h') : (sprintf('%02d:%s h', $hour, $minute));
+        }
         $home_state = '';
         $away_state = '';
-        if ($home_score > $away_score) {
+        if (!$is_unplayed && $home_score > $away_score) {
             $home_state = 'pobednik';
             $away_state = 'gubitnik';
-        } elseif ($away_score > $home_score) {
+        } elseif (!$is_unplayed && $away_score > $home_score) {
             $home_state = 'gubitnik';
             $away_state = 'pobednik';
         }
@@ -1757,11 +1770,17 @@ trait OpenTT_Unified_Shortcodes_Trait
                     <span class="opentt-ekipe-name"><?php echo esc_html($home_name); ?></span>
                 </a>
 
-                <div class="opentt-ekipe-score">
-                    <span class="<?php echo esc_attr($home_state); ?>"><?php echo esc_html((string) $home_score); ?></span>
-                    <span class="opentt-ekipe-score-sep">:</span>
-                    <span class="<?php echo esc_attr($away_state); ?>"><?php echo esc_html((string) $away_score); ?></span>
-                </div>
+                <?php if ($is_unplayed && $match_time_label !== ''): ?>
+                    <div class="opentt-ekipe-score opentt-ekipe-score-time">
+                        <span class="opentt-ekipe-time"><?php echo esc_html($match_time_label); ?></span>
+                    </div>
+                <?php else: ?>
+                    <div class="opentt-ekipe-score">
+                        <span class="<?php echo esc_attr($home_state); ?>"><?php echo esc_html((string) $home_score); ?></span>
+                        <span class="opentt-ekipe-score-sep">:</span>
+                        <span class="<?php echo esc_attr($away_state); ?>"><?php echo esc_html((string) $away_score); ?></span>
+                    </div>
+                <?php endif; ?>
 
                 <a href="<?php echo esc_url($away_url); ?>" class="opentt-ekipe-team opentt-ekipe-away <?php echo esc_attr($away_state); ?>">
                     <span class="opentt-ekipe-logo-wrap">
