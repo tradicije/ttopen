@@ -368,51 +368,14 @@ trait OpenTT_Unified_Shortcodes_Trait
 
     public static function shortcode_match_report($atts = [])
     {
-        $ctx = self::current_match_context();
-        if (!$ctx || empty($ctx['legacy_id'])) {
-            return '';
-        }
-        $legacy_match_id = intval($ctx['legacy_id']);
-
-        $q = new WP_Query([
-            'post_type' => 'post',
-            'posts_per_page' => 1,
-            'ignore_sticky_posts' => true,
-            'orderby' => 'date',
-            'order' => 'DESC',
-            'meta_query' => [[
-                'key' => 'povezana_utakmica',
-                'value' => $legacy_match_id,
-                'compare' => '=',
-            ]],
+        return \OpenTT\Unified\WordPress\Shortcodes\MatchReportShortcode::render($atts, [
+            'current_match_context' => static function () {
+                return self::current_match_context();
+            },
+            'shortcode_title_html' => static function ($title) {
+                return self::shortcode_title_html($title);
+            },
         ]);
-        if (!$q->have_posts()) {
-            return '';
-        }
-
-        ob_start();
-        echo self::shortcode_title_html('Izveštaj utakmice');
-        while ($q->have_posts()) {
-            $q->the_post();
-            $post_id = get_the_ID();
-            $title = get_the_title();
-            $excerpt = get_the_excerpt();
-            $permalink = get_permalink();
-            $thumbnail = get_the_post_thumbnail($post_id, 'medium');
-            ?>
-            <a href="<?php echo esc_url($permalink); ?>" class="izvestaj-utakmice-blok">
-                <div class="izvestaj-leva-kolona">
-                    <?php echo $thumbnail ?: ''; ?>
-                </div>
-                <div class="izvestaj-desna-kolona">
-                    <h3><?php echo esc_html($title); ?></h3>
-                    <p><?php echo esc_html($excerpt); ?></p>
-                </div>
-            </a>
-            <?php
-        }
-        wp_reset_postdata();
-        return ob_get_clean();
     }
 
     public static function shortcode_match_video($atts = [])
@@ -471,88 +434,23 @@ trait OpenTT_Unified_Shortcodes_Trait
 
     public static function shortcode_club_form($atts = [])
     {
-        $atts = shortcode_atts([
-            'klub' => '',
-            'limit' => 5,
-        ], $atts);
-
-        $club_id = 0;
-        if (!empty($atts['klub'])) {
-            $lookup = sanitize_title((string) $atts['klub']);
-            $post = get_page_by_path($lookup, OBJECT, 'klub');
-            if (!$post) {
-                $post = get_page_by_title((string) $atts['klub'], OBJECT, 'klub');
-            }
-            if ($post && !is_wp_error($post)) {
-                $club_id = intval($post->ID);
-            }
-        } elseif (is_singular('klub')) {
-            $club_id = intval(get_the_ID());
-        }
-
-        if ($club_id <= 0) {
-            return '';
-        }
-
-        $limit = max(1, min(10, intval($atts['limit'])));
-        $rows = self::db_get_recent_club_matches($club_id, $limit);
-        if (empty($rows)) {
-            return self::shortcode_title_html('Forma kluba') . '<div class="opentt-forma-kluba"><p>Nema odigranih utakmica za formu kluba.</p></div>';
-        }
-
-        ob_start();
-        echo self::shortcode_title_html('Forma kluba');
-        echo '<div class="opentt-forma-kluba">';
-        echo '<div class="opentt-forma-kluba-list">';
-        foreach ($rows as $row) {
-            $is_home = intval($row->home_club_post_id) === $club_id;
-            $for_score = $is_home ? intval($row->home_score) : intval($row->away_score);
-            $opp_score = $is_home ? intval($row->away_score) : intval($row->home_score);
-            $won = $for_score > $opp_score;
-            $status = $won ? 'pobeda' : 'poraz';
-            $class = $won ? 'is-win' : 'is-loss';
-            $home_score = intval($row->home_score);
-            $away_score = intval($row->away_score);
-            $home_team_class = ($home_score > $away_score) ? 'is-winner' : (($home_score < $away_score) ? 'is-loser' : '');
-            $away_team_class = ($away_score > $home_score) ? 'is-winner' : (($away_score < $home_score) ? 'is-loser' : '');
-            $home_id = intval($row->home_club_post_id);
-            $away_id = intval($row->away_club_post_id);
-            $home_name = $home_id > 0 ? (string) get_the_title($home_id) : '—';
-            $away_name = $away_id > 0 ? (string) get_the_title($away_id) : '—';
-            $home_logo = $home_id > 0 ? self::club_logo_html($home_id, 'thumbnail') : '';
-            $away_logo = $away_id > 0 ? self::club_logo_html($away_id, 'thumbnail') : '';
-            $date = self::display_match_date((string) $row->match_date);
-            $link = self::match_permalink($row);
-
-            echo '<a class="opentt-forma-item ' . esc_attr($class) . '" href="' . esc_url($link) . '" title="' . esc_attr($home_name . ' - ' . $away_name . ' • ' . $date . ' • ' . $status) . '">';
-            echo '<span class="opentt-forma-main">';
-            echo '<span class="opentt-forma-line">';
-            echo '<span class="opentt-forma-team opentt-forma-home ' . esc_attr($home_team_class) . '">';
-            echo '<span class="opentt-forma-logo">' . ($home_logo ?: '') . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-            echo '<span class="opentt-forma-name">' . esc_html($home_name) . '</span>';
-            echo '</span>';
-            echo '<span class="opentt-forma-score ' . esc_attr($home_team_class) . '">' . esc_html((string) intval($row->home_score)) . '</span>';
-            echo '</span>';
-
-            echo '<span class="opentt-forma-line">';
-            echo '<span class="opentt-forma-team opentt-forma-away ' . esc_attr($away_team_class) . '">';
-            echo '<span class="opentt-forma-logo">' . ($away_logo ?: '') . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-            echo '<span class="opentt-forma-name">' . esc_html($away_name) . '</span>';
-            echo '</span>';
-            echo '<span class="opentt-forma-score ' . esc_attr($away_team_class) . '">' . esc_html((string) intval($row->away_score)) . '</span>';
-            echo '</span>';
-            echo '</span>';
-
-            echo '<span class="opentt-forma-side">';
-            echo '<span class="opentt-forma-separator"></span>';
-            echo '<span class="opentt-forma-status">' . esc_html($status) . '</span>';
-            echo '</span>';
-            echo '</a>';
-        }
-        echo '</div>';
-        echo '</div>';
-
-        return ob_get_clean();
+        return \OpenTT\Unified\WordPress\Shortcodes\ClubFormShortcode::render($atts, [
+            'shortcode_title_html' => static function ($title) {
+                return self::shortcode_title_html($title);
+            },
+            'db_get_recent_club_matches' => static function ($club_id, $limit) {
+                return self::db_get_recent_club_matches($club_id, $limit);
+            },
+            'club_logo_html' => static function ($club_id, $size = 'thumbnail', $attr = []) {
+                return self::club_logo_html($club_id, $size, $attr);
+            },
+            'display_match_date' => static function ($match_date) {
+                return self::display_match_date($match_date);
+            },
+            'match_permalink' => static function ($row) {
+                return self::match_permalink($row);
+            },
+        ]);
     }
 
     public static function shortcode_player_stats($atts = [])
