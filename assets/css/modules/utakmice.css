@@ -169,6 +169,15 @@ body a {
   color: #eaf2ff;
   font-size: 0.76rem;
   letter-spacing: 0.02em;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+a.opentt-grid-cal-preview-row:hover,
+a.opentt-grid-cal-preview-row:focus {
+  background: rgba(142, 197, 255, 0.14);
+  color: #ffffff;
+  outline: none;
 }
 
 .opentt-grid-cal-preview-row .home {

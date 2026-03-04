@@ -11,6 +11,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Updated `opentt_players` to render the first 5 player cards by default and added a bottom toggle button (`Prikaži sve` / `Sakrij`) for expanding the full list.
 - Fixed shortcode dropdown/toggle form controls to inherit the active user/theme font instead of browser default (applied in both `assets/css/main.css` and `assets/css/modules/legacy-ui.css`).
 - Enhanced `opentt_matches_grid` calendar hover behavior with per-day match preview rows (`HOME | SCORE | AWAY`) and compact club naming (`BUB` for single-word names, `TSK` initials for multi-word names).
+- Added direct navigation from `opentt_matches_grid` calendar hover preview: each match row is now a clickable link to that match page.
 
 ## Releases
 

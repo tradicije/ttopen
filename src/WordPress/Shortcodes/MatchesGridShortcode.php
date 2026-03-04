@@ -301,6 +301,7 @@ final class MatchesGridShortcode
                     var chunkSize = <?php echo intval($chunk_size); ?>;
                     var visibleCount = chunkSize;
                     var observer = null;
+                    var previewHideTimer = null;
                     var allItems = Array.prototype.slice.call(grid.querySelectorAll('.opentt-item'));
                     var calendarMonthDate = (function(){
                         if (dateInput && dateInput.value) {
@@ -425,6 +426,7 @@ final class MatchesGridShortcode
                         var teams = item.querySelectorAll('.team');
                         var homeTeam = teams[0] || null;
                         var awayTeam = teams[1] || null;
+                        var linkEl = item.querySelector('a');
                         var homeName = homeTeam ? ((homeTeam.querySelector('span') || {}).textContent || '') : '';
                         var awayName = awayTeam ? ((awayTeam.querySelector('span') || {}).textContent || '') : '';
                         var homeScore = homeTeam ? ((homeTeam.querySelector('strong') || {}).textContent || '-') : '-';
@@ -432,7 +434,8 @@ final class MatchesGridShortcode
                         return {
                             home: compactClubName(homeName),
                             away: compactClubName(awayName),
-                            score: String(homeScore).trim() + ':' + String(awayScore).trim()
+                            score: String(homeScore).trim() + ':' + String(awayScore).trim(),
+                            href: linkEl ? (linkEl.getAttribute('href') || '') : ''
                         };
                     }
 
@@ -469,9 +472,23 @@ final class MatchesGridShortcode
                     }
 
                     function hideCalendarPreview() {
+                        if (previewHideTimer) {
+                            clearTimeout(previewHideTimer);
+                            previewHideTimer = null;
+                        }
                         if (!calPreview) { return; }
                         calPreview.hidden = true;
                         calPreview.innerHTML = '';
+                    }
+
+                    function scheduleHideCalendarPreview() {
+                        if (!calPreview) { return; }
+                        if (previewHideTimer) {
+                            clearTimeout(previewHideTimer);
+                        }
+                        previewHideTimer = setTimeout(function(){
+                            hideCalendarPreview();
+                        }, 140);
                     }
 
                     function showCalendarPreview(anchorCell, matches) {
@@ -479,12 +496,19 @@ final class MatchesGridShortcode
                             hideCalendarPreview();
                             return;
                         }
+                        if (previewHideTimer) {
+                            clearTimeout(previewHideTimer);
+                            previewHideTimer = null;
+                        }
 
                         calPreview.innerHTML = '';
                         var maxRows = 6;
                         matches.slice(0, maxRows).forEach(function(match){
-                            var row = document.createElement('div');
+                            var row = document.createElement(match.href ? 'a' : 'div');
                             row.className = 'opentt-grid-cal-preview-row';
+                            if (match.href) {
+                                row.href = match.href;
+                            }
 
                             var home = document.createElement('span');
                             home.className = 'home';
@@ -581,11 +605,11 @@ final class MatchesGridShortcode
                                     cell.addEventListener('mouseenter', (function(anchorCell, dayMatches){
                                         return function(){ showCalendarPreview(anchorCell, dayMatches); };
                                     })(cell, state.matches));
-                                    cell.addEventListener('mouseleave', hideCalendarPreview);
+                                    cell.addEventListener('mouseleave', scheduleHideCalendarPreview);
                                     cell.addEventListener('focus', (function(anchorCell, dayMatches){
                                         return function(){ showCalendarPreview(anchorCell, dayMatches); };
                                     })(cell, state.matches));
-                                    cell.addEventListener('blur', hideCalendarPreview);
+                                    cell.addEventListener('blur', scheduleHideCalendarPreview);
                                 }
                             }
                             if (dateInput && dateInput.value === iso) {
@@ -622,6 +646,15 @@ final class MatchesGridShortcode
                         calClear.addEventListener('click', function(){
                             applyDateSelection('');
                         });
+                    }
+                    if (calPreview) {
+                        calPreview.addEventListener('mouseenter', function(){
+                            if (previewHideTimer) {
+                                clearTimeout(previewHideTimer);
+                                previewHideTimer = null;
+                            }
+                        });
+                        calPreview.addEventListener('mouseleave', scheduleHideCalendarPreview);
                     }
                     document.addEventListener('click', function(ev){
                         if (!calPopover || calPopover.hidden) { return; }
