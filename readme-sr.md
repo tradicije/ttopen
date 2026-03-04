@@ -171,7 +171,9 @@ Doprinosi su dobrodošli:
 ## Status projekta
 
 - Stabilna verzija: **1.0.0**.
+- Beta verzija: **1.1.0-beta.1**.
 - Beta verzija: **1.1.0-beta.2**.
+- Beta verzija: **1.1.0-beta.3**.
 
 ## Napomena
 

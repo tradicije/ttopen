@@ -1466,247 +1466,68 @@ trait OpenTT_Unified_Shortcodes_Trait
 
     public static function shortcode_show_match_teams($atts = [])
     {
-        $ctx = self::current_match_context();
-        if (!$ctx || empty($ctx['db_row'])) {
-            return '';
-        }
-
-        $row = $ctx['db_row'];
-        $home_id = intval($row->home_club_post_id);
-        $away_id = intval($row->away_club_post_id);
-        if ($home_id <= 0 || $away_id <= 0) {
-            return '';
-        }
-
-        $liga_slug = sanitize_title((string) $row->liga_slug);
-        $sezona_slug = sanitize_title((string) $row->sezona_slug);
-        $kolo_slug = sanitize_title((string) $row->kolo_slug);
-
-        $competition_name = self::competition_display_name($liga_slug, $sezona_slug);
-        $competition_url = self::competition_archive_url($liga_slug, $sezona_slug);
-
-        $kolo_name = self::kolo_name_from_slug($kolo_slug);
-        $kolo_url = '';
-        if ($kolo_slug !== '') {
-            $kolo_term = get_term_by('slug', $kolo_slug, 'kolo');
-            if ($kolo_term && !is_wp_error($kolo_term)) {
-                $term_link = get_term_link($kolo_term);
-                if (!is_wp_error($term_link)) {
-                    $kolo_url = (string) $term_link;
-                }
-            }
-        }
-
-        $home_name = (string) get_the_title($home_id);
-        $away_name = (string) get_the_title($away_id);
-        $home_url = (string) get_permalink($home_id);
-        $away_url = (string) get_permalink($away_id);
-        $home_logo = self::club_logo_html($home_id, 'thumbnail');
-        $away_logo = self::club_logo_html($away_id, 'thumbnail');
-        $home_score = intval($row->home_score);
-        $away_score = intval($row->away_score);
-        $played_flag = isset($row->played) ? intval($row->played) : null;
-        $is_score_zero = ($home_score === 0 && $away_score === 0);
-        $match_raw_date = (string) ($row->match_date ?? '');
-        $match_ts = strtotime($match_raw_date);
-        $now_ts = current_time('timestamp');
-        $is_future_match = ($match_ts !== false && intval($match_ts) > intval($now_ts));
-        $is_unplayed = ($played_flag !== null ? $played_flag !== 1 : false) || $is_future_match || $is_score_zero;
-        $match_time_label = '';
-        if (preg_match('/\b([01]?\d|2[0-3]):([0-5]\d)\b/', $match_raw_date, $time_parts)) {
-            $hour = intval($time_parts[1]);
-            $minute = (string) ($time_parts[2] ?? '00');
-            $match_time_label = ($minute === '00') ? ($hour . 'h') : (sprintf('%02d:%s h', $hour, $minute));
-        }
-        $home_state = '';
-        $away_state = '';
-        if (!$is_unplayed && $home_score > $away_score) {
-            $home_state = 'pobednik';
-            $away_state = 'gubitnik';
-        } elseif (!$is_unplayed && $away_score > $home_score) {
-            $home_state = 'gubitnik';
-            $away_state = 'pobednik';
-        }
-        $match_date = self::display_match_date((string) $row->match_date);
-        $match_venue = self::match_venue_label($row);
-
-        ob_start();
-        ?>
-        <?php echo self::shortcode_title_html('Prikaz ekipa'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-        <div class="opentt-ekipe">
-            <div class="opentt-ekipe-meta">
-                <?php if ($competition_url !== ''): ?>
-                    <a href="<?php echo esc_url($competition_url); ?>" class="opentt-ekipe-meta-link"><?php echo esc_html($competition_name); ?></a>
-                <?php else: ?>
-                    <span class="opentt-ekipe-meta-text"><?php echo esc_html($competition_name); ?></span>
-                <?php endif; ?>
-                <?php if ($kolo_name !== ''): ?>
-                    <span class="opentt-ekipe-meta-sep">•</span>
-                    <?php if ($kolo_url !== ''): ?>
-                        <a href="<?php echo esc_url($kolo_url); ?>" class="opentt-ekipe-meta-link"><?php echo esc_html($kolo_name); ?></a>
-                    <?php else: ?>
-                        <span class="opentt-ekipe-meta-text"><?php echo esc_html($kolo_name); ?></span>
-                    <?php endif; ?>
-                <?php endif; ?>
-            </div>
-
-            <div class="opentt-ekipe-row">
-                <a href="<?php echo esc_url($home_url); ?>" class="opentt-ekipe-team opentt-ekipe-home <?php echo esc_attr($home_state); ?>">
-                    <span class="opentt-ekipe-logo-wrap">
-                        <?php echo $home_logo ? $home_logo : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-                    </span>
-                    <span class="opentt-ekipe-name"><?php echo esc_html($home_name); ?></span>
-                </a>
-
-                <?php if ($is_unplayed && $match_time_label !== ''): ?>
-                    <div class="opentt-ekipe-score opentt-ekipe-score-time">
-                        <span class="opentt-ekipe-time"><?php echo esc_html($match_time_label); ?></span>
-                    </div>
-                <?php else: ?>
-                    <div class="opentt-ekipe-score">
-                        <span class="<?php echo esc_attr($home_state); ?>"><?php echo esc_html((string) $home_score); ?></span>
-                        <span class="opentt-ekipe-score-sep">:</span>
-                        <span class="<?php echo esc_attr($away_state); ?>"><?php echo esc_html((string) $away_score); ?></span>
-                    </div>
-                <?php endif; ?>
-
-                <a href="<?php echo esc_url($away_url); ?>" class="opentt-ekipe-team opentt-ekipe-away <?php echo esc_attr($away_state); ?>">
-                    <span class="opentt-ekipe-logo-wrap">
-                        <?php echo $away_logo ? $away_logo : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-                    </span>
-                    <span class="opentt-ekipe-name"><?php echo esc_html($away_name); ?></span>
-                </a>
-            </div>
-
-            <?php if ($match_venue !== '' || $match_date !== ''): ?>
-                <div class="opentt-ekipe-footer">
-                    <?php if ($match_venue !== ''): ?>
-                        <span class="opentt-ekipe-footer-item opentt-ekipe-footer-venue"><?php echo esc_html($match_venue); ?></span>
-                    <?php endif; ?>
-                    <?php if ($match_venue !== '' && $match_date !== ''): ?>
-                        <span class="opentt-ekipe-footer-sep">•</span>
-                    <?php endif; ?>
-                    <?php if ($match_date !== ''): ?>
-                        <span class="opentt-ekipe-footer-item opentt-ekipe-footer-date"><?php echo esc_html($match_date); ?></span>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-        <?php
-        return ob_get_clean();
+        return \OpenTT\Unified\WordPress\Shortcodes\ShowMatchTeamsShortcode::render($atts, [
+            'current_match_context' => static function () {
+                return self::current_match_context();
+            },
+            'competition_display_name' => static function ($liga_slug, $sezona_slug) {
+                return self::competition_display_name($liga_slug, $sezona_slug);
+            },
+            'competition_archive_url' => static function ($liga_slug, $sezona_slug) {
+                return self::competition_archive_url($liga_slug, $sezona_slug);
+            },
+            'kolo_name_from_slug' => static function ($slug) {
+                return self::kolo_name_from_slug($slug);
+            },
+            'club_logo_html' => static function ($club_id, $size = 'thumbnail', $attr = []) {
+                return self::club_logo_html($club_id, $size, $attr);
+            },
+            'display_match_date' => static function ($match_date) {
+                return self::display_match_date($match_date);
+            },
+            'match_venue_label' => static function ($row) {
+                return self::match_venue_label($row);
+            },
+            'shortcode_title_html' => static function ($title) {
+                return self::shortcode_title_html($title);
+            },
+        ]);
     }
 
     public static function shortcode_competition_info($atts = [])
     {
-        $atts = shortcode_atts([
-            'liga' => '',
-            'sezona' => '',
-            'show_logo' => '1',
-        ], $atts);
-
-        $liga_slug = '';
-        $sezona_slug = '';
-        $archive_ctx = self::current_archive_context();
-        $liga_param = sanitize_title((string) ($atts['liga'] ?? ''));
-        $sezona_param = sanitize_title((string) ($atts['sezona'] ?? ''));
-
-        if ($liga_param !== '') {
-            $parsed = self::parse_legacy_liga_sezona($liga_param, $sezona_param);
-            $liga_slug = sanitize_title((string) ($parsed['league_slug'] ?? $liga_param));
-            $sezona_slug = sanitize_title((string) ($parsed['season_slug'] ?? $sezona_param));
-            if ($sezona_param !== '') {
-                $sezona_slug = $sezona_param;
-            }
-        } elseif (is_array($archive_ctx) && ($archive_ctx['type'] ?? '') === 'liga_sezona') {
-            $raw_liga = sanitize_title((string) ($archive_ctx['liga_slug'] ?? ''));
-            $raw_sezona = sanitize_title((string) ($archive_ctx['sezona_slug'] ?? ''));
-            $parsed_ctx = self::parse_legacy_liga_sezona($raw_liga, $raw_sezona);
-            $liga_slug = sanitize_title((string) ($parsed_ctx['league_slug'] ?? $raw_liga));
-            $sezona_slug = sanitize_title((string) ($parsed_ctx['season_slug'] ?? $raw_sezona));
-            if ($liga_slug === '' && $sezona_slug !== '') {
-                global $wpdb;
-                $table = OpenTT_Unified_Core::db_table('matches');
-                if (self::table_exists($table)) {
-                    $liga_guess = $wpdb->get_var($wpdb->prepare("SELECT liga_slug FROM {$table} WHERE sezona_slug=%s AND liga_slug<>'' ORDER BY id DESC LIMIT 1", $sezona_slug));
-                    if (is_string($liga_guess) && $liga_guess !== '') {
-                        $liga_slug = sanitize_title($liga_guess);
-                    }
-                }
-            }
-        } elseif (is_tax('liga_sezona')) {
-            $term = get_queried_object();
-            if ($term && !is_wp_error($term) && !empty($term->slug)) {
-                $parsed = self::parse_legacy_liga_sezona((string) $term->slug, '');
-                $liga_slug = sanitize_title((string) ($parsed['league_slug'] ?? ''));
-                $sezona_slug = sanitize_title((string) ($parsed['season_slug'] ?? ''));
-            }
-        } else {
-            $ctx = self::current_match_context();
-            if ($ctx && !empty($ctx['db_row'])) {
-                $row = $ctx['db_row'];
-                $liga_slug = sanitize_title((string) $row->liga_slug);
-                $sezona_slug = sanitize_title((string) $row->sezona_slug);
-            }
-        }
-
-        if ($liga_slug === '') {
-            return '';
-        }
-
-        $liga_name = self::slug_to_title($liga_slug);
-        if ($liga_name === '') {
-            $liga_name = $liga_slug;
-        }
-        $sezona_name = self::season_display_name($sezona_slug);
-
-        $rule = null;
-        if ($sezona_slug !== '') {
-            $rule = self::get_competition_rule_data($liga_slug, $sezona_slug);
-        }
-
-        $savez_label = '';
-        $savez_url = '';
-        $thumb_html = '';
-
-        if (is_array($rule)) {
-            $savez = self::competition_federation_data((string) ($rule['savez'] ?? ''));
-            if (is_array($savez)) {
-                $savez_label = (string) ($savez['label'] ?? '');
-                $savez_url = (string) ($savez['url'] ?? '');
-            }
-
-            $rule_id = intval($rule['id'] ?? 0);
-            if ($rule_id > 0 && (string) $atts['show_logo'] !== '0' && has_post_thumbnail($rule_id)) {
-                $thumb_html = get_the_post_thumbnail($rule_id, 'medium', ['class' => 'opentt-takmicenje-info-logo-img']);
-            }
-        }
-
-        ob_start();
-        ?>
-        <?php echo self::shortcode_title_html('Info takmičenja'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-        <div class="opentt-takmicenje-info">
-            <?php if ($thumb_html !== ''): ?>
-                <div class="opentt-takmicenje-info-logo"><?php echo $thumb_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
-            <?php endif; ?>
-            <div class="opentt-takmicenje-info-body">
-                <h2 class="opentt-takmicenje-info-title"><?php echo esc_html($liga_name); ?></h2>
-                <?php if ($sezona_name !== ''): ?>
-                    <div class="opentt-takmicenje-info-meta"><strong>Sezona:</strong> <?php echo esc_html($sezona_name); ?></div>
-                <?php endif; ?>
-                <?php if ($savez_label !== ''): ?>
-                    <div class="opentt-takmicenje-info-meta">
-                        <strong>Savez:</strong>
-                        <?php if ($savez_url !== ''): ?>
-                            <a href="<?php echo esc_url($savez_url); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($savez_label); ?></a>
-                        <?php else: ?>
-                            <?php echo esc_html($savez_label); ?>
-                        <?php endif; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-        <?php
-        return ob_get_clean();
+        return \OpenTT\Unified\WordPress\Shortcodes\CompetitionInfoShortcode::render($atts, [
+            'current_archive_context' => static function () {
+                return self::current_archive_context();
+            },
+            'current_match_context' => static function () {
+                return self::current_match_context();
+            },
+            'parse_legacy_liga_sezona' => static function ($liga_slug, $sezona_slug = '') {
+                return self::parse_legacy_liga_sezona($liga_slug, $sezona_slug);
+            },
+            'db_table' => static function ($table_alias) {
+                return OpenTT_Unified_Core::db_table($table_alias);
+            },
+            'table_exists' => static function ($table_name) {
+                return self::table_exists($table_name);
+            },
+            'slug_to_title' => static function ($slug) {
+                return self::slug_to_title($slug);
+            },
+            'season_display_name' => static function ($sezona_slug) {
+                return self::season_display_name($sezona_slug);
+            },
+            'get_competition_rule_data' => static function ($liga_slug, $sezona_slug = '') {
+                return self::get_competition_rule_data($liga_slug, $sezona_slug);
+            },
+            'competition_federation_data' => static function ($code) {
+                return self::competition_federation_data($code);
+            },
+            'shortcode_title_html' => static function ($title) {
+                return self::shortcode_title_html($title);
+            },
+        ]);
     }
 
     public static function shortcode_competitions_grid($atts = [])
