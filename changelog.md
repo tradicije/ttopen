@@ -9,6 +9,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 #### Assets & UI
 
 - Updated `opentt_players` to render the first 5 player cards by default and added a bottom toggle button (`Prikaži sve` / `Sakrij`) for expanding the full list.
+- Fixed shortcode dropdown/toggle form controls to inherit the active user/theme font instead of browser default (applied in both `assets/css/main.css` and `assets/css/modules/legacy-ui.css`).
 
 ## Releases
 

@@ -308,6 +308,24 @@
     overflow: hidden;
 }
 
+/* Ensure form controls inside shortcode blocks inherit active theme/user font. */
+.opentt-ekipe button, .opentt-ekipe input, .opentt-ekipe select, .opentt-ekipe textarea,
+.opentt-info-kluba button, .opentt-info-kluba input, .opentt-info-kluba select, .opentt-info-kluba textarea,
+.opentt-info-igraca button, .opentt-info-igraca input, .opentt-info-igraca select, .opentt-info-igraca textarea,
+.opentt-forma-kluba button, .opentt-forma-kluba input, .opentt-forma-kluba select, .opentt-forma-kluba textarea,
+.opentt-stat-igraca button, .opentt-stat-igraca input, .opentt-stat-igraca select, .opentt-stat-igraca textarea,
+.opentt-stat-ekipe button, .opentt-stat-ekipe input, .opentt-stat-ekipe select, .opentt-stat-ekipe textarea,
+.opentt-transferi button, .opentt-transferi input, .opentt-transferi select, .opentt-transferi textarea,
+.opentt-takmicenje-info button, .opentt-takmicenje-info input, .opentt-takmicenje-info select, .opentt-takmicenje-info textarea,
+.opentt-prikaz-takmicenja button, .opentt-prikaz-takmicenja input, .opentt-prikaz-takmicenja select, .opentt-prikaz-takmicenja textarea,
+.opentt-klubovi button, .opentt-klubovi input, .opentt-klubovi select, .opentt-klubovi textarea,
+.stoni-igraci-list button, .stoni-igraci-list input, .stoni-igraci-list select, .stoni-igraci-list textarea,
+.top-igraci-list button, .top-igraci-list input, .top-igraci-list select, .top-igraci-list textarea,
+.tabela-lige button, .tabela-lige input, .tabela-lige select, .tabela-lige textarea,
+.opentt-grid-filters button, .opentt-grid-filters input, .opentt-grid-filters select, .opentt-grid-filters textarea {
+    font-family: inherit;
+}
+
 /* =========================
    MORE TAB – SAFE VERSION
    ========================= */
