@@ -429,37 +429,44 @@ trait OpenTT_Unified_Shortcodes_Trait
 
     public static function shortcode_show_home_club($atts = [])
     {
-        $ctx = self::current_match_context();
-        if (!$ctx || empty($ctx['db_row'])) {
-            return '';
-        }
-        return self::shortcode_title_html('Domaćin') . self::render_klub_card_html(intval($ctx['db_row']->home_club_post_id));
+        return \OpenTT\Unified\WordPress\Shortcodes\ShowHomeClubShortcode::render($atts, [
+            'current_match_context' => static function () {
+                return self::current_match_context();
+            },
+            'shortcode_title_html' => static function ($title) {
+                return self::shortcode_title_html($title);
+            },
+            'render_klub_card_html' => static function ($club_id) {
+                return self::render_klub_card_html($club_id);
+            },
+        ]);
     }
 
     public static function shortcode_show_away_club($atts = [])
     {
-        $ctx = self::current_match_context();
-        if (!$ctx || empty($ctx['db_row'])) {
-            return '';
-        }
-        return self::shortcode_title_html('Gost') . self::render_klub_card_html(intval($ctx['db_row']->away_club_post_id));
+        return \OpenTT\Unified\WordPress\Shortcodes\ShowAwayClubShortcode::render($atts, [
+            'current_match_context' => static function () {
+                return self::current_match_context();
+            },
+            'shortcode_title_html' => static function ($title) {
+                return self::shortcode_title_html($title);
+            },
+            'render_klub_card_html' => static function ($club_id) {
+                return self::render_klub_card_html($club_id);
+            },
+        ]);
     }
 
     public static function shortcode_show_club_by_name($atts = [])
     {
-        $atts = shortcode_atts(['klub' => ''], $atts);
-        $name = trim((string) $atts['klub']);
-        if ($name === '') {
-            return '';
-        }
-        $post = get_page_by_path($name, OBJECT, 'klub');
-        if (!$post) {
-            $post = get_page_by_title($name, OBJECT, 'klub');
-        }
-        if (!$post || is_wp_error($post)) {
-            return '<p>Klub nije pronađen: ' . esc_html($name) . '</p>';
-        }
-        return self::shortcode_title_html('Klub') . self::render_klub_card_html(intval($post->ID));
+        return \OpenTT\Unified\WordPress\Shortcodes\ShowClubByNameShortcode::render($atts, [
+            'shortcode_title_html' => static function ($title) {
+                return self::shortcode_title_html($title);
+            },
+            'render_klub_card_html' => static function ($club_id) {
+                return self::render_klub_card_html($club_id);
+            },
+        ]);
     }
 
     public static function shortcode_club_form($atts = [])
