@@ -24,6 +24,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Refined `opentt_featured_match` visual styling for stronger desktop presentation (enhanced spacing, crest sizing, center countdown panel, hover polish) and improved mobile layout to keep teams/countdown in a compact three-column row instead of stacked blocks.
 - Fixed persistent featured-card side accent inversion by enforcing explicit inset edge accents (`home` on left, `away` on right) and simplifying overlay glow.
 - Corrected inset shadow direction on `opentt_featured_match` so side accents truly render as home-left and away-right.
+- Reworked featured-card side accents to explicit pseudo-element bars (`::before` home-left, `::after` away-right), removing inset-shadow accents for deterministic left/right color rendering.
 
 #### Admin & Data
 

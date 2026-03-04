@@ -2337,11 +2337,14 @@ border: solid 2px #ffffff26;
   padding: 18px 20px;
   color: #ffffff;
   text-decoration: none;
-  background: linear-gradient(90deg, var(--opentt-featured-home) 0%, #031745 50%, var(--opentt-featured-away) 100%);
-  box-shadow:
-    inset -3px 0 0 var(--opentt-featured-home),
-    inset 3px 0 0 var(--opentt-featured-away),
-    0 16px 30px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(
+    90deg,
+    var(--opentt-featured-home) 0%,
+    rgba(3, 23, 69, 0.95) 40%,
+    rgba(3, 23, 69, 0.95) 60%,
+    var(--opentt-featured-away) 100%
+  );
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -2349,16 +2352,22 @@ border: solid 2px #ffffff26;
 .opentt-featured-match-card::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 8, 24, 0.32) 100%);
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--opentt-featured-home);
   pointer-events: none;
 }
 
 .opentt-featured-match-card::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12), transparent 58%);
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--opentt-featured-away);
   pointer-events: none;
 }
 
@@ -2503,9 +2512,6 @@ border: solid 2px #ffffff26;
 @media (hover: hover) {
   .opentt-featured-match-card:hover {
     transform: translateY(-2px);
-    box-shadow:
-      inset -3px 0 0 var(--opentt-featured-home),
-      inset 3px 0 0 var(--opentt-featured-away),
-      0 20px 34px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 20px 34px rgba(0, 0, 0, 0.4);
   }
 }
