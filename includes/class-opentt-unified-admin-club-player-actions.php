@@ -60,7 +60,8 @@ final class OpenTT_Unified_Admin_Club_Player_Actions
             $website = 'https://' . $website;
         }
         update_post_meta($club_id, 'website_kluba', esc_url_raw($website));
-        update_post_meta($club_id, 'boja_dresa', sanitize_text_field((string) ($_POST['boja_dresa'] ?? '')));
+        $jersey_color = sanitize_hex_color((string) ($_POST['boja_dresa'] ?? ''));
+        update_post_meta($club_id, 'boja_dresa', $jersey_color ? $jersey_color : '');
         update_post_meta($club_id, 'loptice', sanitize_text_field((string) ($_POST['loptice'] ?? '')));
         update_post_meta($club_id, 'adresa_kluba', sanitize_text_field((string) ($_POST['adresa_kluba'] ?? '')));
         update_post_meta($club_id, 'adresa_sale', sanitize_text_field((string) ($_POST['adresa_sale'] ?? '')));

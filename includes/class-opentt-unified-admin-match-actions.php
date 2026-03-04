@@ -46,6 +46,7 @@ final class OpenTT_Unified_Admin_Match_Actions
         $home_score = max(0, (int) ($_POST['home_score'] ?? 0));
         $away_score = max(0, (int) ($_POST['away_score'] ?? 0));
         $played = ($home_score + $away_score) > 0 ? 1 : 0;
+        $featured = !empty($_POST['featured']) ? 1 : 0;
         $match_date = (string) ($_POST['match_date'] ?? '');
         $match_date = $match_date ? str_replace('T', ' ', $match_date) . ':00' : null;
 
@@ -100,6 +101,9 @@ final class OpenTT_Unified_Admin_Match_Actions
             'match_date' => $match_date,
             'updated_at' => current_time('mysql'),
         ];
+        if (self::has_featured_column($table)) {
+            $data['featured'] = $featured;
+        }
 
         if ($id > 0) {
             $ok = $wpdb->update($table, $data, ['id' => $id]);
@@ -144,6 +148,47 @@ final class OpenTT_Unified_Admin_Match_Actions
 
         wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-matches'), 'success', 'Utakmica je obrisana.'));
         exit;
+    }
+
+    public static function handle_toggle_featured_match_admin()
+    {
+        self::require_cap();
+        $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+        if ($id <= 0) {
+            wp_die('Nedostaje ID.');
+        }
+        check_admin_referer('opentt_unified_toggle_featured_match_' . $id);
+
+        global $wpdb;
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $matches_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $matches));
+        if ($matches_exists !== $matches) {
+            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-matches'), 'error', 'Tabela utakmica nije dostupna.'));
+            exit;
+        }
+        if (!self::has_featured_column($matches)) {
+            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-matches'), 'error', 'Featured kolona nije dostupna. Pokreni migraciju šeme.'));
+            exit;
+        }
+
+        $current = (int) $wpdb->get_var($wpdb->prepare("SELECT featured FROM {$matches} WHERE id=%d LIMIT 1", $id));
+        $next = $current === 1 ? 0 : 1;
+        $ok = $wpdb->update($matches, ['featured' => $next], ['id' => $id], ['%d'], ['%d']);
+        if ($ok === false) {
+            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-matches'), 'error', 'Greška pri promeni featured statusa.'));
+            exit;
+        }
+
+        $message = $next === 1 ? 'Utakmica je postavljena kao featured.' : 'Utakmica više nije featured.';
+        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-matches'), 'success', $message));
+        exit;
+    }
+
+    private static function has_featured_column($table)
+    {
+        global $wpdb;
+        $column = $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$table} LIKE %s", 'featured'));
+        return !empty($column);
     }
 
     public static function handle_delete_matches_bulk_admin()

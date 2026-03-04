@@ -28,6 +28,7 @@ final class OpenTT_Unified_Admin_Module
 
         add_action('admin_post_opentt_unified_save_match', ['OpenTT_Unified_Core', 'handle_save_match']);
         add_action('admin_post_opentt_unified_delete_match', ['OpenTT_Unified_Core', 'handle_delete_match']);
+        add_action('admin_post_opentt_unified_toggle_featured_match', ['OpenTT_Unified_Core', 'handle_toggle_featured_match_admin']);
         add_action('admin_post_opentt_unified_delete_matches_bulk', ['OpenTT_Unified_Core', 'handle_delete_matches_bulk_admin']);
         add_action('admin_post_opentt_unified_save_game', ['OpenTT_Unified_Core', 'handle_save_game']);
         add_action('admin_post_opentt_unified_save_games_batch', ['OpenTT_Unified_Core', 'handle_save_games_batch']);

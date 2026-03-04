@@ -67,6 +67,7 @@ final class SchemaMigrationManager
             home_score smallint(6) NOT NULL DEFAULT 0,
             away_score smallint(6) NOT NULL DEFAULT 0,
             played tinyint(1) NOT NULL DEFAULT 0,
+            featured tinyint(1) NOT NULL DEFAULT 0,
             match_date datetime DEFAULT NULL,
             created_at datetime NOT NULL,
             updated_at datetime NOT NULL,

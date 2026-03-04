@@ -1319,19 +1319,25 @@ JS;
 
         echo '<p class="opentt-mobile-scroll-hint">Na telefonu prevuci tabelu levo/desno za prikaz svih kolona.</p>';
         echo '<div class="opentt-table-scroll">';
-        echo '<table id="opentt-matches-table" class="widefat striped opentt-live-search-table"><thead><tr><th style="width:32px;"><input type="checkbox" id="opentt-matches-check-all" aria-label="Izaberi sve utakmice"></th><th>Liga</th><th>Sezona</th><th>Kolo</th><th>Utakmica</th><th>Rezultat</th><th>Partije</th><th>Datum</th><th>Akcije</th></tr></thead><tbody>';
+        echo '<table id="opentt-matches-table" class="widefat striped opentt-live-search-table"><thead><tr><th style="width:32px;"><input type="checkbox" id="opentt-matches-check-all" aria-label="Izaberi sve utakmice"></th><th>Featured</th><th>Liga</th><th>Sezona</th><th>Kolo</th><th>Utakmica</th><th>Rezultat</th><th>Partije</th><th>Datum</th><th>Akcije</th></tr></thead><tbody>';
         foreach ($rows as $m) {
             $home = get_the_title((int) $m->home_club_post_id);
             $away = get_the_title((int) $m->away_club_post_id);
             $edit_url = admin_url('admin.php?page=stkb-unified-add-match&action=edit&id=' . (int) $m->id);
             $front_url = self::match_permalink($m);
+            $toggle_featured_url = wp_nonce_url(
+                admin_url('admin-post.php?action=opentt_unified_toggle_featured_match&id=' . (int) $m->id),
+                'opentt_unified_toggle_featured_match_' . (int) $m->id
+            );
             $del_url = wp_nonce_url(
                 admin_url('admin-post.php?action=opentt_unified_delete_match&id=' . (int) $m->id),
                 'opentt_unified_delete_match_' . (int) $m->id
             );
+            $is_featured = (int) ($m->featured ?? 0) === 1;
 
             echo '<tr>';
             echo '<td><input type="checkbox" class="opentt-match-bulk-checkbox" name="match_ids[]" value="' . intval($m->id) . '" aria-label="Izaberi utakmicu ID ' . intval($m->id) . '"></td>';
+            echo '<td>' . ($is_featured ? '★' : '—') . '</td>';
             echo '<td>' . esc_html((string) $m->liga_slug) . '</td>';
             echo '<td>' . esc_html((string) $m->sezona_slug) . '</td>';
             echo '<td>' . esc_html((string) $m->kolo_slug) . '</td>';
@@ -1341,6 +1347,7 @@ JS;
             echo '<td><strong>' . ($games_count > 0 ? '✓' : '✗') . '</strong> <span style="opacity:.75;">(' . esc_html((string) $games_count) . ')</span></td>';
             echo '<td>' . esc_html(self::display_match_date((string) $m->match_date)) . '</td>';
             echo '<td><a class="button button-small" href="' . esc_url($edit_url) . '">Uredi</a> ';
+            echo '<a class="button button-small" href="' . esc_url($toggle_featured_url) . '">' . esc_html($is_featured ? 'Unfeature' : 'Feature') . '</a> ';
             echo '<a class="button button-small" href="' . esc_url($front_url) . '" target="_blank" rel="noopener">Frontend</a> ';
             echo '<a class="button button-small button-link-delete" href="' . esc_url($del_url) . '" onclick="return confirm(\'Obrisati utakmicu i partije/setove?\')">Obriši</a></td>';
             echo '</tr>';
@@ -1850,6 +1857,7 @@ HTML;
         $m_away = $match ? (int) $match->away_club_post_id : 0;
         $m_hs = $match ? (int) $match->home_score : 0;
         $m_as = $match ? (int) $match->away_score : 0;
+        $m_featured = $match ? (int) ($match->featured ?? 0) : 0;
 
         echo '<div class="wrap opentt-admin">';
         self::render_admin_topbar();
@@ -1866,6 +1874,7 @@ HTML;
         echo '<tr data-opentt-step="2"><th>Domaći klub</th><td>' . self::clubs_dropdown_admin('home_club_post_id', $m_home, true) . '</td></tr>';
         echo '<tr data-opentt-step="2"><th>Gostujući klub</th><td>' . self::clubs_dropdown_admin('away_club_post_id', $m_away, true) . '</td></tr>';
         echo '<tr data-opentt-step="2"><th>Rezultat</th><td><input name="home_score" type="number" min="0" max="7" value="' . esc_attr((string) $m_hs) . '" style="width:90px;"> : <input name="away_score" type="number" min="0" max="7" value="' . esc_attr((string) $m_as) . '" style="width:90px;"></td></tr>';
+        echo '<tr data-opentt-step="2"><th>Featured match</th><td><label><input type="checkbox" name="featured" value="1" ' . checked($m_featured, 1, false) . '> Istakni ovu utakmicu</label></td></tr>';
         echo '<tr data-opentt-step="3"><th>Potvrda</th><td><p class="description">Proveri podatke i klikni na dugme za čuvanje.</p></td></tr>';
         echo '</tbody></table>';
         echo '<div class="opentt-wizard-nav">';
@@ -2045,7 +2054,7 @@ HTML;
         echo '<tr data-opentt-step="3"><th>Email</th><td><input name="email" type="email" class="regular-text" value="' . esc_attr((string) get_post_meta($club_id, 'email', true)) . '"></td></tr>';
         echo '<tr data-opentt-step="3"><th>Zastupnik kluba</th><td><input name="zastupnik_kluba" type="text" class="regular-text" value="' . esc_attr((string) get_post_meta($club_id, 'zastupnik_kluba', true)) . '"></td></tr>';
         echo '<tr data-opentt-step="3"><th>Website kluba</th><td><input name="website_kluba" type="url" class="regular-text" placeholder="https://..." value="' . esc_attr((string) get_post_meta($club_id, 'website_kluba', true)) . '"></td></tr>';
-        echo '<tr data-opentt-step="3"><th>Boja dresa</th><td><input name="boja_dresa" type="text" class="regular-text" value="' . esc_attr((string) get_post_meta($club_id, 'boja_dresa', true)) . '"></td></tr>';
+        echo '<tr data-opentt-step="3"><th>Boja dresa</th><td><input name="boja_dresa" type="text" class="regular-text opentt-color-field" value="' . esc_attr((string) get_post_meta($club_id, 'boja_dresa', true)) . '" placeholder="#0b4db8"></td></tr>';
         echo '<tr data-opentt-step="3"><th>Loptice</th><td><input name="loptice" type="text" class="regular-text" value="' . esc_attr((string) get_post_meta($club_id, 'loptice', true)) . '"></td></tr>';
         echo '<tr data-opentt-step="3"><th>Adresa kluba</th><td><input name="adresa_kluba" type="text" class="regular-text" value="' . esc_attr((string) get_post_meta($club_id, 'adresa_kluba', true)) . '"></td></tr>';
         echo '<tr data-opentt-step="3"><th>Adresa sale</th><td><input name="adresa_sale" type="text" class="regular-text" value="' . esc_attr((string) get_post_meta($club_id, 'adresa_sale', true)) . '"></td></tr>';
@@ -2541,6 +2550,18 @@ JS;
                 ],
             ],
             [
+                'tag' => 'opentt_featured_match',
+                'desc' => 'Istaknuta utakmica sa countdown karticom i gradijentom boja dresova klubova.',
+                'attrs' => 'id, liga, sezona, title',
+                'details' => 'Prikazuje meč označen kao featured. Ako `id` nije zadat, bira najrelevantniji featured meč (prioritet predstojeći).',
+                'builder' => [
+                    ['name' => 'id', 'label' => 'ID utakmice', 'type' => 'number', 'default' => '', 'help' => 'Opciono: prisilno prikaži tačno ovaj meč.'],
+                    ['name' => 'liga', 'label' => 'Liga slug', 'type' => 'text', 'default' => '', 'help' => 'Opciono ograničenje pri auto-izboru featured meča.'],
+                    ['name' => 'sezona', 'label' => 'Sezona slug', 'type' => 'text', 'default' => '', 'help' => 'Opciono ograničenje pri auto-izboru featured meča.'],
+                    ['name' => 'title', 'label' => 'Naslov bloka', 'type' => 'text', 'default' => 'Featured match', 'help' => 'Naslov shortcode sekcije.'],
+                ],
+            ],
+            [
                 'tag' => 'opentt_standings_table',
                 'desc' => 'Tabela lige za kontekst stranice ili zadatu ligu/sezonu.',
                 'attrs' => 'liga, sezona, highlight',
@@ -2601,6 +2622,7 @@ JS;
         return [
             'columns' => 'Broj kolona prikaza (obično 1-6).',
             'limit' => 'Maksimalan broj stavki za prikaz.',
+            'id' => 'ID konkretne utakmice.',
             'liga' => 'Slug lige/takmičenja.',
             'sezona' => 'Slug sezone (npr. 2025-26).',
             'odigrana' => 'Filter odigranosti: 1 odigrane, 0 neodigrane.',
@@ -2613,6 +2635,7 @@ JS;
             'igrac' => 'Slug igrača za koji se povlače podaci.',
             'show_logo' => '1 prikazuje logo, 0 sakriva.',
             'opstina' => 'Opština/grad kluba (filter kroz polje grad).',
+            'title' => 'Naslov sekcije shortcode bloka.',
         ];
     }
 
@@ -2620,6 +2643,7 @@ JS;
     {
         return [
             'opentt_matches_grid' => ['module' => 'utakmice.css', 'classes' => ['.opentt-grid', '.opentt-grid-filters', '.opentt-grid-calendar-toggle', '.opentt-grid-calendar-popover', '.opentt-grid-cal-day', '.opentt-item', '.team.pobednik', '.team.gubitnik', '.meta']],
+            'opentt_featured_match' => ['module' => 'featured-match.css', 'classes' => ['.opentt-featured-match-wrap', '.opentt-featured-match-card', '.opentt-featured-meta-top', '.opentt-featured-main', '.opentt-featured-team', '.opentt-featured-countdown', '.opentt-featured-meta-bottom']],
             'opentt_standings_table' => ['module' => 'tabela.css', 'classes' => ['.tabela-lige', '.tabela-lige tr.highlight', '.zone-promote-direct', '.zone-promote-playoff', '.zone-relegate-direct', '.zone-relegate-playoff']],
             'opentt_match_teams' => ['module' => 'ekipe.css', 'classes' => ['.opentt-ekipe', '.opentt-ekipe-home', '.opentt-ekipe-away', '.opentt-ekipe-score']],
             'opentt_match_games' => ['module' => 'partije.css', 'classes' => ['.lista-partija', '.partija-row', '.lp2-win', '.lp2-name']],
@@ -3311,6 +3335,7 @@ HTML;
                 'home_score' => (int) $r->home_score,
                 'away_score' => (int) $r->away_score,
                 'played' => (int) $r->played,
+                'featured' => (int) ($r->featured ?? 0),
                 'home_club_source_id' => (int) $r->home_club_post_id,
                 'away_club_source_id' => (int) $r->away_club_post_id,
                 'legacy_post_id' => (int) $r->legacy_post_id,
@@ -3940,17 +3965,18 @@ HTML;
                     'home_score' => (int) ($row['home_score'] ?? 0),
                     'away_score' => (int) ($row['away_score'] ?? 0),
                     'played' => (int) ($row['played'] ?? 0),
+                    'featured' => (int) ($row['featured'] ?? 0),
                     'legacy_post_id' => (int) ($row['legacy_post_id'] ?? 0),
                 ];
                 if ($existing_id > 0) {
-                    $ok = $wpdb->update($matches_table, $data_row, ['id' => $existing_id], ['%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d'], ['%d']);
+                    $ok = $wpdb->update($matches_table, $data_row, ['id' => $existing_id], ['%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d'], ['%d']);
                     if ($ok === false) {
                         $result['issues'][] = 'Greška update utakmice ' . $slug . ': ' . (string) $wpdb->last_error;
                         continue;
                     }
                     $new_id = $existing_id;
                 } else {
-                    $ok = $wpdb->insert($matches_table, $data_row, ['%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d']);
+                    $ok = $wpdb->insert($matches_table, $data_row, ['%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d']);
                     if ($ok === false) {
                         $result['issues'][] = 'Greška insert utakmice ' . $slug . ': ' . (string) $wpdb->last_error;
                         continue;
@@ -4256,6 +4282,11 @@ HTML;
     public static function handle_delete_match()
     {
         OpenTT_Unified_Admin_Match_Actions::handle_delete_match();
+    }
+
+    public static function handle_toggle_featured_match_admin()
+    {
+        OpenTT_Unified_Admin_Match_Actions::handle_toggle_featured_match_admin();
     }
 
     public static function handle_delete_matches_bulk_admin()

@@ -73,6 +73,27 @@ trait OpenTT_Unified_Shortcodes_Trait
         ]);
     }
 
+    public static function shortcode_featured_match($atts = [])
+    {
+        return \OpenTT\Unified\WordPress\Shortcodes\FeaturedMatchShortcode::render($atts, [
+            'shortcode_title_html' => static function ($title) {
+                return self::shortcode_title_html($title);
+            },
+            'club_logo_html' => static function ($club_id, $size = 'thumbnail', $attr = []) {
+                return self::club_logo_html($club_id, $size, $attr);
+            },
+            'match_permalink' => static function ($row) {
+                return self::match_permalink($row);
+            },
+            'kolo_name_from_slug' => static function ($slug) {
+                return self::kolo_name_from_slug($slug);
+            },
+            'slug_to_title' => static function ($slug) {
+                return self::slug_to_title($slug);
+            },
+        ]);
+    }
+
     public static function shortcode_clubs_grid($atts = [])
     {
         return \OpenTT\Unified\WordPress\Shortcodes\ClubsGridShortcode::render($atts, [

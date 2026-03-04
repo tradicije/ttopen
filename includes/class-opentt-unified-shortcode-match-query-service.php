@@ -27,6 +27,7 @@ final class OpenTT_Unified_Shortcode_Match_Query_Service
         $sezona_slug = isset($args['sezona_slug']) ? (string) $args['sezona_slug'] : '';
         $kolo_slug = isset($args['kolo_slug']) ? (string) $args['kolo_slug'] : '';
         $played = isset($args['played']) ? (string) $args['played'] : '';
+        $featured = isset($args['featured']) ? (string) $args['featured'] : '';
         $club_id = isset($args['club_id']) ? intval($args['club_id']) : 0;
         $player_id = isset($args['player_id']) ? intval($args['player_id']) : 0;
 
@@ -60,6 +61,10 @@ final class OpenTT_Unified_Shortcode_Match_Query_Service
         if ($played === '0' || $played === '1') {
             $where[] = 'm.played=%d';
             $params[] = intval($played);
+        }
+        if ($featured === '0' || $featured === '1') {
+            $where[] = 'm.featured=%d';
+            $params[] = intval($featured);
         }
         if ($club_id > 0) {
             $where[] = '(m.home_club_post_id=%d OR m.away_club_post_id=%d)';

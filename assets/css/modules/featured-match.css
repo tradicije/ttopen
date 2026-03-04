@@ -1,0 +1,129 @@
+.opentt-featured-match-wrap {
+  margin-bottom: 16px;
+}
+
+.opentt-featured-match-card {
+  --opentt-featured-home: #0b4db8;
+  --opentt-featured-away: #0084ff;
+  position: relative;
+  display: block;
+  border: 2px solid #ffffff2b;
+  border-radius: 12px;
+  padding: 14px;
+  color: #ffffff;
+  text-decoration: none;
+  background: linear-gradient(110deg, var(--opentt-featured-home) 0%, #00113d 48%, var(--opentt-featured-away) 100%);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+}
+
+.opentt-featured-match-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 10, 38, 0.28) 100%);
+  pointer-events: none;
+}
+
+.opentt-featured-meta-top,
+.opentt-featured-main,
+.opentt-featured-meta-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.opentt-featured-meta-top {
+  margin-bottom: 10px;
+  font-size: 0.86rem;
+  color: #d9e8ff;
+  font-weight: 600;
+  text-align: center;
+}
+
+.opentt-featured-main {
+  display: grid;
+  grid-template-columns: minmax(88px, 1fr) minmax(110px, auto) minmax(88px, 1fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.opentt-featured-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.opentt-featured-team-crest {
+  width: 66px;
+  height: 66px;
+  border-radius: 10px;
+  border: 1px solid #ffffff42;
+  background: rgba(0, 10, 38, 0.26);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.opentt-featured-team-crest img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.opentt-featured-team-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #ffffff;
+}
+
+.opentt-featured-center {
+  text-align: center;
+}
+
+.opentt-featured-countdown {
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #ffffff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.opentt-featured-meta-bottom {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: #d4e5ff;
+}
+
+@media (max-width: 700px) {
+  .opentt-featured-main {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .opentt-featured-team {
+    flex-direction: row;
+    justify-content: center;
+    text-align: left;
+  }
+
+  .opentt-featured-team.away {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+
+  .opentt-featured-team-crest {
+    width: 54px;
+    height: 54px;
+  }
+
+  .opentt-featured-team-crest img {
+    width: 46px;
+    height: 46px;
+  }
+}
