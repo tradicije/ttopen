@@ -47,6 +47,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Added a small animated dot indicator before `LIVE` text inside the badge (synchronized pulse) for clearer live-match affordance across frontend card variants.
 - Updated `opentt_featured_match` auto mode to prioritize manually flagged LIVE matches (`live=1`) in active context; when multiple LIVE matches exist, selection now prefers derby quality (better combined standings ranks) with kickoff proximity tie-break.
 - Simplified LIVE center content in `opentt_featured_match` by removing redundant `Uživo` helper label above the LIVE badge.
+- Restored score visibility in `opentt_featured_match` LIVE state by rendering center row as `home_score LIVE away_score` (with synchronized dot+text LIVE indicator).
 
 #### Admin & Data
 

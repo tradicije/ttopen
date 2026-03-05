@@ -42,6 +42,8 @@ final class FeaturedMatchShortcode
         $awayName = $awayId > 0 ? (string) get_the_title($awayId) : '';
         $homeLogo = $homeId > 0 ? (string) $call('club_logo_html', $homeId, 'thumbnail', ['class' => 'opentt-featured-team-logo']) : '';
         $awayLogo = $awayId > 0 ? (string) $call('club_logo_html', $awayId, 'thumbnail', ['class' => 'opentt-featured-team-logo']) : '';
+        $homeScore = intval($match->home_score ?? 0);
+        $awayScore = intval($match->away_score ?? 0);
         $homeColor = self::clubJerseyColor($homeId, '#0b4db8');
         $awayColor = self::clubJerseyColor($awayId, '#0084ff');
         $matchLink = (string) $call('match_permalink', $match);
@@ -78,7 +80,11 @@ final class FeaturedMatchShortcode
         echo '</div>';
         echo '<div class="opentt-featured-center">';
         if ($isLive) {
-            echo '<div class="opentt-live-badge">LIVE</div>';
+            echo '<div class="opentt-featured-live-score-row">';
+            echo '<span class="opentt-featured-live-score">' . esc_html((string) $homeScore) . '</span>';
+            echo '<span class="opentt-live-badge">LIVE</span>';
+            echo '<span class="opentt-featured-live-score">' . esc_html((string) $awayScore) . '</span>';
+            echo '</div>';
         } else {
             echo '<div class="opentt-featured-countdown-label">' . esc_html($centerIntroLabel) . '</div>';
             echo '<div class="opentt-featured-countdown" data-opentt-target="' . esc_attr($targetDate) . '">' . esc_html($centerLabel) . '</div>';

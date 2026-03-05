@@ -122,6 +122,21 @@
   animation: openttLivePulse 1.2s ease-in-out infinite;
 }
 
+.opentt-featured-live-score-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.opentt-featured-live-score {
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1;
+  min-width: 12px;
+  color: #ffffff;
+}
+
 .opentt-featured-meta-top {
   margin-bottom: 14px;
   font-size: 0.82rem;
@@ -258,6 +273,14 @@
 
   .opentt-featured-countdown {
     font-size: 0.9rem;
+  }
+
+  .opentt-featured-live-score-row {
+    gap: 8px;
+  }
+
+  .opentt-featured-live-score {
+    font-size: 1rem;
   }
 
   .opentt-featured-meta-bottom {
