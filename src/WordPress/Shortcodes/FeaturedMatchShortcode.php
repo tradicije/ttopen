@@ -80,9 +80,10 @@ final class FeaturedMatchShortcode
         echo '</div>';
         echo '<div class="opentt-featured-center">';
         if ($isLive) {
+            echo '<div class="opentt-live-badge">LIVE</div>';
             echo '<div class="opentt-featured-live-score-row">';
             echo '<span class="opentt-featured-live-score">' . esc_html((string) $homeScore) . '</span>';
-            echo '<span class="opentt-live-badge">LIVE</span>';
+            echo '<span class="opentt-featured-live-sep">:</span>';
             echo '<span class="opentt-featured-live-score">' . esc_html((string) $awayScore) . '</span>';
             echo '</div>';
         } else {

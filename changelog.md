@@ -49,6 +49,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Simplified LIVE center content in `opentt_featured_match` by removing redundant `Uživo` helper label above the LIVE badge.
 - Restored score visibility in `opentt_featured_match` LIVE state by rendering center row as `home_score LIVE away_score` (with synchronized dot+text LIVE indicator).
 - Polished `opentt_featured_match` LIVE center sizing: larger desktop score/indicator presence, plus mobile-specific balance tweak (slightly smaller LIVE indicator, slightly larger scores, and increased score-group spacing/padding).
+- Updated `opentt_featured_match` LIVE center layout: `LIVE` indicator now sits above the score group, while scores are rendered on a separate line as `home : away` (with stronger desktop emphasis).
 
 #### Admin & Data
 
