@@ -1342,10 +1342,13 @@ trait OpenTT_Unified_Shortcodes_Trait
             $away_id = intval($row->away_club_post_id);
             $rd = intval($row->home_score);
             $rg = intval($row->away_score);
+            $is_played = intval($row->played) === 1 || $rd > 0 || $rg > 0;
+            $is_upcoming_no_score = !$is_played && $rd === 0 && $rg === 0;
             $home_win = ($rd === 4);
             $away_win = ($rg === 4);
-            $kolo_name = self::kolo_name_from_slug((string) $row->kolo_slug);
             $date = self::display_match_date($row->match_date);
+            $time = self::display_match_time($row->match_date);
+            $time_label = $time !== '' ? $time : '--:--';
             $link = self::match_permalink($row);
 
             $attr = '';
@@ -1370,9 +1373,21 @@ trait OpenTT_Unified_Shortcodes_Trait
 
             echo '<div class="opentt-item"' . $attr . '>';
             echo '<a href="' . esc_url($link) . '">';
-            echo self::render_team_html($home_id, $rd, $home_win);
-            echo self::render_team_html($away_id, $rg, $away_win);
-            echo '<div class="meta"><span>' . esc_html($kolo_name) . '</span><span>' . esc_html($date) . '</span></div>';
+            echo '<div class="opentt-item-main">';
+            echo '<div class="opentt-item-teams">';
+            echo self::render_team_html($home_id, $rd, $home_win, !$is_upcoming_no_score);
+            echo self::render_team_html($away_id, $rg, $away_win, !$is_upcoming_no_score);
+            echo '</div>';
+            echo '<div class="opentt-item-side" aria-label="Vreme utakmice">';
+            if ($is_played) {
+                echo '<span class="opentt-item-side-top">' . esc_html($date) . '</span>';
+                echo '<span class="opentt-item-side-bottom">Kraj</span>';
+            } else {
+                echo '<span class="opentt-item-side-top">' . esc_html($date) . '</span>';
+                echo '<span class="opentt-item-side-bottom">' . esc_html($time_label) . '</span>';
+            }
+            echo '</div>';
+            echo '</div>';
             echo '</a></div>';
         }
         echo '</div></div>';
@@ -1528,7 +1543,7 @@ trait OpenTT_Unified_Shortcodes_Trait
         return '<img ' . implode(' ', $parts) . ' />';
     }
 
-    private static function render_team_html($club_id, $score, $is_winner)
+    private static function render_team_html($club_id, $score, $is_winner, $show_score = true)
     {
         $class = $is_winner ? 'pobednik' : 'gubitnik';
         $name = $club_id ? get_the_title($club_id) : '';
@@ -1540,9 +1555,24 @@ trait OpenTT_Unified_Shortcodes_Trait
             echo $crest; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         }
         echo '<span>' . esc_html($name) . '</span>';
-        echo '<strong>' . esc_html((string) intval($score)) . '</strong>';
+        if ($show_score) {
+            echo '<strong>' . esc_html((string) intval($score)) . '</strong>';
+        }
         echo '</div>';
         return ob_get_clean();
+    }
+
+    private static function display_match_time($match_date)
+    {
+        $match_date = (string) $match_date;
+        if ($match_date === '' || $match_date === '0000-00-00 00:00:00') {
+            return '';
+        }
+        $ts = strtotime($match_date);
+        if ($ts === false) {
+            return '';
+        }
+        return date_i18n('H:i', $ts);
     }
 
     private static function match_permalink($row)

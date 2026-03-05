@@ -296,10 +296,8 @@ a.opentt-grid-cal-preview-more:focus {
 /* === POJEDINAČNA UTAKMICA === */
 .opentt-item {
   border: 2px solid #ffffff26;
-  padding: 8px;
+  padding: 10px;
   border-radius: 6px;
-  display: flex;
-  flex-direction: column;
   text-decoration: none;
   color: inherit;
   background: #000a26;
@@ -310,21 +308,30 @@ a.opentt-grid-cal-preview-more:focus {
   box-shadow: 0 2px 8px #0084FF26;
 }
 
-/* === DOMAĆIN / GOST RED === */
+.opentt-item > a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.opentt-item-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.opentt-item-teams {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .opentt-item .team {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0;
-}
-
-.opentt-item .team {
-  margin-bottom: 8px; /* razmak ispod svakog tima */
-}
-
-/* ali ako ne želiš razmak ispod poslednjeg (gosta), možeš dodati ovo: */
-.opentt-item .team:last-of-type {
-  margin-bottom: 0;
+  min-height: 34px;
 }
 
 .opentt-item .team img {
@@ -344,20 +351,37 @@ a.opentt-grid-cal-preview-more:focus {
 .opentt-item .team strong {
   font-size: 1.2rem;
   font-weight: 700;
-  min-width: 24px;
+  min-width: 26px;
   text-align: right;
 }
 
-/* === META PODACI === */
-.opentt-item .meta {
+.opentt-item-side {
+  min-width: 86px;
+  border-left: 2px solid #ffffff2e;
+  padding-left: 10px;
   display: flex;
-  justify-content: space-between;
-  font-size: 1rem;
-  font-weight: 500;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 2px solid #ffffff26;
-  color: #ffffffa8;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: right;
+}
+
+.opentt-item-side-top,
+.opentt-item-side-bottom {
+  display: block;
+  white-space: nowrap;
+}
+
+.opentt-item-side-top {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #eef4ff;
+}
+
+.opentt-item-side-bottom {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #b7cbef;
 }
 
 /* === POBEDNIK / GUBITNIK === */
@@ -370,6 +394,26 @@ a.opentt-grid-cal-preview-more:focus {
 .team.gubitnik strong {
   color: #ffffffa8;
   font-weight: 500;
+}
+
+@media (max-width: 700px) {
+  .opentt-item-main {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .opentt-item-side {
+    min-width: 76px;
+    padding-left: 8px;
+  }
+
+  .opentt-item-side-top {
+    font-size: 0.8rem;
+  }
+
+  .opentt-item-side-bottom {
+    font-size: 0.76rem;
+  }
 }
 
 /* === LIST VARIJANTA === */
