@@ -116,6 +116,29 @@
   opacity: 0.85;
 }
 
+.opentt-ekipe-score-time {
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.opentt-ekipe-time-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #c9ddff;
+  line-height: 1.2;
+}
+
+.opentt-ekipe-time {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
 .opentt-ekipe-team.pobednik .opentt-ekipe-name,
 .opentt-ekipe-score .pobednik {
   color: #fff;
@@ -184,6 +207,21 @@
     row-gap: 6px;
     font-size: 1.25rem;
     min-width: 24px;
+  }
+
+  .opentt-ekipe-score-time {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    row-gap: 2px;
+  }
+
+  .opentt-ekipe-time-label {
+    font-size: 0.56rem;
+  }
+
+  .opentt-ekipe-time {
+    font-size: 0.84rem;
   }
 
   .opentt-ekipe-score-sep {

@@ -32,6 +32,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Applied the same two-row card pattern to `opentt_h2h` (team rows + right-side date/status panel), including conditional score hiding for upcoming `0:0` matches and `Kraj` status for played matches.
 - Added round-grouped rendering to `opentt_matches_grid`: matches are now grouped with per-round subheadings (`kolo`) that stay in sync with active filters/sorting/infinite loading.
 - Hardened round heading labels in `opentt_matches_grid` with numeric fallback (`N. kolo`) and higher-contrast badge styling to ensure subheadings remain visible across all layouts.
+- Updated `opentt_ekipe` center block for unplayed matches to use a live countdown (`Početak utakmice za:`) instead of static kickoff time, reusing featured-match countdown behavior with safe fallback.
 
 #### Admin & Data
 

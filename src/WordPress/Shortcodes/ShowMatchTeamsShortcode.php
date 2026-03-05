@@ -69,6 +69,8 @@ final class ShowMatchTeamsShortcode
         $now_ts = current_time('timestamp');
         $is_future_match = ($match_ts !== false && intval($match_ts) > intval($now_ts));
         $is_unplayed = ($played_flag !== null ? $played_flag !== 1 : false) || $is_future_match || $is_score_zero;
+        $target_date = self::matchTargetDateAttr($match_raw_date);
+        $countdown_uid = 'opentt-ekipe-countdown-' . wp_unique_id();
         $match_time_label = '';
         if (preg_match('/\b([01]?\d|2[0-3]):([0-5]\d)\b/', $match_raw_date, $time_parts)) {
             $hour = intval($time_parts[1]);
@@ -117,7 +119,8 @@ final class ShowMatchTeamsShortcode
 
                 <?php if ($is_unplayed && $match_time_label !== ''): ?>
                     <div class="opentt-ekipe-score opentt-ekipe-score-time">
-                        <span class="opentt-ekipe-time"><?php echo esc_html($match_time_label); ?></span>
+                        <span class="opentt-ekipe-time-label">Početak utakmice za:</span>
+                        <span id="<?php echo esc_attr($countdown_uid); ?>" class="opentt-ekipe-time" data-opentt-target="<?php echo esc_attr($target_date); ?>"><?php echo esc_html($match_time_label); ?></span>
                     </div>
                 <?php else: ?>
                     <div class="opentt-ekipe-score">
@@ -149,7 +152,53 @@ final class ShowMatchTeamsShortcode
                 </div>
             <?php endif; ?>
         </div>
+        <?php if ($is_unplayed): ?>
+        <script>
+        (function(){
+            var el = document.getElementById('<?php echo esc_js($countdown_uid); ?>');
+            if (!el) { return; }
+            var target = String(el.getAttribute('data-opentt-target') || '');
+            if (!target) { return; }
+            var ts = Date.parse(target);
+            if (isNaN(ts)) { return; }
+
+            function pad(n) { return n < 10 ? ('0' + n) : String(n); }
+            function update() {
+                var diff = ts - Date.now();
+                if (diff <= 0) {
+                    el.textContent = 'U toku / završena';
+                    return;
+                }
+                var sec = Math.floor(diff / 1000);
+                var days = Math.floor(sec / 86400);
+                var hours = Math.floor((sec % 86400) / 3600);
+                var minutes = Math.floor((sec % 3600) / 60);
+                var seconds = sec % 60;
+                if (days > 0) {
+                    el.textContent = days + 'd ' + pad(hours) + 'h ' + pad(minutes) + 'm';
+                } else {
+                    el.textContent = pad(hours) + 'h ' + pad(minutes) + 'm ' + pad(seconds) + 's';
+                }
+            }
+            update();
+            setInterval(update, 1000);
+        })();
+        </script>
+        <?php endif; ?>
         <?php
         return ob_get_clean();
+    }
+
+    private static function matchTargetDateAttr($matchDate)
+    {
+        $matchDate = trim((string) $matchDate);
+        if ($matchDate === '') {
+            return '';
+        }
+        $ts = strtotime($matchDate);
+        if ($ts === false) {
+            return '';
+        }
+        return wp_date('c', $ts);
     }
 }
