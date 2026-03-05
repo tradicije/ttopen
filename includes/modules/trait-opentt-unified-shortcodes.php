@@ -1633,9 +1633,28 @@ trait OpenTT_Unified_Shortcodes_Trait
             $match_date .= ' 00:00:00';
         }
 
+        $tz = wp_timezone();
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})(?:[ T]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/', $match_date, $m)) {
+            $year = intval($m[1]);
+            $month = intval($m[2]);
+            $day = intval($m[3]);
+            $hour = isset($m[4]) ? intval($m[4]) : 0;
+            $minute = isset($m[5]) ? intval($m[5]) : 0;
+            $second = isset($m[6]) ? intval($m[6]) : 0;
+            if (checkdate($month, $day, $year) && $hour >= 0 && $hour <= 23 && $minute >= 0 && $minute <= 59 && $second >= 0 && $second <= 59) {
+                $dt = (new \DateTimeImmutable('now', $tz))
+                    ->setDate($year, $month, $day)
+                    ->setTime($hour, $minute, $second);
+                if ($end_of_day_if_midnight && $hour === 0 && $minute === 0 && $second === 0) {
+                    $dt = $dt->setTime(23, 59, 59);
+                }
+                return $dt->getTimestamp();
+            }
+        }
+
         $formats = ['Y-m-d H:i:s', 'Y-m-d G:i:s', 'Y-m-d H:i', 'Y-m-d G:i'];
         foreach ($formats as $format) {
-            $dt = \DateTimeImmutable::createFromFormat($format, $match_date, wp_timezone());
+            $dt = \DateTimeImmutable::createFromFormat($format, $match_date, $tz);
             if (!($dt instanceof \DateTimeImmutable)) {
                 continue;
             }
@@ -1645,15 +1664,7 @@ trait OpenTT_Unified_Shortcodes_Trait
             return $dt->getTimestamp();
         }
 
-        $ts = strtotime($match_date);
-        if ($ts === false) {
-            return false;
-        }
-        if ($end_of_day_if_midnight && preg_match('/\s00:00:00$/', $match_date)) {
-            $fallback = strtotime(substr($match_date, 0, 10) . ' 23:59:59');
-            return ($fallback === false) ? intval($ts) : intval($fallback);
-        }
-        return intval($ts);
+        return false;
     }
 
     private static function match_permalink($row)

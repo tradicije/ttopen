@@ -516,9 +516,28 @@ final class FeaturedMatchShortcode
             $matchDate .= ' 00:00:00';
         }
 
+        $tz = wp_timezone();
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})(?:[ T]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/', $matchDate, $m)) {
+            $year = intval($m[1]);
+            $month = intval($m[2]);
+            $day = intval($m[3]);
+            $hour = isset($m[4]) ? intval($m[4]) : 0;
+            $minute = isset($m[5]) ? intval($m[5]) : 0;
+            $second = isset($m[6]) ? intval($m[6]) : 0;
+            if (checkdate($month, $day, $year) && $hour >= 0 && $hour <= 23 && $minute >= 0 && $minute <= 59 && $second >= 0 && $second <= 59) {
+                $dt = (new \DateTimeImmutable('now', $tz))
+                    ->setDate($year, $month, $day)
+                    ->setTime($hour, $minute, $second);
+                if ($endOfDayIfMidnight && $hour === 0 && $minute === 0 && $second === 0) {
+                    $dt = $dt->setTime(23, 59, 59);
+                }
+                return $dt->getTimestamp();
+            }
+        }
+
         $formats = ['Y-m-d H:i:s', 'Y-m-d G:i:s', 'Y-m-d H:i', 'Y-m-d G:i'];
         foreach ($formats as $format) {
-            $dt = \DateTimeImmutable::createFromFormat($format, $matchDate, wp_timezone());
+            $dt = \DateTimeImmutable::createFromFormat($format, $matchDate, $tz);
             if (!($dt instanceof \DateTimeImmutable)) {
                 continue;
             }
@@ -528,14 +547,6 @@ final class FeaturedMatchShortcode
             return $dt->getTimestamp();
         }
 
-        $ts = strtotime($matchDate);
-        if ($ts === false) {
-            return false;
-        }
-        if ($endOfDayIfMidnight && preg_match('/\s00:00:00$/', $matchDate)) {
-            $fallback = strtotime(substr($matchDate, 0, 10) . ' 23:59:59');
-            return ($fallback === false) ? intval($ts) : intval($fallback);
-        }
-        return intval($ts);
+        return false;
     }
 }
