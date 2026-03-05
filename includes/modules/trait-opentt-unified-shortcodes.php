@@ -1363,7 +1363,7 @@ trait OpenTT_Unified_Shortcodes_Trait
 
             $attr = '';
             if ($with_kolo_attr) {
-                $match_ts = strtotime((string) $row->match_date);
+                $match_ts = self::parse_match_timestamp((string) $row->match_date);
                 if ($match_ts === false) {
                     $match_ts = 0;
                 }
@@ -1581,7 +1581,7 @@ trait OpenTT_Unified_Shortcodes_Trait
         if ($match_date === '' || $match_date === '0000-00-00 00:00:00') {
             return '';
         }
-        $ts = strtotime($match_date);
+        $ts = self::parse_match_timestamp($match_date);
         if ($ts === false) {
             return '';
         }
@@ -1616,11 +1616,40 @@ trait OpenTT_Unified_Shortcodes_Trait
         if ($match_date === '' || $match_date === '0000-00-00 00:00:00') {
             return false;
         }
-        $match_ts = strtotime($match_date);
+        $match_ts = self::parse_match_timestamp($match_date);
         if ($match_ts === false) {
             return false;
         }
         return intval($match_ts) <= intval(current_time('timestamp'));
+    }
+
+    private static function parse_match_timestamp($match_date, $end_of_day_if_midnight = false)
+    {
+        $match_date = trim((string) $match_date);
+        if ($match_date === '' || $match_date === '0000-00-00 00:00:00') {
+            return false;
+        }
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $match_date)) {
+            $match_date .= ' 00:00:00';
+        }
+
+        $dt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $match_date, wp_timezone());
+        if ($dt instanceof \DateTimeImmutable) {
+            if ($end_of_day_if_midnight && preg_match('/\s00:00:00$/', $match_date)) {
+                $dt = $dt->setTime(23, 59, 59);
+            }
+            return $dt->getTimestamp();
+        }
+
+        $ts = strtotime($match_date);
+        if ($ts === false) {
+            return false;
+        }
+        if ($end_of_day_if_midnight && preg_match('/\s00:00:00$/', $match_date)) {
+            $fallback = strtotime(substr($match_date, 0, 10) . ' 23:59:59');
+            return ($fallback === false) ? intval($ts) : intval($fallback);
+        }
+        return intval($ts);
     }
 
     private static function match_permalink($row)

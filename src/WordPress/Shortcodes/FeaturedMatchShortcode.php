@@ -299,9 +299,9 @@ final class FeaturedMatchShortcode
         }
         if (preg_match('/^(\d{4}-\d{2}-\d{2})\s+00:00:00$/', $matchDate, $m)) {
             // No explicit kickoff time: treat as end-of-day so today's match is still considered upcoming.
-            return strtotime($m[1] . ' 23:59:59');
+            return self::matchTimestamp($m[1] . ' 00:00:00', true);
         }
-        return strtotime($matchDate);
+        return self::matchTimestamp($matchDate);
     }
 
     private static function hasExplicitKickoffTime($matchDate)
@@ -415,7 +415,7 @@ final class FeaturedMatchShortcode
             return intval($match->home_score ?? 0) . ' : ' . intval($match->away_score ?? 0);
         }
         $dateRaw = (string) ($match->match_date ?? '');
-        $ts = strtotime($dateRaw);
+        $ts = self::matchTimestamp($dateRaw);
         if ($ts !== false) {
             return wp_date('H:i', $ts) . 'h';
         }
@@ -447,7 +447,7 @@ final class FeaturedMatchShortcode
         if ($matchDate === '' || $matchDate === '0000-00-00 00:00:00') {
             return false;
         }
-        $ts = strtotime($matchDate);
+        $ts = self::matchTimestamp($matchDate);
         if ($ts === false) {
             return false;
         }
@@ -499,10 +499,39 @@ final class FeaturedMatchShortcode
         if ($matchDate === '') {
             return '';
         }
-        $ts = strtotime($matchDate);
+        $ts = self::matchTimestamp($matchDate);
         if ($ts === false) {
             return '';
         }
         return wp_date('c', $ts);
+    }
+
+    private static function matchTimestamp($matchDate, $endOfDayIfMidnight = false)
+    {
+        $matchDate = trim((string) $matchDate);
+        if ($matchDate === '' || $matchDate === '0000-00-00 00:00:00') {
+            return false;
+        }
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $matchDate)) {
+            $matchDate .= ' 00:00:00';
+        }
+
+        $dt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $matchDate, wp_timezone());
+        if ($dt instanceof \DateTimeImmutable) {
+            if ($endOfDayIfMidnight && preg_match('/\s00:00:00$/', $matchDate)) {
+                $dt = $dt->setTime(23, 59, 59);
+            }
+            return $dt->getTimestamp();
+        }
+
+        $ts = strtotime($matchDate);
+        if ($ts === false) {
+            return false;
+        }
+        if ($endOfDayIfMidnight && preg_match('/\s00:00:00$/', $matchDate)) {
+            $fallback = strtotime(substr($matchDate, 0, 10) . ' 23:59:59');
+            return ($fallback === false) ? intval($ts) : intval($fallback);
+        }
+        return intval($ts);
     }
 }

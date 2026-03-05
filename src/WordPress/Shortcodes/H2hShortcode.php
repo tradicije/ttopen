@@ -108,7 +108,7 @@ final class H2hShortcode
         if ($matchDate === '' || $matchDate === '0000-00-00 00:00:00') {
             return '';
         }
-        $ts = strtotime($matchDate);
+        $ts = self::matchTimestamp($matchDate);
         if ($ts === false) {
             return '';
         }
@@ -121,7 +121,7 @@ final class H2hShortcode
         if ($matchDate === '' || $matchDate === '0000-00-00 00:00:00') {
             return '';
         }
-        $ts = strtotime($matchDate);
+        $ts = self::matchTimestamp($matchDate);
         if ($ts === false) {
             return '';
         }
@@ -142,10 +142,29 @@ final class H2hShortcode
         if ($matchDate === '' || $matchDate === '0000-00-00 00:00:00') {
             return false;
         }
-        $ts = strtotime($matchDate);
+        $ts = self::matchTimestamp($matchDate);
         if ($ts === false) {
             return false;
         }
         return intval($ts) <= intval(current_time('timestamp'));
+    }
+
+    private static function matchTimestamp($matchDate)
+    {
+        $matchDate = trim((string) $matchDate);
+        if ($matchDate === '' || $matchDate === '0000-00-00 00:00:00') {
+            return false;
+        }
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $matchDate)) {
+            $matchDate .= ' 00:00:00';
+        }
+
+        $dt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $matchDate, wp_timezone());
+        if ($dt instanceof \DateTimeImmutable) {
+            return $dt->getTimestamp();
+        }
+
+        $ts = strtotime($matchDate);
+        return ($ts === false) ? false : intval($ts);
     }
 }

@@ -145,6 +145,20 @@
   gap: 4px;
 }
 
+.opentt-ekipe-score.opentt-ekipe-score-live {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.opentt-ekipe-live-score {
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+  font-weight: 800;
+  line-height: 1;
+  min-width: 22px;
+  text-align: center;
+}
+
 .opentt-ekipe-time-label {
   font-size: 0.68rem;
   font-weight: 700;
@@ -237,6 +251,23 @@
     justify-content: center;
     align-items: flex-end;
     row-gap: 2px;
+  }
+
+  .opentt-ekipe-score.opentt-ekipe-score-live {
+    display: flex;
+    grid-template-rows: none;
+    justify-items: unset;
+    align-content: unset;
+    justify-content: center;
+    align-items: center;
+    row-gap: 0;
+    gap: 8px;
+    min-width: 80px;
+  }
+
+  .opentt-ekipe-live-score {
+    font-size: 1.05rem;
+    min-width: 16px;
   }
 
   .opentt-ekipe-time-label {

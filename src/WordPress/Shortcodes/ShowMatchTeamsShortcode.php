@@ -65,7 +65,7 @@ final class ShowMatchTeamsShortcode
         $played_flag = isset($row->played) ? intval($row->played) : null;
         $is_score_zero = ($home_score === 0 && $away_score === 0);
         $match_raw_date = (string) ($row->match_date ?? '');
-        $match_ts = strtotime($match_raw_date);
+        $match_ts = self::matchTimestamp($match_raw_date);
         $now_ts = current_time('timestamp');
         $is_live_match = ($match_ts !== false && intval($match_ts) <= intval($now_ts) && $home_score < 4 && $away_score < 4);
         $is_future_match = ($match_ts !== false && intval($match_ts) > intval($now_ts));
@@ -119,8 +119,10 @@ final class ShowMatchTeamsShortcode
                 </a>
 
                 <?php if ($is_live_match): ?>
-                    <div class="opentt-ekipe-score opentt-ekipe-score-time">
+                    <div class="opentt-ekipe-score opentt-ekipe-score-time opentt-ekipe-score-live">
+                        <span class="opentt-ekipe-live-score"><?php echo esc_html((string) $home_score); ?></span>
                         <span class="opentt-live-badge">LIVE</span>
+                        <span class="opentt-ekipe-live-score"><?php echo esc_html((string) $away_score); ?></span>
                     </div>
                 <?php elseif ($is_unplayed && $match_time_label !== ''): ?>
                     <div class="opentt-ekipe-score opentt-ekipe-score-time">
@@ -200,10 +202,31 @@ final class ShowMatchTeamsShortcode
         if ($matchDate === '') {
             return '';
         }
-        $ts = strtotime($matchDate);
+        $ts = self::matchTimestamp($matchDate);
         if ($ts === false) {
             return '';
         }
         return wp_date('c', $ts);
+    }
+
+    private static function matchTimestamp($matchDate)
+    {
+        $matchDate = trim((string) $matchDate);
+        if ($matchDate === '' || $matchDate === '0000-00-00 00:00:00') {
+            return false;
+        }
+
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $matchDate)) {
+            $matchDate .= ' 00:00:00';
+        }
+
+        $tz = wp_timezone();
+        $dt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $matchDate, $tz);
+        if ($dt instanceof \DateTimeImmutable) {
+            return $dt->getTimestamp();
+        }
+
+        $ts = strtotime($matchDate);
+        return ($ts === false) ? false : intval($ts);
     }
 }
