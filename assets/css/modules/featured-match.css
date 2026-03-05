@@ -118,6 +118,7 @@
   border-radius: 0;
   background: transparent;
   color: #ffffff;
+  font-size: 0.9rem;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
   animation: openttLivePulse 1.2s ease-in-out infinite;
 }
@@ -126,14 +127,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
+  padding: 3px 8px;
 }
 
 .opentt-featured-live-score {
-  font-size: 1.2rem;
+  font-size: 1.42rem;
   font-weight: 800;
   line-height: 1;
-  min-width: 12px;
+  min-width: 18px;
   color: #ffffff;
 }
 
@@ -276,11 +278,23 @@
   }
 
   .opentt-featured-live-score-row {
-    gap: 8px;
+    gap: 9px;
+    padding: 4px 9px;
   }
 
   .opentt-featured-live-score {
-    font-size: 1rem;
+    font-size: 1.08rem;
+    min-width: 16px;
+  }
+
+  .opentt-featured-match-card.opentt-featured-live .opentt-live-badge {
+    font-size: 0.74rem;
+    letter-spacing: 0.07em;
+  }
+
+  .opentt-featured-match-card.opentt-featured-live .opentt-live-badge::before {
+    width: 5px;
+    height: 5px;
   }
 
   .opentt-featured-meta-bottom {
