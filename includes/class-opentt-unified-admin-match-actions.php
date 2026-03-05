@@ -47,6 +47,7 @@ final class OpenTT_Unified_Admin_Match_Actions
         $away_score = max(0, (int) ($_POST['away_score'] ?? 0));
         $played = ($home_score >= 4 || $away_score >= 4) ? 1 : 0;
         $featured = !empty($_POST['featured']) ? 1 : 0;
+        $live = !empty($_POST['live']) ? 1 : 0;
         $match_date = self::normalize_match_date((string) ($_POST['match_date'] ?? ''));
         $location = sanitize_text_field((string) ($_POST['location'] ?? ''));
 
@@ -106,6 +107,9 @@ final class OpenTT_Unified_Admin_Match_Actions
         }
         if (self::has_location_column($table)) {
             $data['location'] = $location;
+        }
+        if (self::has_live_column($table)) {
+            $data['live'] = $live;
         }
 
         if ($id > 0) {
@@ -187,6 +191,65 @@ final class OpenTT_Unified_Admin_Match_Actions
         exit;
     }
 
+    public static function handle_toggle_live_match_admin()
+    {
+        self::require_cap();
+        $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+        if ($id <= 0) {
+            wp_die('Nedostaje ID.');
+        }
+        check_admin_referer('opentt_unified_toggle_live_match_' . $id);
+
+        global $wpdb;
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        $matches_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $matches));
+        if ($matches_exists !== $matches) {
+            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-matches'), 'error', 'Tabela utakmica nije dostupna.'));
+            exit;
+        }
+        if (!self::has_live_column($matches)) {
+            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-matches'), 'error', 'LIVE kolona nije dostupna. Pokreni migraciju šeme.'));
+            exit;
+        }
+
+        $current = (int) $wpdb->get_var($wpdb->prepare("SELECT live FROM {$matches} WHERE id=%d LIMIT 1", $id));
+        $next = $current === 1 ? 0 : 1;
+        $ok = $wpdb->update($matches, ['live' => $next], ['id' => $id], ['%d'], ['%d']);
+        if ($ok === false) {
+            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-matches'), 'error', 'Greška pri promeni LIVE statusa.'));
+            exit;
+        }
+
+        $message = $next === 1 ? 'Utakmica je uključena u LIVE.' : 'Utakmica je uklonjena iz LIVE.';
+        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-matches'), 'success', $message));
+        exit;
+    }
+
+    public static function handle_finish_live_match_admin()
+    {
+        self::require_cap();
+        $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+        if ($id <= 0) {
+            wp_die('Nedostaje ID.');
+        }
+        check_admin_referer('opentt_unified_finish_live_match_' . $id);
+
+        global $wpdb;
+        $matches = OpenTT_Unified_Core::db_table('matches');
+        if (!self::has_live_column($matches)) {
+            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-live'), 'error', 'LIVE kolona nije dostupna.'));
+            exit;
+        }
+
+        $ok = $wpdb->update($matches, ['live' => 0], ['id' => $id], ['%d'], ['%d']);
+        if ($ok === false) {
+            wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-live'), 'error', 'Greška pri završavanju LIVE utakmice.'));
+            exit;
+        }
+        wp_safe_redirect(self::admin_notice_url(admin_url('admin.php?page=stkb-unified-live'), 'success', 'LIVE utakmica je završena.'));
+        exit;
+    }
+
     private static function has_featured_column($table)
     {
         self::maybe_add_featured_column($table);
@@ -213,6 +276,14 @@ final class OpenTT_Unified_Admin_Match_Actions
         return !empty($column);
     }
 
+    private static function has_live_column($table)
+    {
+        self::maybe_add_live_column($table);
+        global $wpdb;
+        $column = $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$table} LIKE %s", 'live'));
+        return !empty($column);
+    }
+
     private static function maybe_add_location_column($table)
     {
         global $wpdb;
@@ -221,6 +292,16 @@ final class OpenTT_Unified_Admin_Match_Actions
             return;
         }
         $wpdb->query("ALTER TABLE {$table} ADD COLUMN location varchar(255) NOT NULL DEFAULT '' AFTER match_date");
+    }
+
+    private static function maybe_add_live_column($table)
+    {
+        global $wpdb;
+        $column = $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$table} LIKE %s", 'live'));
+        if (!empty($column)) {
+            return;
+        }
+        $wpdb->query("ALTER TABLE {$table} ADD COLUMN live tinyint(1) NOT NULL DEFAULT 0 AFTER featured");
     }
 
     private static function normalize_match_date($raw)

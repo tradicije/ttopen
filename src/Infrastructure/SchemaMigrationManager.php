@@ -68,6 +68,7 @@ final class SchemaMigrationManager
             away_score smallint(6) NOT NULL DEFAULT 0,
             played tinyint(1) NOT NULL DEFAULT 0,
             featured tinyint(1) NOT NULL DEFAULT 0,
+            live tinyint(1) NOT NULL DEFAULT 0,
             match_date datetime DEFAULT NULL,
             location varchar(255) NOT NULL DEFAULT '',
             created_at datetime NOT NULL,

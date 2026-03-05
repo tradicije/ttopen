@@ -67,7 +67,7 @@ final class ShowMatchTeamsShortcode
         $match_raw_date = (string) ($row->match_date ?? '');
         $match_ts = self::matchTimestamp($match_raw_date);
         $now_ts = current_time('timestamp');
-        $is_live_match = ($match_ts !== false && intval($match_ts) <= intval($now_ts) && $home_score < 4 && $away_score < 4);
+        $is_live_match = intval($row->live ?? 0) === 1;
         $is_future_match = ($match_ts !== false && intval($match_ts) > intval($now_ts));
         $is_unplayed = ($played_flag !== null ? $played_flag !== 1 : false) || $is_future_match || $is_score_zero;
         $target_date = self::matchTargetDateAttr($match_raw_date);

@@ -34,7 +34,7 @@ final class OpenTT_Unified_Core
     const VERSION = '1.1.0-beta.2';
     const CAP = 'edit_others_posts';
     const OPTION_SCHEMA_VERSION = 'opentt_unified_schema_version';
-    const SCHEMA_VERSION = '5';
+    const SCHEMA_VERSION = '6';
     const OPTION_MIGRATION_STATE = 'opentt_unified_migration_state';
     const OPTION_VALIDATION_REPORT = 'opentt_unified_validation_report';
     const OPTION_LEAGUE_SEASON_VALIDATION_REPORT = 'opentt_unified_league_season_validation_report';
@@ -1145,6 +1145,7 @@ JS;
         $sort_dir = in_array($sort_dir, ['ASC', 'DESC'], true) ? $sort_dir : 'DESC';
 
         if (self::table_exists($table)) {
+            self::ensure_matches_live_column($table);
             $liga_options = $wpdb->get_col("SELECT DISTINCT liga_slug FROM {$table} WHERE liga_slug <> '' ORDER BY liga_slug ASC") ?: [];
             $sezona_options = $wpdb->get_col("SELECT DISTINCT sezona_slug FROM {$table} WHERE sezona_slug <> '' ORDER BY sezona_slug ASC") ?: [];
             $kolo_options = $wpdb->get_col("SELECT DISTINCT kolo_slug FROM {$table} WHERE kolo_slug <> '' ORDER BY CAST(kolo_slug AS UNSIGNED) ASC, kolo_slug ASC") ?: [];
@@ -1320,7 +1321,7 @@ JS;
 
         echo '<p class="opentt-mobile-scroll-hint">Na telefonu prevuci tabelu levo/desno za prikaz svih kolona.</p>';
         echo '<div class="opentt-table-scroll">';
-        echo '<table id="opentt-matches-table" class="widefat striped opentt-live-search-table"><thead><tr><th style="width:32px;"><input type="checkbox" id="opentt-matches-check-all" aria-label="Izaberi sve utakmice"></th><th>Featured</th><th>Liga</th><th>Sezona</th><th>Kolo</th><th>Utakmica</th><th>Rezultat</th><th>Partije</th><th>Datum</th><th>Akcije</th></tr></thead><tbody>';
+        echo '<table id="opentt-matches-table" class="widefat striped opentt-live-search-table"><thead><tr><th style="width:32px;"><input type="checkbox" id="opentt-matches-check-all" aria-label="Izaberi sve utakmice"></th><th>Featured</th><th>LIVE</th><th>Liga</th><th>Sezona</th><th>Kolo</th><th>Utakmica</th><th>Rezultat</th><th>Partije</th><th>Datum</th><th>Akcije</th></tr></thead><tbody>';
         foreach ($rows as $m) {
             $home = get_the_title((int) $m->home_club_post_id);
             $away = get_the_title((int) $m->away_club_post_id);
@@ -1330,15 +1331,21 @@ JS;
                 admin_url('admin-post.php?action=opentt_unified_toggle_featured_match&id=' . (int) $m->id),
                 'opentt_unified_toggle_featured_match_' . (int) $m->id
             );
+            $toggle_live_url = wp_nonce_url(
+                admin_url('admin-post.php?action=opentt_unified_toggle_live_match&id=' . (int) $m->id),
+                'opentt_unified_toggle_live_match_' . (int) $m->id
+            );
             $del_url = wp_nonce_url(
                 admin_url('admin-post.php?action=opentt_unified_delete_match&id=' . (int) $m->id),
                 'opentt_unified_delete_match_' . (int) $m->id
             );
             $is_featured = (int) ($m->featured ?? 0) === 1;
+            $is_live = (int) ($m->live ?? 0) === 1;
 
             echo '<tr>';
             echo '<td><input type="checkbox" class="opentt-match-bulk-checkbox" name="match_ids[]" value="' . intval($m->id) . '" aria-label="Izaberi utakmicu ID ' . intval($m->id) . '"></td>';
             echo '<td>' . ($is_featured ? '★' : '—') . '</td>';
+            echo '<td>' . ($is_live ? '<span class="opentt-live-badge">LIVE</span>' : '—') . '</td>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             echo '<td>' . esc_html((string) $m->liga_slug) . '</td>';
             echo '<td>' . esc_html((string) $m->sezona_slug) . '</td>';
             echo '<td>' . esc_html((string) $m->kolo_slug) . '</td>';
@@ -1349,6 +1356,7 @@ JS;
             echo '<td>' . esc_html(self::display_match_date((string) $m->match_date)) . '</td>';
             echo '<td><a class="button button-small" href="' . esc_url($edit_url) . '">Uredi</a> ';
             echo '<a class="button button-small" href="' . esc_url($toggle_featured_url) . '">' . esc_html($is_featured ? 'Unfeature' : 'Feature') . '</a> ';
+            echo '<a class="button button-small" href="' . esc_url($toggle_live_url) . '">' . esc_html($is_live ? 'Unset LIVE' : 'Set LIVE') . '</a> ';
             echo '<a class="button button-small" href="' . esc_url($front_url) . '" target="_blank" rel="noopener">Frontend</a> ';
             echo '<a class="button button-small button-link-delete" href="' . esc_url($del_url) . '" onclick="return confirm(\'Obrisati utakmicu i partije/setove?\')">Obriši</a></td>';
             echo '</tr>';
@@ -1366,15 +1374,15 @@ JS;
         echo '<div class="wrap opentt-admin">';
         self::render_admin_topbar();
         echo '<h1>Uživo</h1>';
-        echo '<p class="description">U LIVE modu su utakmice kojima je isteklo vreme početka, a još nije postignut završni rezultat (prvi do 4).</p>';
+        echo '<p class="description">U LIVE modu su utakmice koje su ručno označene kao LIVE u listi utakmica ili u formi za uređivanje utakmice.</p>';
 
         if (!self::table_exists($table) || !self::table_exists($games_table)) {
             echo '<p>Nema dostupnih tabela za prikaz.</p></div>';
             return;
         }
+        self::ensure_matches_live_column($table);
 
-        $now_mysql = current_time('mysql');
-        $rows = $wpdb->get_results($wpdb->prepare(
+        $rows = $wpdb->get_results(
             "SELECT m.*, COALESCE(gc.games_count,0) AS games_count
              FROM {$table} m
              LEFT JOIN (
@@ -1382,21 +1390,10 @@ JS;
                 FROM {$games_table}
                 GROUP BY match_id
              ) gc ON gc.match_id = m.id
-             WHERE m.match_date IS NOT NULL
-               AND m.match_date <> '0000-00-00 00:00:00'
-               AND COALESCE(
-                    STR_TO_DATE(m.match_date, '%%Y-%%m-%%d %%H:%%i:%%s'),
-                    STR_TO_DATE(m.match_date, '%%Y-%%m-%%d %%k:%%i:%%s')
-               ) <= %s
-               AND m.home_score < 4
-               AND m.away_score < 4
-             ORDER BY COALESCE(
-                    STR_TO_DATE(m.match_date, '%%Y-%%m-%%d %%H:%%i:%%s'),
-                    STR_TO_DATE(m.match_date, '%%Y-%%m-%%d %%k:%%i:%%s')
-               ) ASC, m.id ASC
-             LIMIT 400",
-            $now_mysql
-        )) ?: [];
+             WHERE m.live = 1
+             ORDER BY m.match_date ASC, m.id ASC
+             LIMIT 400"
+        ) ?: [];
 
         if (empty($rows)) {
             echo '<p>Trenutno nema utakmica u LIVE modu.</p></div>';
@@ -1413,6 +1410,10 @@ JS;
             $result_url = $edit_url . '#opentt-match-score-row';
             $games_url = $edit_url . '#opentt-games-section';
             $front_url = self::match_permalink($m);
+            $finish_live_url = wp_nonce_url(
+                admin_url('admin-post.php?action=opentt_unified_finish_live_match&id=' . (int) $m->id),
+                'opentt_unified_finish_live_match_' . (int) $m->id
+            );
             $games_count = isset($m->games_count) ? intval($m->games_count) : 0;
 
             echo '<tr>';
@@ -1427,7 +1428,8 @@ JS;
             echo '<td>';
             echo '<a class="button button-small" href="' . esc_url($result_url) . '">Rezultat</a> ';
             echo '<a class="button button-small" href="' . esc_url($games_url) . '">Partije</a> ';
-            echo '<a class="button button-small" href="' . esc_url($front_url) . '" target="_blank" rel="noopener">Frontend</a>';
+            echo '<a class="button button-small" href="' . esc_url($front_url) . '" target="_blank" rel="noopener">Frontend</a> ';
+            echo '<a class="button button-small" href="' . esc_url($finish_live_url) . '" onclick="return confirm(\'Završiti LIVE utakmicu?\')">Završi utakmicu</a>';
             echo '</td>';
             echo '</tr>';
         }
@@ -1939,6 +1941,7 @@ HTML;
         $m_hs = $match ? (int) $match->home_score : 0;
         $m_as = $match ? (int) $match->away_score : 0;
         $m_featured = $match ? (int) ($match->featured ?? 0) : 0;
+        $m_live = $match ? (int) ($match->live ?? 0) : 0;
         $m_location = $match ? trim((string) ($match->location ?? '')) : '';
 
         echo '<div class="wrap opentt-admin">';
@@ -1958,6 +1961,7 @@ HTML;
         echo '<tr data-opentt-step="2"><th>Gostujući klub</th><td>' . self::clubs_dropdown_admin('away_club_post_id', $m_away, true) . '</td></tr>';
         echo '<tr id="opentt-match-score-row" data-opentt-step="2"><th>Rezultat</th><td><input name="home_score" type="number" min="0" max="7" value="' . esc_attr((string) $m_hs) . '" style="width:90px;"> : <input name="away_score" type="number" min="0" max="7" value="' . esc_attr((string) $m_as) . '" style="width:90px;"></td></tr>';
         echo '<tr data-opentt-step="2"><th>Featured match</th><td><label><input type="checkbox" name="featured" value="1" ' . checked($m_featured, 1, false) . '> Istakni ovu utakmicu</label></td></tr>';
+        echo '<tr data-opentt-step="2"><th>LIVE match</th><td><label><input type="checkbox" name="live" value="1" ' . checked($m_live, 1, false) . '> Označi ovu utakmicu kao LIVE (ručno)</label></td></tr>';
         echo '<tr data-opentt-step="3"><th>Potvrda</th><td><p class="description">Proveri podatke i klikni na dugme za čuvanje.</p></td></tr>';
         echo '</tbody></table>';
         echo '<div class="opentt-wizard-nav">';
@@ -3422,6 +3426,7 @@ HTML;
                 'away_score' => (int) $r->away_score,
                 'played' => (int) $r->played,
                 'featured' => (int) ($r->featured ?? 0),
+                'live' => (int) ($r->live ?? 0),
                 'home_club_source_id' => (int) $r->home_club_post_id,
                 'away_club_source_id' => (int) $r->away_club_post_id,
                 'legacy_post_id' => (int) $r->legacy_post_id,
@@ -4053,17 +4058,18 @@ HTML;
                     'away_score' => (int) ($row['away_score'] ?? 0),
                     'played' => (int) ($row['played'] ?? 0),
                     'featured' => (int) ($row['featured'] ?? 0),
+                    'live' => (int) ($row['live'] ?? 0),
                     'legacy_post_id' => (int) ($row['legacy_post_id'] ?? 0),
                 ];
                 if ($existing_id > 0) {
-                    $ok = $wpdb->update($matches_table, $data_row, ['id' => $existing_id], ['%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d'], ['%d']);
+                    $ok = $wpdb->update($matches_table, $data_row, ['id' => $existing_id], ['%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d'], ['%d']);
                     if ($ok === false) {
                         $result['issues'][] = 'Greška update utakmice ' . $slug . ': ' . (string) $wpdb->last_error;
                         continue;
                     }
                     $new_id = $existing_id;
                 } else {
-                    $ok = $wpdb->insert($matches_table, $data_row, ['%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d']);
+                    $ok = $wpdb->insert($matches_table, $data_row, ['%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d']);
                     if ($ok === false) {
                         $result['issues'][] = 'Greška insert utakmice ' . $slug . ': ' . (string) $wpdb->last_error;
                         continue;
@@ -4374,6 +4380,16 @@ HTML;
     public static function handle_toggle_featured_match_admin()
     {
         OpenTT_Unified_Admin_Match_Actions::handle_toggle_featured_match_admin();
+    }
+
+    public static function handle_toggle_live_match_admin()
+    {
+        OpenTT_Unified_Admin_Match_Actions::handle_toggle_live_match_admin();
+    }
+
+    public static function handle_finish_live_match_admin()
+    {
+        OpenTT_Unified_Admin_Match_Actions::handle_finish_live_match_admin();
     }
 
     public static function handle_delete_matches_bulk_admin()
@@ -5737,6 +5753,20 @@ HTML;
         global $wpdb;
         $found = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table_name));
         return $found === $table_name;
+    }
+
+    private static function ensure_matches_live_column($table_name)
+    {
+        global $wpdb;
+        $table_name = (string) $table_name;
+        if ($table_name === '' || !self::table_exists($table_name)) {
+            return;
+        }
+        $column = $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$table_name} LIKE %s", 'live'));
+        if (!empty($column)) {
+            return;
+        }
+        $wpdb->query("ALTER TABLE {$table_name} ADD COLUMN live tinyint(1) NOT NULL DEFAULT 0 AFTER featured");
     }
 
     private static function get_game_sets_rows($game_id)

@@ -438,20 +438,7 @@ final class FeaturedMatchShortcode
         if (!is_object($match)) {
             return false;
         }
-        $homeScore = intval($match->home_score ?? 0);
-        $awayScore = intval($match->away_score ?? 0);
-        if ($homeScore >= 4 || $awayScore >= 4) {
-            return false;
-        }
-        $matchDate = trim((string) ($match->match_date ?? ''));
-        if ($matchDate === '' || $matchDate === '0000-00-00 00:00:00') {
-            return false;
-        }
-        $ts = self::matchTimestamp($matchDate);
-        if ($ts === false) {
-            return false;
-        }
-        return intval($ts) <= intval(current_time('timestamp'));
+        return intval($match->live ?? 0) === 1;
     }
 
     private static function matchLocationLabel($match)

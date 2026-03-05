@@ -133,20 +133,7 @@ final class H2hShortcode
         if (!is_object($row)) {
             return false;
         }
-        $homeScore = intval($row->home_score ?? 0);
-        $awayScore = intval($row->away_score ?? 0);
-        if ($homeScore >= 4 || $awayScore >= 4) {
-            return false;
-        }
-        $matchDate = trim((string) ($row->match_date ?? ''));
-        if ($matchDate === '' || $matchDate === '0000-00-00 00:00:00') {
-            return false;
-        }
-        $ts = self::matchTimestamp($matchDate);
-        if ($ts === false) {
-            return false;
-        }
-        return intval($ts) <= intval(current_time('timestamp'));
+        return intval($row->live ?? 0) === 1;
     }
 
     private static function matchTimestamp($matchDate)

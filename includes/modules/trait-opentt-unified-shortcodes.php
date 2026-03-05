@@ -1607,20 +1607,7 @@ trait OpenTT_Unified_Shortcodes_Trait
         if (!is_object($row)) {
             return false;
         }
-        $home_score = intval($row->home_score ?? 0);
-        $away_score = intval($row->away_score ?? 0);
-        if ($home_score >= 4 || $away_score >= 4) {
-            return false;
-        }
-        $match_date = trim((string) ($row->match_date ?? ''));
-        if ($match_date === '' || $match_date === '0000-00-00 00:00:00') {
-            return false;
-        }
-        $match_ts = self::parse_match_timestamp($match_date);
-        if ($match_ts === false) {
-            return false;
-        }
-        return intval($match_ts) <= intval(current_time('timestamp'));
+        return intval($row->live ?? 0) === 1;
     }
 
     private static function parse_match_timestamp($match_date, $end_of_day_if_midnight = false)
