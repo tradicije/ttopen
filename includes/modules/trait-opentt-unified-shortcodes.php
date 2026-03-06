@@ -70,6 +70,15 @@ trait OpenTT_Unified_Shortcodes_Trait
             'match_permalink' => static function ($row) {
                 return self::match_permalink($row);
             },
+            'kolo_name_from_slug' => static function ($slug) {
+                return self::kolo_name_from_slug($slug);
+            },
+            'extract_round_no' => static function ($slug) {
+                return self::extract_round_no($slug);
+            },
+            'club_logo_html' => static function ($club_id, $size = 'thumbnail', $attr = []) {
+                return self::club_logo_html($club_id, $size, $attr);
+            },
         ]);
     }
 

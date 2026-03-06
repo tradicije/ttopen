@@ -8,6 +8,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 
 #### Assets & UI
 
+- Added new `opentt_matches_list` shortcode with contextual league/season round navigation (chevrons, no page refresh), per-round match rows, row-to-match linking, and optional report/video indicators when related content exists.
 - Updated `opentt_matches_grid` calendar preview so the `+X more` indicator is clickable and applies direct date filtering for that day.
 - Improved `opentt_matches_grid` calendar preview positioning to reduce hover gap between day cell and preview panel, preventing accidental preview switches to adjacent days.
 - Added new `opentt_featured_match` shortcode with standout card layout (league/season/round meta, team crests/names, countdown center, location footer) and home/away gradient based on club jersey colors.
