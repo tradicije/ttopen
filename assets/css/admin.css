@@ -51,7 +51,7 @@
 }
 
 .wrap.opentt-admin::after {
-  content: "OpenTT for Wordpress | Version 1.1.0-beta.2";
+  content: "OpenTT for Wordpress | Version 1.1.0";
   display: block;
   margin: 18px 0 0 0;
   padding: 8px 10px;

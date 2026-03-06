@@ -119,7 +119,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Fixed `opentt_matches_grid` contextual league-season filtering so league archives now respect the active `sezona` context instead of aggregating matches from all seasons of the same league.
 - Updated `opentt_match_teams` center display logic to show scheduled match time (for example `19h`) instead of `0:0` for not-yet-played matches, using backend `played`, match date, and score fallback checks.
 
-### 1.1.0-beta.2 - 2026-03-03
+### 1.1.0 - 2026-03-03
 
 #### Highlights
 
@@ -141,7 +141,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 
 #### Documentation
 
-- Updated version references to `1.1.0-beta.2` in README files.
+- Updated version references to `1.1.0` in README files.
 - Standardized AGPL file headers across PHP sources.
 
 ### 1.1.0-beta.1 - 2026-03-03

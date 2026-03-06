@@ -172,7 +172,7 @@ Contributions are welcome:
 
 - Stable release: **1.0.0**.
 - Pre-release: **1.1.0-beta.1**.
-- Pre-release: **1.1.0-beta.2**.
+- Pre-release: **1.1.0**.
 - Pre-release: **1.1.0-beta.3**.
 
 ## Notes

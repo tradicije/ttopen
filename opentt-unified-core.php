@@ -12,7 +12,7 @@
 /**
  * Plugin Name: OpenTT
  * Description: OpenTT table tennis management plugin for competitions, clubs, players, and match data.
- * Version: 1.1.0-beta.2
+ * Version: 1.1.0
  * Author: Aleksa Dimitrijević
  * Author URI: https://instagram.com/tradicije
  * License: AGPL-3.0-or-later
