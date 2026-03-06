@@ -11,6 +11,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Added new `opentt_matches_list` shortcode with contextual league/season round navigation (chevrons, no page refresh), per-round match rows, row-to-match linking, and optional report/video indicators when related content exists.
 - Fixed `opentt_matches_list` score-line alignment so the center separator (`:`) and scores stay visually centered regardless of team-name length.
 - Fixed `opentt_matches_list` score rendering and styling parity: `0` scores now render correctly, and winner/loser emphasis now matches `opentt_matches_grid` (winner bold, loser reduced opacity for both name and score).
+- Updated `opentt_matches_list` unplayed rows to hide placeholder `0:0` scores and show kickoff time in the center block instead, with tighter team spacing around the middle label.
 - Updated `opentt_matches_grid` calendar preview so the `+X more` indicator is clickable and applies direct date filtering for that day.
 - Improved `opentt_matches_grid` calendar preview positioning to reduce hover gap between day cell and preview panel, preventing accidental preview switches to adjacent days.
 - Added new `opentt_featured_match` shortcode with standout card layout (league/season/round meta, team crests/names, countdown center, location footer) and home/away gradient based on club jersey colors.

@@ -67,6 +67,9 @@ trait OpenTT_Unified_Shortcodes_Trait
             'display_match_date' => static function ($match_date) {
                 return self::display_match_date($match_date);
             },
+            'display_match_time' => static function ($match_date) {
+                return self::display_match_time($match_date);
+            },
             'match_permalink' => static function ($row) {
                 return self::match_permalink($row);
             },

@@ -138,10 +138,12 @@ final class MatchesListShortcode
               +       '<span class="team-name team-name--home ' + esc(match.homeClass || '') + '">' + esc(match.homeName) + '</span>'
               +       '<span class="team-crest">' + (match.homeLogo || '') + '</span>'
               +     '</span>'
-              +     '<span class="match-score">'
-              +       '<span class="team-score ' + esc(match.homeClass || '') + '">' + esc(match.homeScore) + '</span>'
-              +       '<span class="team-sep">:</span>'
-              +       '<span class="team-score ' + esc(match.awayClass || '') + '">' + esc(match.awayScore) + '</span>'
+              +     '<span class="match-score ' + (match.showTime ? 'is-time' : '') + '">'
+              +       (match.showTime
+                        ? '<span class="match-time">' + esc(match.timeLabel || '--:--') + '</span>'
+                        : '<span class="team-score ' + esc(match.homeClass || '') + '">' + esc(match.homeScore) + '</span>'
+                          + '<span class="team-sep">:</span>'
+                          + '<span class="team-score ' + esc(match.awayClass || '') + '">' + esc(match.awayScore) + '</span>')
               +     '</span>'
               +     '<span class="match-side match-side--away">'
               +       '<span class="team-crest">' + (match.awayLogo || '') + '</span>'
@@ -258,6 +260,7 @@ final class MatchesListShortcode
             $home_score = intval($row->home_score ?? 0);
             $away_score = intval($row->away_score ?? 0);
             $is_played = intval($row->played ?? 0) === 1 || $home_score > 0 || $away_score > 0;
+            $show_time = !$is_played && $home_score === 0 && $away_score === 0;
             $home_class = '';
             $away_class = '';
             if ($is_played) {
@@ -282,6 +285,8 @@ final class MatchesListShortcode
                 'awayScore' => $away_score,
                 'homeClass' => $home_class,
                 'awayClass' => $away_class,
+                'showTime' => $show_time,
+                'timeLabel' => (string) $call('display_match_time', $row->match_date ?? ''),
                 'link' => $match_link,
                 'reportUrl' => $legacy_id > 0 ? (string) ($report_map[$legacy_id] ?? '') : '',
                 'videoUrl' => ($legacy_id > 0 && !empty($video_map[$legacy_id])) ? $match_link : '',
