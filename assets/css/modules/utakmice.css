@@ -635,12 +635,8 @@ a.opentt-grid-cal-preview-more:focus {
   white-space: nowrap;
 }
 
-.opentt-matches-list-col--match .match-score.is-time {
-  min-width: 62px;
-}
-
 .opentt-matches-list-col--match .match-time {
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #ffffff;
   letter-spacing: 0.02em;
