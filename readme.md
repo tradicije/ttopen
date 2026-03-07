@@ -6,6 +6,7 @@
 
 OpenTT was built from real club/community needs, not as a commercial product.
 The goal is simple: **keep tools, knowledge, and data in the hands of the community.**
+Disclaimer: this project is not affiliated with, endorsed by, or connected to `opentt.pl`.
 
 ## Project philosophy
 

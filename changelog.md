@@ -9,6 +9,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 #### Assets & UI
 
 - Reverted visible plugin branding back to `OpenTT` (plugin header metadata, admin UI labels, onboarding copy, import messaging, and README text), while keeping existing technical identifiers unchanged.
+- Added an explicit project disclaimer in README files clarifying that OpenTT is not affiliated with `opentt.pl`.
 - Added new `opentt_matches_list` shortcode with contextual league/season round navigation (chevrons, no page refresh), per-round match rows, row-to-match linking, and optional report/video indicators when related content exists.
 - Fixed `opentt_matches_list` score-line alignment so the center separator (`:`) and scores stay visually centered regardless of team-name length.
 - Fixed `opentt_matches_list` score rendering and styling parity: `0` scores now render correctly, and winner/loser emphasis now matches `opentt_matches_grid` (winner bold, loser reduced opacity for both name and score).

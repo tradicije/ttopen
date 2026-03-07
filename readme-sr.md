@@ -6,6 +6,7 @@
 
 OpenTT je nastao iz realnih potreba kluba i zajednice, a ne kao komercijalni proizvod.
 Cilj je jednostavan: **da alati, znanje i podaci ostanu u rukama zajednice.**
+Disclaimer: ovaj projekat nije povezan sa `opentt.pl`, niti je od njega odobren ili podržan.
 
 ## Filozofija projekta
 
