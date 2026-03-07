@@ -31,6 +31,7 @@ final class MatchesShortcode
             'odigrana' => '',
             'liga' => '',
             'sezona' => '',
+            'season' => '',
             'filter' => '',
             'infinite' => '',
             'opentt_match_date' => '',

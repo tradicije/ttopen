@@ -31,6 +31,7 @@ final class MatchesGridShortcode
             'odigrana' => '',
             'liga' => '',
             'sezona' => '',
+            'season' => '',
             'filter' => '',
             'infinite' => '',
             'pagination' => '',

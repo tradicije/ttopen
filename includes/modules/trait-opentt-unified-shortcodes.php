@@ -1212,7 +1212,12 @@ trait OpenTT_Unified_Shortcodes_Trait
     {
         $limit = isset($atts['limit']) ? intval($atts['limit']) : 5;
         $liga = sanitize_title((string) ($atts['liga'] ?? ''));
-        $sezona_from_atts = !empty($atts['sezona']) ? sanitize_title((string) $atts['sezona']) : '';
+        $sezona_from_atts = '';
+        if (!empty($atts['season'])) {
+            $sezona_from_atts = sanitize_title((string) $atts['season']);
+        } elseif (!empty($atts['sezona'])) {
+            $sezona_from_atts = sanitize_title((string) $atts['sezona']);
+        }
         $sezona_from_context = '';
         $kolo = '';
         $played_filter = '';

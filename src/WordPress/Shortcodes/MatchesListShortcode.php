@@ -30,6 +30,7 @@ final class MatchesListShortcode
             'odigrana' => '',
             'liga' => '',
             'sezona' => '',
+            'season' => '',
             'kolo' => '',
         ], $atts);
 
