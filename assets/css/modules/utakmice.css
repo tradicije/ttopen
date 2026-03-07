@@ -461,10 +461,11 @@ a.opentt-grid-cal-preview-more:focus {
   color: inherit;
   background: #000a26;
   cursor: pointer;
-  transition: box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 .opentt-item:hover {
-  box-shadow: 0 2px 8px #0084FF26;
+  transform: scale(1.03);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
 .opentt-item.opentt-item-live {
