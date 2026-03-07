@@ -2623,14 +2623,14 @@ JS;
             [
                 'tag' => 'opentt_matches_grid',
                 'desc' => 'Grid prikaz utakmica sa filterima/sortiranjem, kalendarskim filterom datuma i infinite opcijom.',
-                'attrs' => 'columns, limit, klub, odigrana, liga, sezona, filter, infinite, opentt_match_date',
+                'attrs' => 'columns, limit, klub, played, liga, sezona, filter, infinite, opentt_match_date',
                 'details' => 'Najčešći shortcode za listing utakmica na početnoj ili liga stranici. Kada je `filter=true`, prikazuje i kalendar (desno) sa obojenim danima: odigrane (zeleno), predstojeće (plavo).',
                 'builder' => [
                     ['name' => 'columns', 'label' => 'Kolone', 'type' => 'number', 'default' => '4', 'help' => 'Broj kolona u gridu (1-6).'],
                     ['name' => 'limit', 'label' => 'Limit', 'type' => 'number', 'default' => '8', 'help' => 'Broj utakmica inicijalno (i chunk za infinite).'],
                     ['name' => 'liga', 'label' => 'Liga slug', 'type' => 'text', 'default' => '', 'help' => 'Slug lige/takmičenja.'],
                     ['name' => 'sezona', 'label' => 'Sezona slug', 'type' => 'text', 'default' => '', 'help' => 'Slug sezone (npr. 2025-26).'],
-                    ['name' => 'odigrana', 'label' => 'Odigrana', 'type' => 'text', 'default' => '', 'help' => '1 = odigrane, 0 = neodigrane, prazno = sve.'],
+                    ['name' => 'played', 'label' => 'Played', 'type' => 'text', 'default' => '', 'help' => 'true = odigrane, false = neodigrane, prazno = sve.'],
                     ['name' => 'filter', 'label' => 'Filter', 'type' => 'text', 'default' => 'true', 'help' => 'Uključuje filter/sort panel i kalendar datuma.'],
                     ['name' => 'infinite', 'label' => 'Infinite', 'type' => 'text', 'default' => 'true', 'help' => 'Učitavanje dodatnih kartica pri skrolu.'],
                     ['name' => 'opentt_match_date', 'label' => 'Datum (YYYY-MM-DD)', 'type' => 'text', 'default' => '', 'help' => 'Opcioni početni datum filtera (npr. 2026-03-03).'],
@@ -2714,7 +2714,8 @@ JS;
             'mode' => 'Režim izbora featured meča: manual ili auto.',
             'liga' => 'Slug lige/takmičenja.',
             'sezona' => 'Slug sezone (npr. 2025-26).',
-            'odigrana' => 'Filter odigranosti: 1 odigrane, 0 neodigrane.',
+            'played' => 'Filter odigranosti: true odigrane, false neodigrane.',
+            'odigrana' => 'Legacy alias za played: 1 odigrane, 0 neodigrane.',
             'filter' => 'Uključuje dodatne filtere/sort opcije.',
             'opentt_match_date' => 'Filter po tačnom datumu utakmice (YYYY-MM-DD).',
             'infinite' => 'Uključuje infinite scroll učitavanje.',
@@ -2823,7 +2824,7 @@ JS;
             echo '<div class="opentt-shortcode-builder" data-tag="' . esc_attr($tag) . '" data-builder="' . esc_attr($builder_json) . '">';
             echo '<div class="opentt-shortcode-builder-fields"></div>';
             echo '<label>Dodatni atributi (opciono)</label>';
-            echo '<input type="text" class="opentt-shortcode-extra" placeholder="npr. odigrana=&quot;1&quot; klub=&quot;bubusinci&quot;">';
+            echo '<input type="text" class="opentt-shortcode-extra" placeholder="npr. played=&quot;true&quot; klub=&quot;bubusinci&quot;">';
             echo '<label>Generisani shortcode</label>';
             echo '<textarea class="opentt-shortcode-output" rows="2" readonly></textarea>';
             echo '<div><button type="button" class="button opentt-shortcode-copy">Kopiraj</button></div>';

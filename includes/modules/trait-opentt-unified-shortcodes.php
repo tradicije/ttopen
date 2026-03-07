@@ -1203,7 +1203,7 @@ trait OpenTT_Unified_Shortcodes_Trait
         $sezona_from_atts = !empty($atts['sezona']) ? sanitize_title((string) $atts['sezona']) : '';
         $sezona_from_context = '';
         $kolo = '';
-        $odigrana = '';
+        $played_filter = '';
         $club_id = 0;
         $player_id = 0;
         $archive_ctx = self::current_archive_context();
@@ -1255,21 +1255,14 @@ trait OpenTT_Unified_Shortcodes_Trait
             }
         }
 
-        if (isset($atts['odigrana']) && $atts['odigrana'] !== '') {
-            $val = strtolower(trim((string) $atts['odigrana']));
-            if ($val === 'da' || strpos($val, 'da') === 0) {
-                $val = '1';
-            }
-            if ($val === 'ne' || strpos($val, 'ne') === 0) {
-                $val = '0';
-            }
-            if ($val !== '0' && $val !== '1' && preg_match('/^[01]/', $val, $m)) {
-                $val = (string) $m[0];
-            }
-            if ($val === '0' || $val === '1') {
-                $odigrana = $val;
-            }
+        // Public attr: played="true|false" (preferred), with odigrana kept for backward compatibility.
+        $raw_played = '';
+        if (array_key_exists('played', (array) $atts)) {
+            $raw_played = (string) ($atts['played'] ?? '');
+        } elseif (array_key_exists('odigrana', (array) $atts)) {
+            $raw_played = (string) ($atts['odigrana'] ?? '');
         }
+        $played_filter = self::normalize_played_shortcode_attr($raw_played);
 
         if (!empty($atts['klub'])) {
             $club_slug_or_name = (string) $atts['klub'];
@@ -1303,10 +1296,34 @@ trait OpenTT_Unified_Shortcodes_Trait
             'liga_slug' => $liga,
             'sezona_slug' => $sezona_slug,
             'kolo_slug' => $kolo,
-            'played' => $odigrana,
+            'played' => $played_filter,
             'club_id' => $club_id,
             'player_id' => $player_id,
         ];
+    }
+
+    private static function normalize_played_shortcode_attr($value)
+    {
+        $value = strtolower(trim((string) $value));
+        if ($value === '') {
+            return '';
+        }
+
+        $truthy = ['true', '1', 'yes', 'da', 'on'];
+        $falsy = ['false', '0', 'no', 'ne', 'off'];
+
+        foreach ($truthy as $token) {
+            if ($value === $token || strpos($value, $token) === 0) {
+                return '1';
+            }
+        }
+        foreach ($falsy as $token) {
+            if ($value === $token || strpos($value, $token) === 0) {
+                return '0';
+            }
+        }
+
+        return '';
     }
 
     private static function db_get_matches($args)

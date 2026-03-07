@@ -26,6 +26,7 @@ final class MatchesListShortcode
         $atts = shortcode_atts([
             'limit' => -1,
             'klub' => '',
+            'played' => '',
             'odigrana' => '',
             'liga' => '',
             'sezona' => '',

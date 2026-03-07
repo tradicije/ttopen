@@ -27,6 +27,7 @@ final class MatchesGridShortcode
             'columns' => 3,
             'limit' => 5,
             'klub' => '',
+            'played' => '',
             'odigrana' => '',
             'liga' => '',
             'sezona' => '',

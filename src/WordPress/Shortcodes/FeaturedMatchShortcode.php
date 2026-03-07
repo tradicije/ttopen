@@ -391,7 +391,7 @@ final class FeaturedMatchShortcode
             'liga' => (string) ($atts['liga'] ?? ''),
             'sezona' => (string) ($atts['sezona'] ?? ''),
             'klub' => '',
-            'odigrana' => '',
+            'played' => '',
         ]);
         if (is_array($queryArgs)) {
             $qLiga = sanitize_title((string) ($queryArgs['liga_slug'] ?? ''));
