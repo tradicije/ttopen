@@ -50,7 +50,14 @@ final class OpenTT_Unified_Admin_Match_Actions
         $live = !empty($_POST['live']) ? 1 : 0;
         $match_date = self::normalize_match_date((string) ($_POST['match_date'] ?? ''));
         $location = sanitize_text_field((string) ($_POST['location'] ?? ''));
-        $report_url = esc_url_raw((string) ($_POST['report_url'] ?? ''));
+        $report_post_id = isset($_POST['report_post_id']) ? (int) $_POST['report_post_id'] : 0;
+        $report_url = '';
+        if ($report_post_id > 0) {
+            $report_post = get_post($report_post_id);
+            if ($report_post && $report_post->post_type === 'post') {
+                $report_url = (string) get_permalink($report_post_id);
+            }
+        }
         $video_url = esc_url_raw((string) ($_POST['video_url'] ?? ''));
 
         if (self::has_any_competition_rules() && $competition_rule_id <= 0) {

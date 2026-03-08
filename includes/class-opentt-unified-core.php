@@ -1944,6 +1944,8 @@ HTML;
         $m_live = $match ? (int) ($match->live ?? 0) : 0;
         $m_location = $match ? trim((string) ($match->location ?? '')) : '';
         $m_report_url = $match ? trim((string) ($match->report_url ?? '')) : '';
+        $m_report_post_id = self::resolve_report_post_id_from_url($m_report_url);
+        $report_posts = self::report_posts_for_dropdown_admin($m_report_post_id);
         $m_video_url = $match ? trim((string) ($match->video_url ?? '')) : '';
 
         echo '<div class="wrap opentt-admin">';
@@ -1959,7 +1961,16 @@ HTML;
         echo '<tr data-opentt-step="1"><th>Kolo slug</th><td><input type="text" class="regular-text" name="kolo_slug" value="' . esc_attr($m_kolo) . '" required><p class="description">Primer: <code>12-kolo</code>.</p></td></tr>';
         echo '<tr data-opentt-step="1"><th>Datum i vreme</th><td><input name="match_date" type="datetime-local" value="' . esc_attr($match && !empty($match->match_date) ? str_replace(' ', 'T', substr((string) $match->match_date, 0, 16)) : '') . '"></td></tr>';
         echo '<tr data-opentt-step="1"><th>Lokacija</th><td><input name="location" type="text" class="regular-text" value="' . esc_attr($m_location) . '" placeholder="Hala, sala ili adresa"><p class="description">Menjaj ovo polje samo ako se utakmica ne igra kod domaćina.</p></td></tr>';
-        echo '<tr data-opentt-step="1"><th>Link izveštaja</th><td><input name="report_url" type="url" class="regular-text" value="' . esc_attr($m_report_url) . '" placeholder="https://..."><p class="description">Opcioni URL ka izveštaju za ovu utakmicu.</p></td></tr>';
+        echo '<tr data-opentt-step="1"><th>Izveštaj</th><td>';
+        echo '<input type="search" id="opentt-report-post-search" class="regular-text" placeholder="Pretraži vesti..." style="margin-bottom:8px;display:block;max-width:420px;">';
+        echo '<select name="report_post_id" id="opentt-report-post-id" class="regular-text" style="max-width:420px;">';
+        echo '<option value="0"' . selected($m_report_post_id, 0, false) . '>Bez izveštaja</option>';
+        foreach ($report_posts as $post_id => $post_title) {
+            echo '<option value="' . (int) $post_id . '"' . selected($m_report_post_id, (int) $post_id, false) . '>' . esc_html($post_title) . '</option>';
+        }
+        echo '</select>';
+        echo '<p class="description">Izaberi blog vest sa ovog sajta koja predstavlja izveštaj utakmice.</p>';
+        echo '</td></tr>';
         echo '<tr data-opentt-step="1"><th>Link snimka</th><td><input name="video_url" type="url" class="regular-text" value="' . esc_attr($m_video_url) . '" placeholder="https://..."><p class="description">Opcioni URL ka video snimku utakmice.</p></td></tr>';
         echo '<tr data-opentt-step="2"><th>Domaći klub</th><td>' . self::clubs_dropdown_admin('home_club_post_id', $m_home, true) . '</td></tr>';
         echo '<tr data-opentt-step="2"><th>Gostujući klub</th><td>' . self::clubs_dropdown_admin('away_club_post_id', $m_away, true) . '</td></tr>';
@@ -1975,6 +1986,7 @@ HTML;
         echo '<span class="opentt-wizard-help"></span>';
         echo '</div>';
         echo '</form>';
+        echo '<script>(function(){var search=document.getElementById("opentt-report-post-search");var select=document.getElementById("opentt-report-post-id");if(!search||!select||search.dataset.bound==="1"){return;}search.dataset.bound="1";var options=Array.prototype.slice.call(select.options||[]);function apply(){var q=String(search.value||"").toLowerCase().trim();options.forEach(function(opt,idx){if(idx===0){opt.hidden=false;return;}var txt=String(opt.textContent||"").toLowerCase();var show=!q||txt.indexOf(q)!==-1||opt.selected;opt.hidden=!show;});}search.addEventListener("input",apply);apply();})();</script>';
 
         if ($match) {
             $sets_table = OpenTT_Unified_Core::db_table('sets');
@@ -2101,6 +2113,67 @@ HTML;
             echo '</div>';
         }
         echo '</div>';
+    }
+
+    private static function resolve_report_post_id_from_url($report_url)
+    {
+        $report_url = trim((string) $report_url);
+        if ($report_url === '') {
+            return 0;
+        }
+
+        $post_id = (int) url_to_postid($report_url);
+        if ($post_id > 0) {
+            return $post_id;
+        }
+
+        $path = (string) wp_parse_url($report_url, PHP_URL_PATH);
+        $slug = sanitize_title((string) basename(trim($path, '/')));
+        if ($slug === '') {
+            return 0;
+        }
+
+        $rows = get_posts([
+            'post_type' => 'post',
+            'post_status' => ['publish', 'private', 'draft', 'pending'],
+            'posts_per_page' => 1,
+            'name' => $slug,
+            'fields' => 'ids',
+        ]);
+
+        return !empty($rows) ? (int) $rows[0] : 0;
+    }
+
+    private static function report_posts_for_dropdown_admin($selected_id = 0)
+    {
+        $selected_id = (int) $selected_id;
+        $posts = get_posts([
+            'post_type' => 'post',
+            'post_status' => ['publish', 'private', 'draft', 'pending'],
+            'posts_per_page' => 400,
+            'orderby' => 'date',
+            'order' => 'DESC',
+            'ignore_sticky_posts' => true,
+        ]) ?: [];
+
+        $out = [];
+        foreach ($posts as $post) {
+            if (!($post instanceof \WP_Post)) {
+                continue;
+            }
+            $title = trim((string) $post->post_title);
+            $out[(int) $post->ID] = $title !== '' ? $title : ('#' . (int) $post->ID);
+        }
+
+        if ($selected_id > 0 && !isset($out[$selected_id])) {
+            $selected_post = get_post($selected_id);
+            if ($selected_post && $selected_post->post_type === 'post') {
+                $title = trim((string) $selected_post->post_title);
+                $out = [(int) $selected_post->ID => ($title !== '' ? $title : ('#' . (int) $selected_post->ID))] + $out;
+            }
+        }
+
+        return $out;
     }
 
     public static function render_club_edit_page()
