@@ -15,6 +15,7 @@ final class EloRatingManager
 {
     public const META_KEY = 'opentt_elo_rating';
     public const META_KEY_SCOPED = 'opentt_elo_ratings';
+    public const OPTION_BACKFILL_STATE = 'opentt_elo_backfill_state_v1';
     public const DEFAULT_RATING = 1500;
     public const K_FACTOR = 32.0;
 
@@ -136,6 +137,136 @@ final class EloRatingManager
         ];
     }
 
+    public static function maybeBackfillHistoricalRatings($force = false)
+    {
+        $force = (bool) $force;
+        $state = get_option(self::OPTION_BACKFILL_STATE, []);
+        if (!$force && is_array($state) && !empty($state['done'])) {
+            return $state;
+        }
+
+        global $wpdb;
+        $matches = \OpenTT_Unified_Core::db_table('matches');
+        $games = \OpenTT_Unified_Core::db_table('games');
+        if (!self::tableExists($matches) || !self::tableExists($games)) {
+            return ['done' => 0, 'reason' => 'missing_tables'];
+        }
+
+        $rows = $wpdb->get_results(
+            "SELECT
+                m.liga_slug,
+                m.sezona_slug,
+                g.home_player_post_id,
+                g.away_player_post_id,
+                g.home_sets,
+                g.away_sets
+             FROM {$games} g
+             INNER JOIN {$matches} m ON m.id = g.match_id
+             WHERE g.is_doubles = 0
+               AND g.home_player_post_id > 0
+               AND g.away_player_post_id > 0
+               AND m.liga_slug <> ''
+               AND m.sezona_slug <> ''
+               AND g.home_sets <> g.away_sets
+             ORDER BY
+               COALESCE(m.match_date, m.created_at, m.updated_at) ASC,
+               m.id ASC,
+               g.order_no ASC,
+               g.id ASC"
+        ) ?: [];
+
+        if (empty($rows)) {
+            $state = [
+                'done' => 1,
+                'processed_games' => 0,
+                'updated_players' => 0,
+                'generated_at' => current_time('mysql'),
+            ];
+            update_option(self::OPTION_BACKFILL_STATE, $state, false);
+            return $state;
+        }
+
+        $player_ids = [];
+        foreach ($rows as $row) {
+            if (!is_object($row)) {
+                continue;
+            }
+            $home = (int) ($row->home_player_post_id ?? 0);
+            $away = (int) ($row->away_player_post_id ?? 0);
+            if ($home > 0) {
+                $player_ids[$home] = true;
+            }
+            if ($away > 0) {
+                $player_ids[$away] = true;
+            }
+        }
+
+        foreach (array_keys($player_ids) as $pid) {
+            delete_post_meta((int) $pid, self::META_KEY_SCOPED);
+        }
+
+        $ratings = [];
+        $processed_games = 0;
+
+        foreach ($rows as $row) {
+            if (!is_object($row)) {
+                continue;
+            }
+
+            $home = (int) ($row->home_player_post_id ?? 0);
+            $away = (int) ($row->away_player_post_id ?? 0);
+            $home_sets = (int) ($row->home_sets ?? 0);
+            $away_sets = (int) ($row->away_sets ?? 0);
+            $liga = sanitize_title((string) ($row->liga_slug ?? ''));
+            $sezona = sanitize_title((string) ($row->sezona_slug ?? ''));
+            $scope = self::scopeKey($liga, $sezona);
+
+            if ($home <= 0 || $away <= 0 || $scope === '') {
+                continue;
+            }
+            if ($home_sets === $away_sets) {
+                continue;
+            }
+
+            if (!isset($ratings[$home])) {
+                $ratings[$home] = [];
+            }
+            if (!isset($ratings[$away])) {
+                $ratings[$away] = [];
+            }
+            if (!isset($ratings[$home][$scope])) {
+                $ratings[$home][$scope] = self::DEFAULT_RATING;
+            }
+            if (!isset($ratings[$away][$scope])) {
+                $ratings[$away][$scope] = self::DEFAULT_RATING;
+            }
+
+            $rating_home = (int) $ratings[$home][$scope];
+            $rating_away = (int) $ratings[$away][$scope];
+            $expected_home = 1.0 / (1.0 + pow(10.0, (($rating_away - $rating_home) / 400.0)));
+            $expected_away = 1.0 - $expected_home;
+            $score_home = $home_sets > $away_sets ? 1.0 : 0.0;
+            $score_away = 1.0 - $score_home;
+
+            $ratings[$home][$scope] = (int) round($rating_home + (self::K_FACTOR * ($score_home - $expected_home)));
+            $ratings[$away][$scope] = (int) round($rating_away + (self::K_FACTOR * ($score_away - $expected_away)));
+            $processed_games++;
+        }
+
+        foreach ($ratings as $pid => $map) {
+            update_post_meta((int) $pid, self::META_KEY_SCOPED, $map);
+        }
+
+        $state = [
+            'done' => 1,
+            'processed_games' => $processed_games,
+            'updated_players' => count($ratings),
+            'generated_at' => current_time('mysql'),
+        ];
+        update_option(self::OPTION_BACKFILL_STATE, $state, false);
+        return $state;
+    }
+
     private static function scopeKey($ligaSlug, $sezonaSlug)
     {
         $ligaSlug = sanitize_title((string) $ligaSlug);
@@ -154,5 +285,12 @@ final class EloRatingManager
             'liga_slug' => $liga,
             'sezona_slug' => $sezona,
         ];
+    }
+
+    private static function tableExists($table)
+    {
+        global $wpdb;
+        $found = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', (string) $table));
+        return (string) $found === (string) $table;
     }
 }

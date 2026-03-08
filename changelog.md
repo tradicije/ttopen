@@ -80,6 +80,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Added ELO rating foundation for players (`1500` default, `K=32`) with automatic update on newly added single matches that have a winner, and added a small ELO badge overlay on player images in key player list/ranking card views.
 - Updated ELO model to be competition-scoped (`liga + sezona`) so each league-season pair has its own rating track per player, with contextual ELO rendering in `opentt_player_info` (current scope + per-scope list).
 - Fixed ELO badge positioning to render outside player images in the top-right corner (overlay style) instead of inside clipped avatar areas.
+- Added one-time historical ELO backfill on plugin init: existing single games are replayed chronologically to populate scoped (`liga+sezona`) player ratings from already entered data.
 
 ## Releases
 

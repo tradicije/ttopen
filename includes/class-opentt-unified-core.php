@@ -77,6 +77,7 @@ final class OpenTT_Unified_Core
         add_action('init', [__CLASS__, 'maybe_setup_default_pages'], 30);
         add_action('admin_init', [__CLASS__, 'maybe_redirect_to_onboarding']);
         add_action('admin_init', [__CLASS__, 'maybe_backfill_player_citizenship_default']);
+        add_action('init', [__CLASS__, 'maybe_backfill_elo_ratings_once'], 40);
     }
 
     public static function activate($plugin_file)
@@ -123,6 +124,11 @@ final class OpenTT_Unified_Core
 
         \OpenTT\Unified\WordPress\DefaultPagesProvisioner::ensureCompetitionsPage();
         update_option(self::OPTION_DEFAULT_PAGES_SETUP_DONE, '1', false);
+    }
+
+    public static function maybe_backfill_elo_ratings_once()
+    {
+        \OpenTT\Unified\Infrastructure\EloRatingManager::maybeBackfillHistoricalRatings(false);
     }
 
     public static function enqueue_frontend_assets()
