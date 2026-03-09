@@ -13,6 +13,7 @@ namespace OpenTT\Unified\Infrastructure;
 
 final class EloRatingManager
 {
+    public const OPTION_ENABLED = 'opentt_unified_elo_enabled';
     public const META_KEY = 'opentt_elo_rating';
     public const META_KEY_SCOPED = 'opentt_elo_ratings';
     public const OPTION_BACKFILL_STATE = 'opentt_elo_backfill_state_v1';
@@ -65,6 +66,12 @@ final class EloRatingManager
         return self::DEFAULT_RATING;
     }
 
+    public static function isEnabled()
+    {
+        $raw = get_option(self::OPTION_ENABLED, '1');
+        return (string) $raw !== '0';
+    }
+
     public static function getPlayerRatingsMap($playerId)
     {
         $playerId = (int) $playerId;
@@ -91,6 +98,10 @@ final class EloRatingManager
 
     public static function updateAfterMatch($playerAId, $playerBId, $winnerId, $kFactor = self::K_FACTOR, $ligaSlug = '', $sezonaSlug = '')
     {
+        if (!self::isEnabled()) {
+            return null;
+        }
+
         $playerAId = (int) $playerAId;
         $playerBId = (int) $playerBId;
         $winnerId = (int) $winnerId;
@@ -153,6 +164,10 @@ final class EloRatingManager
 
     public static function maybeBackfillHistoricalRatings($force = false)
     {
+        if (!self::isEnabled()) {
+            return ['done' => 0, 'reason' => 'elo_disabled'];
+        }
+
         $force = (bool) $force;
         $state = get_option(self::OPTION_BACKFILL_STATE, []);
         if (!$force && is_array($state) && !empty($state['done'])) {

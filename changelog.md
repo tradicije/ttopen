@@ -83,6 +83,7 @@ All notable changes to the OpenTT plugin are documented in this file.
 - Added one-time historical ELO backfill on plugin init: existing single games are replayed chronologically to populate scoped (`liga+sezona`) player ratings from already entered data.
 - Adjusted ELO visibility to player profile context only (`opentt_player_info`), removing ELO badges from ranking/list cards.
 - Improved player-profile ELO fallback resolution: when page context has no explicit league/season, profile now uses the player’s latest available competition scope instead of defaulting to `1500`.
+- Added admin Settings toggle for ELO system (enable/disable): when disabled, ELO updates/backfill are skipped and player-profile ELO display is hidden.
 
 ## Releases
 

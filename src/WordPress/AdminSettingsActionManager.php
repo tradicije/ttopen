@@ -75,6 +75,7 @@ final class AdminSettingsActionManager
         $optionVisualSettings = (string) ($config['option_visual_settings'] ?? '');
         $optionCustomCss = (string) ($config['option_custom_css'] ?? '');
         $optionCustomCssMap = (string) ($config['option_custom_css_map'] ?? '');
+        $optionEloEnabled = (string) ($config['option_elo_enabled'] ?? '');
         $optionAdminUiLanguage = (string) ($config['option_admin_ui_language'] ?? '');
         $availableLanguages = isset($config['available_languages']) && is_array($config['available_languages'])
             ? $config['available_languages']
@@ -113,6 +114,17 @@ final class AdminSettingsActionManager
             SettingsManager::saveVisualSettings($optionVisualSettings, $visualSettings);
             if ($section === 'visual') {
                 wp_safe_redirect(AdminNoticeManager::buildUrl($customizeUrl, 'success', 'Globalna stilizacija je sačuvana.'));
+                exit;
+            }
+        }
+
+        if ($section === 'elo' || $section === 'all') {
+            $eloEnabled = !empty($_POST['elo_enabled']) ? '1' : '0'; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            if ($optionEloEnabled !== '') {
+                update_option($optionEloEnabled, $eloEnabled, false);
+            }
+            if ($section === 'elo') {
+                wp_safe_redirect(AdminNoticeManager::buildUrl($settingsUrl, 'success', 'ELO podešavanje je sačuvano.'));
                 exit;
             }
         }

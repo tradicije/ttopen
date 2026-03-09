@@ -43,6 +43,7 @@ final class OpenTT_Unified_Core
     const OPTION_CUSTOM_SHORTCODE_CSS = 'opentt_unified_custom_shortcode_css';
     const OPTION_CUSTOM_SHORTCODE_CSS_MAP = 'opentt_unified_custom_shortcode_css_map';
     const OPTION_VISUAL_SETTINGS = 'opentt_unified_visual_settings';
+    const OPTION_ELO_ENABLED = 'opentt_unified_elo_enabled';
     const OPTION_DEFAULT_PAGES_SETUP_DONE = 'opentt_unified_default_pages_setup_done';
     const OPTION_ONBOARDING_STATE = 'opentt_unified_onboarding_state';
     const OPTION_REWRITE_FLUSHED = 'opentt_unified_rewrite_flushed';
@@ -2884,6 +2885,21 @@ JS;
         echo '</form>';
         echo '</div>';
 
+        $elo_enabled = \OpenTT\Unified\Infrastructure\EloRatingManager::isEnabled() ? 1 : 0;
+        echo '<div class="opentt-panel opentt-settings-panel">';
+        echo '<h2>ELO rejting</h2>';
+        echo '<p class="description">Uključi ili isključi ELO sistem (računanje i prikaz na profilu igrača).</p>';
+        echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" class="opentt-settings-css-form">';
+        wp_nonce_field('opentt_unified_save_settings');
+        echo '<input type="hidden" name="action" value="opentt_unified_save_settings">';
+        echo '<input type="hidden" name="opentt_settings_section" value="elo">';
+        echo '<label><span>ELO status</span><span style="display:flex;align-items:center;gap:8px;margin-top:8px;"><input type="hidden" name="elo_enabled" value="0"><input type="checkbox" name="elo_enabled" value="1" ' . checked($elo_enabled, 1, false) . '> Uključi ELO</span></label>';
+        echo '<div class="opentt-settings-actions">';
+        echo '<button type="submit" class="button button-primary">Sačuvaj ELO podešavanje</button>';
+        echo '</div>';
+        echo '</form>';
+        echo '</div>';
+
         echo '<div class="opentt-panel opentt-settings-panel">';
         echo '<h2>Katalog shortcode-ova</h2>';
         echo '<p class="description">Klikni na shortcode da se otvore detalji, primer i mini builder za generisanje shortcode niza.</p>';
@@ -4442,6 +4458,7 @@ HTML;
                 self::OPTION_CUSTOM_SHORTCODE_CSS,
                 self::OPTION_CUSTOM_SHORTCODE_CSS_MAP,
                 self::OPTION_VISUAL_SETTINGS,
+                self::OPTION_ELO_ENABLED,
                 self::OPTION_ADMIN_UI_LANGUAGE,
                 self::OPTION_DEFAULT_PAGES_SETUP_DONE,
                 self::OPTION_ONBOARDING_STATE,
@@ -4462,6 +4479,7 @@ HTML;
             'option_visual_settings' => self::OPTION_VISUAL_SETTINGS,
             'option_custom_css' => self::OPTION_CUSTOM_SHORTCODE_CSS,
             'option_custom_css_map' => self::OPTION_CUSTOM_SHORTCODE_CSS_MAP,
+            'option_elo_enabled' => self::OPTION_ELO_ENABLED,
             'option_admin_ui_language' => self::OPTION_ADMIN_UI_LANGUAGE,
             'available_languages' => self::get_available_admin_ui_languages(),
         ]);

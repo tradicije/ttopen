@@ -56,6 +56,7 @@ final class PlayerInfoShortcode
         $club_name = $club_id > 0 ? (string) get_the_title($club_id) : '';
         $club_link = $club_id > 0 ? (string) get_permalink($club_id) : '';
         $club_logo = $club_id > 0 ? (string) $call('club_logo_html', $club_id, 'thumbnail', ['class' => 'opentt-info-igraca-klub-grb']) : '';
+        $elo_enabled = \OpenTT\Unified\Infrastructure\EloRatingManager::isEnabled();
         $elo_scope = self::resolve_elo_scope($call);
         $elo_current = \OpenTT\Unified\Infrastructure\EloRatingManager::getPlayerRating(
             $player_id,
@@ -65,52 +66,53 @@ final class PlayerInfoShortcode
         $elo_map = \OpenTT\Unified\Infrastructure\EloRatingManager::getPlayerRatingsMap($player_id);
 
         $rows = [];
-
-        $elo_value = '<span class="opentt-player-elo-value">ELO ' . esc_html((string) $elo_current) . '</span>';
-        if (!empty($elo_scope['liga_slug']) && !empty($elo_scope['sezona_slug'])) {
-            $liga_name = (string) $call('slug_to_title', (string) $elo_scope['liga_slug']);
-            $sezona_name = (string) $call('season_display_name', (string) $elo_scope['sezona_slug']);
-            if ($liga_name === '') {
-                $liga_name = (string) $elo_scope['liga_slug'];
-            }
-            if ($sezona_name === '') {
-                $sezona_name = (string) $elo_scope['sezona_slug'];
-            }
-            $elo_value .= '<small class="opentt-player-elo-scope">Aktivni kontekst: '
-                . esc_html($liga_name . ' • ' . $sezona_name)
-                . '</small>';
-        }
-        $rows[] = [
-            'label' => 'ELO',
-            'value' => $elo_value,
-        ];
-
-        if (!empty($elo_map)) {
-            $items = [];
-            ksort($elo_map);
-            foreach ($elo_map as $scope_key => $rating) {
-                $scope_key = (string) $scope_key;
-                $chunks = explode('|', $scope_key, 2);
-                $liga_slug = sanitize_title((string) ($chunks[0] ?? ''));
-                $sezona_slug = sanitize_title((string) ($chunks[1] ?? ''));
-                if ($liga_slug === '' || $sezona_slug === '') {
-                    continue;
-                }
-                $liga_name = (string) $call('slug_to_title', $liga_slug);
-                $sezona_name = (string) $call('season_display_name', $sezona_slug);
+        if ($elo_enabled) {
+            $elo_value = '<span class="opentt-player-elo-value">ELO ' . esc_html((string) $elo_current) . '</span>';
+            if (!empty($elo_scope['liga_slug']) && !empty($elo_scope['sezona_slug'])) {
+                $liga_name = (string) $call('slug_to_title', (string) $elo_scope['liga_slug']);
+                $sezona_name = (string) $call('season_display_name', (string) $elo_scope['sezona_slug']);
                 if ($liga_name === '') {
-                    $liga_name = $liga_slug;
+                    $liga_name = (string) $elo_scope['liga_slug'];
                 }
                 if ($sezona_name === '') {
-                    $sezona_name = $sezona_slug;
+                    $sezona_name = (string) $elo_scope['sezona_slug'];
                 }
-                $items[] = '<li><span>' . esc_html($liga_name . ' • ' . $sezona_name) . '</span><strong>' . esc_html((string) intval($rating)) . '</strong></li>';
+                $elo_value .= '<small class="opentt-player-elo-scope">Aktivni kontekst: '
+                    . esc_html($liga_name . ' • ' . $sezona_name)
+                    . '</small>';
             }
-            if (!empty($items)) {
-                $rows[] = [
-                    'label' => 'ELO po ligi/sezoni',
-                    'value' => '<ul class="opentt-player-elo-list">' . implode('', $items) . '</ul>',
-                ];
+            $rows[] = [
+                'label' => 'ELO',
+                'value' => $elo_value,
+            ];
+
+            if (!empty($elo_map)) {
+                $items = [];
+                ksort($elo_map);
+                foreach ($elo_map as $scope_key => $rating) {
+                    $scope_key = (string) $scope_key;
+                    $chunks = explode('|', $scope_key, 2);
+                    $liga_slug = sanitize_title((string) ($chunks[0] ?? ''));
+                    $sezona_slug = sanitize_title((string) ($chunks[1] ?? ''));
+                    if ($liga_slug === '' || $sezona_slug === '') {
+                        continue;
+                    }
+                    $liga_name = (string) $call('slug_to_title', $liga_slug);
+                    $sezona_name = (string) $call('season_display_name', $sezona_slug);
+                    if ($liga_name === '') {
+                        $liga_name = $liga_slug;
+                    }
+                    if ($sezona_name === '') {
+                        $sezona_name = $sezona_slug;
+                    }
+                    $items[] = '<li><span>' . esc_html($liga_name . ' • ' . $sezona_name) . '</span><strong>' . esc_html((string) intval($rating)) . '</strong></li>';
+                }
+                if (!empty($items)) {
+                    $rows[] = [
+                        'label' => 'ELO po ligi/sezoni',
+                        'value' => '<ul class="opentt-player-elo-list">' . implode('', $items) . '</ul>',
+                    ];
+                }
             }
         }
 
@@ -169,7 +171,7 @@ final class PlayerInfoShortcode
                     <a href="<?php echo esc_url($player_link); ?>" class="opentt-info-igraca-foto-link">
                         <span class="opentt-info-igraca-slika-wrap">
                             <?php echo $player_photo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-                            <span class="opentt-elo-badge">ELO <?php echo esc_html((string) $elo_current); ?></span>
+                            <?php if ($elo_enabled): ?><span class="opentt-elo-badge">ELO <?php echo esc_html((string) $elo_current); ?></span><?php endif; ?>
                         </span>
                     </a>
                     <span class="opentt-info-igraca-head-text">
